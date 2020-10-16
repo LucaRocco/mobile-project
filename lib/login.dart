@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:in_expense/cambia_password.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key, this.title}) : super(key: key);
@@ -63,9 +64,11 @@ class _LoginPageState extends State<LoginPage> {
             Row(
               children: [
                 TextButton(
-                  child: Text("Password Dimenticata"),
-                  onPressed: () => {},
-                ),
+                    child: Text("Password Dimenticata"),
+                    onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CambiaPasswordPage()))),
                 Padding(
                   padding: EdgeInsets.all(16),
                   child: RaisedButton(
@@ -74,6 +77,14 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ],
               mainAxisAlignment: MainAxisAlignment.end,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                    child: Text("Non hai un account? REGISTRATI"),
+                    onPressed: () => {})
+              ],
             )
           ],
         ),
