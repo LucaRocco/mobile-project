@@ -6,10 +6,10 @@ class CambiaPasswordPage extends StatefulWidget {
   final String title;
 
   @override
-  _cambiaPasswordPageState createState() => _cambiaPasswordPageState();
+  _CambiaPasswordPageState createState() => _CambiaPasswordPageState();
 }
 
-class _cambiaPasswordPageState extends State<CambiaPasswordPage> {
+class _CambiaPasswordPageState extends State<CambiaPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
