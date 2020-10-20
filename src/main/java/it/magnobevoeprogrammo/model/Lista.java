@@ -1,16 +1,13 @@
 package it.magnobevoeprogrammo.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "lista")
 public class Lista {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
     private String nome;
     private Date dataCreazione;

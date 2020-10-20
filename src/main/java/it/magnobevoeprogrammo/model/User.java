@@ -1,13 +1,16 @@
 package it.magnobevoeprogrammo.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.sql.Blob;
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "user")
 public class User {
-    @Id //Chiave primaria
+    @Id @GeneratedValue(strategy = GenerationType.TABLE) //Chiave primaria
     private Long id;
     private String email;
     private String nome;

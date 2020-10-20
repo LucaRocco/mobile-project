@@ -7,7 +7,7 @@ import java.util.List;
 @Entity
 @Table(name = "prodotto")
 public class Prodotto {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
     private String nome;
     @Lob
