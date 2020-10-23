@@ -18,6 +18,8 @@ public class User {
     private String password;
     @Lob
     private Blob foto;
+    @OneToMany
+    private List<Prodotto> prodotti;
     @ManyToMany
     private List<Lista> liste;
 }
