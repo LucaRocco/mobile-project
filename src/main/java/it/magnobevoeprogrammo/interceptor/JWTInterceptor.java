@@ -32,7 +32,7 @@ public class JWTInterceptor implements HandlerInterceptor {
         String jsonString = new String(Base64.getDecoder().decode(token), Charset.defaultCharset());
         ObjectMapper objectMapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        MDC.put("username", objectMapper.readValue(jsonString, JWTModel.class).getUsername());
+        MDC.put("email", objectMapper.readValue(jsonString, JWTModel.class).getEmail());
 
         return true;
     }

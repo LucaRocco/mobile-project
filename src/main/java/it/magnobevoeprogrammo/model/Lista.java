@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 @Table(name = "lista")
 public class Lista {
-    @Id @GeneratedValue(strategy = GenerationType.TABLE)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
     private Date dataCreazione;

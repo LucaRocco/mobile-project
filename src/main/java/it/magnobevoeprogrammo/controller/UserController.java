@@ -6,7 +6,6 @@ import it.magnobevoeprogrammo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -18,10 +17,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping(path = {"/", ""})
+    @PostMapping(path = {"/create", ""})
     public ResponseEntity<String> addUsers(@RequestBody User user) {
-        user.setId(userService.getUserId());
-        return ResponseEntity.ok().body(userRepository.save(user).getId());
+        return ResponseEntity.ok().body(userRepository.save(user).getEmail());
     }
 
     @GetMapping(path = {"/", ""})
@@ -30,12 +28,11 @@ public class UserController {
     }
 
     @PutMapping(path = {"/", ""})
-    public ResponseEntity<User> modificaProfilo(
-            @RequestBody User updatedUser) throws Exception{
+    public ResponseEntity<User> modificaProfilo(@RequestBody User updatedUser) {
         User user = userService.getUser();
-        user.setNome(user.getNome());
-        user.setCognome(user.getCognome());
-        user.setEmail(user.getEmail());
+        user.setNome(updatedUser.getNome());
+        user.setCognome(updatedUser.getCognome());
+        user.setEmail(updatedUser.getEmail());
         return ResponseEntity.ok().body(userRepository.save(user));
     }
 

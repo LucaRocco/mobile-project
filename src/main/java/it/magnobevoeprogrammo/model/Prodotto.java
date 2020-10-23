@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 @Table(name = "prodotto")
 public class Prodotto {
-    @Id @GeneratedValue(strategy= GenerationType.TABLE) //generare la chiave
+    @Id @GeneratedValue(strategy= GenerationType.IDENTITY) //generare la chiave
     private Long id;
     private String nome;
     @Lob

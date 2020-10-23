@@ -15,12 +15,12 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public String getUserId() {
-        return MDC.get("username");
+    public String getUserEmail() {
+        return MDC.get("email");
     }
 
     public User getUser() {
-        Optional<User> userOptional = userRepository.findById(this.getUserId());
+        Optional<User> userOptional = userRepository.findUserByEmail(this.getUserEmail());
         if(userOptional.isPresent())
             return userOptional.get();
         else
