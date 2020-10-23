@@ -10,8 +10,8 @@ import java.util.List;
 @Entity
 @Table(name = "user")
 public class User {
-    @Id @GeneratedValue(strategy = GenerationType.TABLE) //Chiave primaria
-    private Long id;
+    @Id //Chiave primaria
+    private String id;
     private String email;
     private String nome;
     private String cognome;

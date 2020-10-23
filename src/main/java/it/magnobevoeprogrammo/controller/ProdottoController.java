@@ -1,6 +1,6 @@
 package it.magnobevoeprogrammo.controller;
 
-import it.magnobevoeprogrammo.Service.ProdottoService;
+import it.magnobevoeprogrammo.service.ProdottoService;
 import it.magnobevoeprogrammo.model.Prezzo;
 import it.magnobevoeprogrammo.model.Prodotto;
 
@@ -25,8 +25,6 @@ public class ProdottoController {
     @Autowired
     private ProdottoService prodottoService;
 
-
-
   /*  @PostMapping(path={"/", ""})
     public Prodotto setProdotto(
         @RequestBody Prodotto prodotto) {
@@ -35,88 +33,77 @@ public class ProdottoController {
     }*/
 
     //modifica il nome
-    @PostMapping(path={"/", ""})
+    @PutMapping(path={"/modificaNome"})
     public ResponseEntity<HttpStatus> modificaNome(
-            @RequestParam("prodotto") Prodotto prodotto,
+            @RequestParam("idProdotto") Long idProdotto,
             @RequestParam("nuovoNome") String nuovoNome){
-        return prodottoService.modificaNome(prodotto, nuovoNome);
+        return prodottoService.modificaNome(idProdotto, nuovoNome);
     }
 
     //ritorna il prodotto dall'id
     @GetMapping(path={"/", ""})
-    public ResponseEntity<Prodotto> getProdotto( @RequestParam("id") long id) throws Exception{
+    public ResponseEntity<Prodotto> getProdotto( @RequestParam("id") long id) {
         return prodottoService.getProdotto(id);
     }
 
-    @GetMapping(path={"/", ""})
-    public ResponseEntity<Long> getId(
-            @RequestBody Prodotto prodotto){
-        return prodottoService.getId(prodotto);
-    }
-
-
     //get all by user
-    @GetMapping(path={"/", ""})
-    public ResponseEntity<List<Prodotto>> getAllByUser(@RequestParam("id") long id) throws Exception{
-        return prodottoService.getAllByUser(id);
+    @GetMapping(path= "/all")
+    public ResponseEntity<List<Prodotto>> getAllByUser() {
+        return prodottoService.getAllByUser();
     }
 
 
     //aggiungi prezzo
-    @PostMapping(path={"/", ""})
+    @PostMapping(path= "/aggiungiPrezzo")
     public ResponseEntity<HttpStatus> aggiungiPrezzo(
-            @RequestParam("prodotto") Prodotto prodotto,
+            @RequestParam("idProdotto") Long idProdotto,
             @RequestParam("prezzo") Prezzo prezzo){
-        return prodottoService.aggiungiPrezzo(prodotto, prezzo);
+        return prodottoService.aggiungiPrezzo(idProdotto, prezzo);
     }
 
     //ritorna il prezzo
-    @GetMapping(path={"/", ""})
-    public ResponseEntity<List<Prezzo>> getPrezzo(
-            @RequestBody Prodotto prodotto){
-        return prodottoService.getPrezzo(prodotto);
+    @GetMapping(path= "/prezzi")
+    public ResponseEntity<List<Prezzo>> getPrezzi(
+            @RequestParam("idProdotto") Long idProdotto){
+        return prodottoService.getPrezzi(idProdotto);
     }
 
-
-
     //ritorna la foto
-    @GetMapping(path={"/", ""})
+    @GetMapping(path={"/foto", ""})
     public ResponseEntity<Blob> getFoto(
-            @RequestBody Prodotto prodotto){
-        return prodottoService.getFoto(prodotto);
+            @RequestParam("idProdotto") Long idProdotto){
+        return prodottoService.getFoto(idProdotto);
     }
 
     //modificafoto
-    @PostMapping(path={"/", ""})
+    @PutMapping(path={"/foto", ""})
     public ResponseEntity<HttpStatus> modificaFoto(
-            @RequestParam("prodotto") Prodotto prodotto,
+            @RequestParam("idProdotto") Long idProdotto,
             @RequestParam("foto") Blob nuovaFoto){
-        return prodottoService.modificaFoto(prodotto,nuovaFoto);
+        return prodottoService.modificaFoto(idProdotto, nuovaFoto);
     }
 
     //aggiungi foto
-    @PostMapping(path={"/", ""})
+    @PostMapping(path={"/foto", ""})
     public ResponseEntity<HttpStatus> aggiungiFoto(
-            @RequestParam("prodotto") Prodotto prodotto,
+            @RequestParam("idProdotto") Long idProdotto,
             @RequestParam("foto") Blob foto){
-        return prodottoService.aggiungiFoto(prodotto,foto);
+        return prodottoService.aggiungiFoto(idProdotto, foto);
     }
 
-
-
     //ritorna il codice a barre
-    @GetMapping(path={"/", ""})
+    @GetMapping(path={"/codice", ""})
     public ResponseEntity<String> getCodiceABarre(
-            @RequestParam("prodotto") Prodotto prodotto){
-        return prodottoService.getCodiceABarre(prodotto);
+            @RequestParam("idProdotto") Long idProdotto){
+        return prodottoService.getCodiceABarre(idProdotto);
     }
 
     //aggiungi il codice a barre
-    @PostMapping(path={"/", ""})
+    @PostMapping(path={"/codice", ""})
     public ResponseEntity<HttpStatus> aggiungiCodice(
-            @RequestParam("prodotto") Prodotto prodotto,
+            @RequestParam("idProdotto") Long idProdotto,
             @RequestParam("codice") String codice){
-        return prodottoService.aggiungiCodice(prodotto, codice);
+        return prodottoService.aggiungiCodice(idProdotto, codice);
     }
 
 

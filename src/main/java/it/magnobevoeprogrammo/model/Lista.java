@@ -1,9 +1,12 @@
 package it.magnobevoeprogrammo.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "lista")
 public class Lista {
