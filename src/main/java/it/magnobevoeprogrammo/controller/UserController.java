@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.SqlResultSetMapping;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +31,22 @@ public class UserController {
             throw new Exception();
         }
     }
-    
+
+    @PutMapping(path = {"/", ""})
+    public ResponseEntity<User> modificaProfilo(
+            @RequestBody User user) throws Exception{
+        Optional<User> userOtional = userRepository.findById(user.getId());
+        if(userOtional.isPresent()) {
+            User userFromDB = userOtional.get();
+            userFromDB.setNome(user.getNome());
+            userFromDB.setCognome(user.getCognome());
+            userFromDB.setEmail(user.getEmail());
+
+            return ResponseEntity.ok(userFromDB);
+        } else {
+            throw new Exception();
+        }
+    }
 
 }
 
