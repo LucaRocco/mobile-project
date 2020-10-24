@@ -1,5 +1,6 @@
 class User {
-  String firstName;
-  String lastName;
+  User({this.nome, this.cognome, this.email});
+  String nome;
+  String cognome;
   String email;
 }

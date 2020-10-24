@@ -1,10 +1,13 @@
 import 'dart:convert';
-
+import 'package:http/http.dart' as http;
 import 'package:amazon_cognito_identity_dart/cognito.dart';
+import 'package:in_expense/exception/code_verification_exception.dart';
 import 'package:in_expense/exception/login_exception.dart';
+import 'package:in_expense/model/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountService {
+  var serverUrl = "https://mobile-project-roma3.herokuapp.com";
   CognitoUser authenticatedUser;
   CognitoUserPool getCognitoUserPool() {
     return new CognitoUserPool(
@@ -12,7 +15,8 @@ class AccountService {
   }
 
   Future<CognitoUserPoolData> performRegistration(
-      firstName, lastName, email, password) {
+      firstName, lastName, email, password) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     final CognitoUserPool userPool = getCognitoUserPool();
     final userAttributes = [
       new AttributeArg(name: 'email', value: email),
@@ -22,14 +26,38 @@ class AccountService {
 
     var data;
     try {
-      data = userPool.signUp(email, password, userAttributes: userAttributes);
+      data = await userPool.signUp(email, password,
+          userAttributes: userAttributes);
     } catch (e) {
       print(e);
     }
+
+    prefs.setString("email", email);
+    prefs.setString("firstName", firstName);
+    prefs.setString("lastName", lastName);
+
+    setUserStatus(UserStatus.NEED_EMAIL_CONFIRMATION);
+
+    final http.Response response = await http.post(
+      serverUrl + "/user/create",
+      body: jsonEncode(<String, String>{
+        'nome': firstName,
+        'cognome': lastName,
+        'email': email
+      }),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    print(response.body);
+    print(response.statusCode);
+
+    if (response.statusCode != 200) throw Error();
     return data;
   }
 
-  void performEmailConfirmation(email, verificationCode) async {
+  performEmailConfirmation(email, verificationCode) async {
     final CognitoUserPool userPool = getCognitoUserPool();
 
     final cognitoUser = new CognitoUser(email, userPool);
@@ -39,9 +67,11 @@ class AccountService {
       registrationConfirmed =
           await cognitoUser.confirmRegistration(verificationCode);
     } catch (e) {
-      print(e);
+      throw CodeVerificationException(
+          cause:
+              "Il codice inserito non corrisponde con quello che abbiamo inviato");
     }
-    print(registrationConfirmed);
+    setUserStatus(UserStatus.EMPTY);
   }
 
   Future<CognitoUserSession> performLogin(email, password) async {
@@ -71,7 +101,8 @@ class AccountService {
     attributes.forEach((element) {
       prefs.setString(element.name, element.value);
     });
-    prefs.setBool("isLoggedIn", true);
+    setUserStatus(UserStatus.LOGGED);
+    print(session.idToken.jwtToken);
     return session;
   }
 
@@ -158,10 +189,23 @@ class AccountService {
 
   Future<bool> isUserLoggedIn() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (!prefs.containsKey("isLoggedIn")) return false;
-    return prefs.getBool("isLoggedIn");
+    return prefs.getString("UserStatus") == UserStatus.LOGGED.toString();
+  }
+
+  void setUserStatus(UserStatus userStatus) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("UserStatus", userStatus.toString());
+  }
+
+  Future<UserStatus> getUserStatus() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey("UserStatus")) return UserStatus.EMPTY;
+    return UserStatus.values.firstWhere(
+        (element) => element.toString() == prefs.getString("UserStatus"));
   }
 }
+
+enum UserStatus { LOGGED, NEED_EMAIL_CONFIRMATION, EMPTY }
 
 class AccountUtility {
   static Map<String, dynamic> parseJwt(String token) {

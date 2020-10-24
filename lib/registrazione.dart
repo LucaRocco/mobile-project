@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:in_expense/model/user.dart';
 import 'package:in_expense/service/account_service.dart';
@@ -133,20 +134,17 @@ class _RegisterPageState extends State<RegistrationPage> {
 
   void _registrationPressed() async {
     this.setState(() {
-      user.firstName = firstNameController.text;
-      user.lastName = lastNameController.text;
+      user.nome = firstNameController.text;
+      user.cognome = lastNameController.text;
       user.email = emailController.text;
       isLoading = true;
     });
     await accountService.performRegistration(
-        user.firstName, user.lastName, user.email, passwordController.text);
+        user.nome, user.cognome, user.email, passwordController.text);
     this.setState(() {
       isLoading = false;
     });
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => VerificationCodePage(user: this.user)));
+    Get.to(VerificationCodePage(user: this.user));
   }
 
   void _onChanged(String value) {
