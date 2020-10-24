@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:in_expense/cambia_password.dart';
+import 'package:in_expense/password_dimenticata.dart';
 import 'package:in_expense/exception/login_exception.dart';
 import 'package:in_expense/liste_attive.dart';
 import 'package:in_expense/registrazione.dart';
@@ -117,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => CambiaPasswordPage()))),
+                          builder: (context) => PaaswordDimenticataPage()))),
             ],
           ),
           Row(

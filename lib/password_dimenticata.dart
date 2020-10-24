@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
-class CambiaPasswordPage extends StatefulWidget {
-  CambiaPasswordPage({Key key, this.title}) : super(key: key);
+class PaaswordDimenticataPage extends StatefulWidget {
+  PaaswordDimenticataPage({Key key, this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _CambiaPasswordPageState createState() => _CambiaPasswordPageState();
+  _PaaswordDimenticataPageState createState() =>
+      _PaaswordDimenticataPageState();
 }
 
-class _CambiaPasswordPageState extends State<CambiaPasswordPage> {
+class _PaaswordDimenticataPageState extends State<PaaswordDimenticataPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,17 +1,8 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
-/*pagina per creare il proprio"PROFILO" con vari campi:
-- username
-- e-mail
--data di nascita
-- foto 
-- liste a cui partecipi
-- modifica password 
-- logout
-*/
 
 class ProfiloPage extends StatefulWidget {
   ProfiloPage({Key key, this.title}) : super(key: key);
@@ -28,7 +19,12 @@ class _ProfiloPageState extends State<ProfiloPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Profilo')),
+      appBar: AppBar(
+        title: Text('Profilo'),
+        actions: [
+          ButtonBar(children: [Text("Salva")])
+        ],
+      ),
       body: Column(
         children: <Widget>[
           SizedBox(
@@ -65,6 +61,75 @@ class _ProfiloPageState extends State<ProfiloPage> {
                       ),
               ),
             ),
+          ),
+          Column(
+            children: [
+              Padding(padding: EdgeInsets.only(top: 20)),
+              Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                Padding(padding: EdgeInsets.only(left: 20)),
+                Text(
+                  "NOME",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                )
+              ]),
+              Container(
+                padding: EdgeInsets.only(left: 16, right: 16),
+                child: TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    labelText: 'inserisci il tuo nome',
+                  ),
+                ),
+              ),
+              Padding(padding: EdgeInsets.only(top: 20)),
+              Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                Padding(padding: EdgeInsets.only(left: 20)),
+                Text(
+                  "COGNOME",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                )
+              ]),
+              Container(
+                padding: EdgeInsets.only(left: 16, right: 16),
+                child: TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    labelText: 'inserisci il tuo cognome',
+                  ),
+                ),
+              ),
+              Padding(padding: EdgeInsets.only(top: 20)),
+              Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                Padding(padding: EdgeInsets.only(left: 20)),
+                Text(
+                  "E-MAIL",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                )
+              ]),
+              Container(
+                padding: EdgeInsets.only(left: 16, right: 16),
+                child: TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    labelText: 'inserisci la tua e-mail',
+                  ),
+                ),
+              ),
+              Padding(padding: EdgeInsets.only(top: 30)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    child: Text("MODIFICA PASSWORD",
+                        style: TextStyle(fontSize: 20)),
+                    onPressed: () => {},
+                  )
+                ],
+              ),
+            ],
           )
         ],
       ),
