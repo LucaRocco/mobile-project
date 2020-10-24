@@ -16,7 +16,6 @@ public class User {
     private String email;
     private String nome;
     private String cognome;
-    private String password;
     @Lob
     private Blob foto;
     @OneToMany
