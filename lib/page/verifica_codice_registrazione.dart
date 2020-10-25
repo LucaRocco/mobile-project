@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
-import 'package:in_expense/login.dart';
+import 'package:in_expense/page/login.dart';
 import 'package:in_expense/model/user.dart';
 import 'package:in_expense/service/account_service.dart';
 

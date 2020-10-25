@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:in_expense/model/user.dart';
 import 'package:in_expense/service/account_service.dart';
-import 'package:in_expense/verifica_codice_registrazione.dart';
+import 'package:in_expense/page/verifica_codice_registrazione.dart';
 
 class RegistrationPage extends StatefulWidget {
   RegistrationPage({Key key, this.title}) : super(key: key);

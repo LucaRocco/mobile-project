@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:amazon_cognito_identity_dart/cognito.dart';
+import 'package:in_expense/constant/application_constants.dart';
 import 'package:in_expense/exception/code_verification_exception.dart';
 import 'package:in_expense/exception/login_exception.dart';
-import 'package:in_expense/model/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountService {
-  var serverUrl = "https://mobile-project-roma3.herokuapp.com";
   CognitoUser authenticatedUser;
+
   CognitoUserPool getCognitoUserPool() {
     return new CognitoUserPool(
         'us-east-1_dkjj8yRFo', '2f97ljcqvolns9kge2nu0rm5oo');
@@ -39,15 +39,16 @@ class AccountService {
     setUserStatus(UserStatus.NEED_EMAIL_CONFIRMATION);
 
     final http.Response response = await http.post(
-      serverUrl + "/user/create",
+      ApplicationConstants.serverUrl + "/user/create",
+      headers: (<String, String> {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer" + prefs.getString("token")
+      }),
       body: jsonEncode(<String, String>{
         'nome': firstName,
         'cognome': lastName,
         'email': email
       }),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
     );
 
     print(response.body);
@@ -95,6 +96,7 @@ class AccountService {
       throw LoginException(
           cause: "Errore durante il login, si prega di riprovare più tardi");
     }
+
     this.authenticatedUser = cognitoUser;
     var attributes = await getUserAttributes();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -102,6 +104,7 @@ class AccountService {
       prefs.setString(element.name, element.value);
     });
     setUserStatus(UserStatus.LOGGED);
+    prefs.setString("token", session.idToken.jwtToken);
     print(session.idToken.jwtToken);
     return session;
   }
@@ -124,6 +127,9 @@ class AccountService {
     } catch (e) {
       print(e);
     }
+
+    http.Response response = await http.post(ApplicationConstants.serverUrl + "/user/confirm");
+    if(response.statusCode != 200) throw Error();
   }
 
   updateUserAttributes(attributeName, attributeValue) async {

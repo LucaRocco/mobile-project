@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
-import 'package:in_expense/modifica_password.dart';
-import 'package:in_expense/password_dimenticata.dart';
+import 'package:in_expense/page/modifica_password.dart';
 import 'package:in_expense/exception/login_exception.dart';
-import 'package:in_expense/liste_attive.dart';
-import 'package:in_expense/registrazione.dart';
+import 'package:in_expense/page/liste_attive.dart';
+import 'package:in_expense/page/registrazione.dart';
 import 'package:in_expense/service/account_service.dart';
 import 'package:in_expense/widget/logo.dart';
 
@@ -125,13 +124,15 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
               SizedBox(height: MediaQuery.of(context).size.height / 9),
-              Expanded(
-                  child: Align(
-                alignment: FractionalOffset.bottomCenter,
-                child: TextButton(
-                    child: Text("Non hai un account? REGISTRATI"),
-                    onPressed: () => Get.to(RegistrationPage())),
-              )),
+              Flex(direction: Axis.horizontal, children: [
+                Expanded(
+                    child: Align(
+                  alignment: FractionalOffset.bottomCenter,
+                  child: TextButton(
+                      child: Text("Non hai un account? REGISTRATI"),
+                      onPressed: () => Get.to(RegistrationPage())),
+                ))
+              ]),
             ],
           ),
         ));
@@ -143,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = true;
     });
     try {
-      final loginResult = await accountService.performLogin(
+      await accountService.performLogin(
           emailController.text, passwordController.text);
     } on LoginException catch (e) {
       this.setState(() {
@@ -160,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = false;
     });
     if (!loginFailed) {
-      Get.off(ListsPage());
+      Get.offAll(ListsPage());
     }
   }
 
