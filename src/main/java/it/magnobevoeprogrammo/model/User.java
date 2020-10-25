@@ -3,23 +3,20 @@ package it.magnobevoeprogrammo.model;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.sql.Blob;
 import java.util.List;
 
 @Data
 @Entity
 @Table(name = "user")
 public class User {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)//Chiave primaria
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //Chiave primaria
     private Long id;
     @Column(unique = true)
     private String email;
     private String nome;
     private String cognome;
-    @Lob
-    private Blob foto;
+    private String foto;
     @OneToMany
     private List<Prodotto> prodotti;
-    @ManyToMany
-    private List<Lista> liste;
 }

@@ -83,13 +83,13 @@ public class ProdottoService {
 
     //ritorna la foto
 
-    public ResponseEntity<Blob> getFoto(Long idProdotto) {
+    public ResponseEntity<String> getFoto(Long idProdotto) {
         return ResponseEntity.ok().body(getProdottoById(idProdotto).getFoto());
     }
 
     //modificafoto
 
-    public ResponseEntity<HttpStatus> modificaFoto(Long idProdotto, Blob nuovaFoto) {
+    public ResponseEntity<HttpStatus> modificaFoto(Long idProdotto, String nuovaFoto) {
         Prodotto prodotto = getProdottoById(idProdotto);
         prodotto.setFoto(nuovaFoto);
         prodottorepository.save(prodotto);
@@ -98,7 +98,7 @@ public class ProdottoService {
 
     //aggiungi foto
 
-    public ResponseEntity<HttpStatus> aggiungiFoto(Long idProdotto, Blob foto) {
+    public ResponseEntity<HttpStatus> aggiungiFoto(Long idProdotto, String foto) {
         Prodotto prodotto = getProdottoById(idProdotto);
         prodotto.setFoto(foto);
         prodottorepository.save(prodotto);
