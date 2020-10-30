@@ -1,5 +1,6 @@
 package it.magnobevoeprogrammo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ public class User {
     private String nome;
     private String cognome;
     private String foto;
+    @JsonIgnore
     @OneToMany
     private List<Prodotto> prodotti;
 }

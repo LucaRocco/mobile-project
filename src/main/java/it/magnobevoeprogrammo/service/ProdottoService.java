@@ -4,18 +4,13 @@ import it.magnobevoeprogrammo.exception.NotFoundException;
 import it.magnobevoeprogrammo.model.Prezzo;
 import it.magnobevoeprogrammo.model.Prodotto;
 
-import it.magnobevoeprogrammo.model.User;
 import it.magnobevoeprogrammo.repository.ProdottoRepository;
-import it.magnobevoeprogrammo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 
-import javax.sound.midi.spi.MidiDeviceProvider;
 import javax.transaction.Transactional;
-import java.sql.Blob;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,10 +19,15 @@ import java.util.Optional;
 public class ProdottoService {
 
     @Autowired
-    private ProdottoRepository prodottorepository;
+    private ProdottoRepository prodottoRepository;
 
     @Autowired
     private UserService userService;
+
+    public ResponseEntity<Prodotto> saveProdotto(Prodotto prodotto) {
+        prodotto.setUser(userService.getUser());
+        return ResponseEntity.ok().body(prodottoRepository.save(prodotto));
+    }
    
 
   /*  @PostMapping(path={"/", ""})
@@ -54,7 +54,7 @@ public class ProdottoService {
 
     @Transactional
     public ResponseEntity<List<Prodotto>> getAllByUser() {
-        return ResponseEntity.ok().body(userService.getUser().getProdotti());
+        return ResponseEntity.ok().body(prodottoRepository.findAllByUser(userService.getUser()));
     }
 
 /*
@@ -70,7 +70,7 @@ public class ProdottoService {
     public ResponseEntity<HttpStatus> aggiungiPrezzo(Long idProdotto, Prezzo prezzo) {
         Prodotto prodotto = getProdottoById(idProdotto);
         prodotto.getPrezzi().add(prezzo);
-        prodottorepository.save(prodotto);
+        prodottoRepository.save(prodotto);
         return ResponseEntity.ok().build();
     }
 
@@ -92,7 +92,7 @@ public class ProdottoService {
     public ResponseEntity<HttpStatus> modificaFoto(Long idProdotto, String nuovaFoto) {
         Prodotto prodotto = getProdottoById(idProdotto);
         prodotto.setFoto(nuovaFoto);
-        prodottorepository.save(prodotto);
+        prodottoRepository.save(prodotto);
         return ResponseEntity.ok().build();
     }
 
@@ -101,7 +101,7 @@ public class ProdottoService {
     public ResponseEntity<HttpStatus> aggiungiFoto(Long idProdotto, String foto) {
         Prodotto prodotto = getProdottoById(idProdotto);
         prodotto.setFoto(foto);
-        prodottorepository.save(prodotto);
+        prodottoRepository.save(prodotto);
         return ResponseEntity.ok().build();
     }
 
@@ -117,12 +117,12 @@ public class ProdottoService {
     public ResponseEntity<HttpStatus> aggiungiCodice(Long idProdotto, String codice) {
         Prodotto prodotto = getProdottoById(idProdotto);
         prodotto.setCodiceABarre(codice);
-        prodottorepository.save(prodotto);
+        prodottoRepository.save(prodotto);
         return ResponseEntity.ok().build();
     }
 
     private Prodotto getProdottoById(Long idProdotto) {
-        Optional<Prodotto> prodottoOptional = prodottorepository.findById(idProdotto);
+        Optional<Prodotto> prodottoOptional = prodottoRepository.findById(idProdotto);
         if(prodottoOptional.isPresent()) {
             return prodottoOptional.get();
         } else {

@@ -31,6 +31,11 @@ public class ProdottoController {
         return prodottoService.getProdotto(id);
     }
 
+    @PostMapping(path = {"/", ""})
+    public ResponseEntity<Prodotto> saveProdotto(@RequestBody Prodotto prodotto) {
+        return prodottoService.saveProdotto(prodotto);
+    }
+
     //get all by user
     @GetMapping(path= "/all")
     public ResponseEntity<List<Prodotto>> getAllByUser() {
