@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:in_expense/page/home_page.dart';
 import 'package:in_expense/page/liste_attive.dart';
 import 'package:in_expense/page/login.dart';
 import 'package:get_it/get_it.dart';
@@ -35,7 +36,7 @@ void main() async {
               cognome: prefs.getString("lastName")));
       break;
     case UserStatus.EMPTY:
-      _homePage = ();
+      _homePage = HomePage();
       break;
   }
   runApp(MyApp(homePage: _homePage));
