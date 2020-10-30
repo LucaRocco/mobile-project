@@ -4,8 +4,8 @@ class Prodotto {
   String nome;
   String categoria;
 
-  Prodotto.fromJson(json) {
-    Prodotto(
+  factory Prodotto.fromJson(json) {
+    return Prodotto(
       id: json['id'],
       nome: json['nome'],
       categoria: json['categoria']

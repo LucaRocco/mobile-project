@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:in_expense/component/product_scroller.dart';
 import 'package:in_expense/model/lista_spesa.dart';
+import 'package:in_expense/page/aggiungi_lista.dart';
+import 'package:in_expense/page/aggiungi_prodotto.dart';
 import 'package:in_expense/service/lists_service.dart';
 
 class ListScroller extends StatefulWidget {
@@ -193,10 +196,10 @@ class _ListScrollerState extends State<ListScroller> {
   }
 
   _addProduct() {
-    print("Aggiungi prodotto cliccato");
+    Get.to(ProductAddPage());
   }
 
   _addList() {
-    print("Aggiungi lista cliccato");
+    Get.to(AggiungiListaPage());
   }
 }

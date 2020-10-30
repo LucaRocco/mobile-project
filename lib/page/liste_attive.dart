@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:in_expense/component/list_element.dart';
 import 'package:in_expense/component/list_scroller.dart';
 import 'package:in_expense/model/lista_spesa.dart';
 import 'package:in_expense/service/lists_service.dart';

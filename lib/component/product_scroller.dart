@@ -2,8 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:in_expense/model/prodotto.dart';
+import 'package:in_expense/page/aggiungi_lista.dart';
 import 'package:in_expense/service/product_service.dart';
 
 class ProductsScroller extends StatefulWidget {
@@ -172,6 +174,6 @@ class _ProductsScrollerState extends State<ProductsScroller> {
   }
 
   _addList() {
-    print("Aggiungi lista cliccato");
+    Get.to(AggiungiListaPage());
   }
 }

@@ -180,7 +180,7 @@ class _ListElementState extends State<ListElement> {
   }
 
   _addTapped() async {
-    ListaSpesa listaSpesaFromBE = await listsService.saveList(nomeController.text);
+    ListaSpesa listaSpesaFromBE = await listsService.saveList(nomeLista: nomeController.text);
     listaSpesa.id = listaSpesaFromBE.id;
     listaSpesa.nome = nomeController.text;
     setState(() {});

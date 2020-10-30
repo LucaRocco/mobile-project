@@ -13,14 +13,12 @@ class ListsService {
               "Content-Type": "application/json",
               "Authorization": "Bearer " + prefs.getString("token")
             }));
-    print(response.statusCode);
-    print(response.body);
     if (response.statusCode != 200) throw Error();
     var listeObjJson = jsonDecode(response.body) as List;
     return listeObjJson.map((lista) => ListaSpesa.fromJson(lista)).toList();
   }
 
-  Future<ListaSpesa> saveList(String nomeLista) async {
+  Future<ListaSpesa> saveList({String nomeLista, String descrizioneLista}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     http.Response response =
         await http.post(ApplicationConstants.serverUrl + "/lista",
@@ -28,10 +26,11 @@ class ListsService {
               "Content-Type": "application/json",
               "Authorization": "Bearer " + prefs.getString("token")
             }),
-            body: jsonEncode({"nome": nomeLista}));
-    print(response.statusCode);
-    print(response.body);
-    print(jsonEncode('{"nome", $nomeLista}'));
+            body: jsonEncode(
+                {
+                  "nome": nomeLista,
+                  "descrizione": descrizioneLista
+                }));
     if(response.statusCode != 200) throw Error();
     return ListaSpesa.fromJson(jsonDecode(response.body));
   }
