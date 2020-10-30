@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:in_expense/page/home_page.dart';
 import 'package:in_expense/page/liste_attive.dart';
 import 'package:in_expense/page/login.dart';
 import 'package:get_it/get_it.dart';
 import 'package:in_expense/model/user.dart';
-import 'package:in_expense/page/profilo.dart';
 import 'package:in_expense/service/account_service.dart';
 import 'package:in_expense/page/verifica_codice_registrazione.dart';
 import 'package:in_expense/service/lists_service.dart';
@@ -37,7 +35,7 @@ void main() async {
               cognome: prefs.getString("lastName")));
       break;
     case UserStatus.EMPTY:
-      _homePage = HomePage();
+      _homePage = ();
       break;
   }
   runApp(MyApp(homePage: _homePage));
