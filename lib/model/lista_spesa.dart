@@ -5,6 +5,7 @@ class ListaSpesa {
   ListaSpesa(
       {this.id,
       this.nome,
+      this.descrizione,
       this.numeroPartecipanti,
       this.numeroProdotti,
       this.partecipanti,
@@ -12,6 +13,7 @@ class ListaSpesa {
 
   int id;
   String nome;
+  String descrizione;
   int numeroPartecipanti;
   int numeroProdotti;
   List<User> partecipanti;
@@ -21,10 +23,13 @@ class ListaSpesa {
 
   factory ListaSpesa.fromJson(Map<String, dynamic> json) {
     return ListaSpesa(
-      id: json['id'],
-      nome: json['nome'],
-      numeroProdotti: json['numeroProdotti'] == null ? 0 : json['numeroProdotti'] == null,
-      numeroPartecipanti: json['numeroPartecipanti'] == null ? 0 : json['numeroPartecipanti']
-    );
+        id: json['id'],
+        nome: json['nome'],
+        descrizione: json['descrizione'],
+        numeroProdotti:
+            json['numeroProdotti'] == null ? 0 : json['numeroProdotti'] == null,
+        numeroPartecipanti: json['numeroPartecipanti'] == null
+            ? 0
+            : json['numeroPartecipanti']);
   }
 }

@@ -9,11 +9,13 @@ import 'package:in_expense/page/profilo.dart';
 import 'package:in_expense/service/account_service.dart';
 import 'package:in_expense/page/verifica_codice_registrazione.dart';
 import 'package:in_expense/service/lists_service.dart';
+import 'package:in_expense/service/product_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 setUpServices() {
   GetIt.I.registerLazySingleton(() => AccountService());
   GetIt.I.registerLazySingleton(() => ListsService());
+  GetIt.I.registerLazySingleton(() => ProductService());
 }
 
 void main() async {
