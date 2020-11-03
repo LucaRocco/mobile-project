@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/model/user.dart';
 import 'package:in_expense/service/account_service.dart';
 import 'package:in_expense/page/verifica_codice_registrazione.dart';
@@ -30,7 +31,8 @@ class _RegisterPageState extends State<RegistrationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Registrazione"),
+        title: Text(
+            AppLocalizations.of(context).translate("appBar_registrazione")),
       ),
       body: Container(
         child: ListView(
@@ -42,7 +44,8 @@ class _RegisterPageState extends State<RegistrationPage> {
                   child: Padding(
                     padding: EdgeInsets.all(20),
                     child: Text(
-                      "Registra un account per iniziare a utilizzare inExpense",
+                      AppLocalizations.of(context)
+                          .translate("descrizione_registrazione"),
                       overflow: TextOverflow.visible,
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -57,7 +60,8 @@ class _RegisterPageState extends State<RegistrationPage> {
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10))),
-                    labelText: 'Nome',
+                    labelText: AppLocalizations.of(context)
+                        .translate("nome_per_registrazione"),
                     icon: Icon(Icons.tag_faces_sharp)),
                 controller: firstNameController,
               ),
@@ -68,7 +72,8 @@ class _RegisterPageState extends State<RegistrationPage> {
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10))),
-                    labelText: 'Cognome',
+                    labelText: AppLocalizations.of(context)
+                        .translate("cognome_per_registrazione"),
                     icon: Icon(Icons.tag_faces_sharp)),
                 controller: lastNameController,
               ),
@@ -79,7 +84,8 @@ class _RegisterPageState extends State<RegistrationPage> {
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10))),
-                    labelText: 'Email',
+                    labelText: AppLocalizations.of(context)
+                        .translate("email_per_registrazione"),
                     icon: Icon(Icons.alternate_email)),
                 controller: emailController,
                 onChanged: _onChanged,
@@ -91,7 +97,8 @@ class _RegisterPageState extends State<RegistrationPage> {
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10))),
-                    labelText: 'Password',
+                    labelText: AppLocalizations.of(context)
+                        .translate("password_per_registrazione"),
                     icon: Icon(Icons.visibility_off_outlined)),
                 controller: passwordController,
                 onChanged: _onChanged,
@@ -104,7 +111,8 @@ class _RegisterPageState extends State<RegistrationPage> {
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10))),
-                    labelText: 'Ripeti Password',
+                    labelText: AppLocalizations.of(context)
+                        .translate("ripetizione_password_per_registrazione"),
                     icon: Icon(Icons.visibility_off_outlined)),
                 controller: repetePasswordController,
                 onChanged: _onChanged,
@@ -119,7 +127,8 @@ class _RegisterPageState extends State<RegistrationPage> {
                   child: isLoading
                       ? Center(child: CircularProgressIndicator())
                       : RaisedButton(
-                          child: Text('Registrati'),
+                          child: Text(AppLocalizations.of(context)
+                              .translate("pulsante_per_registrazione")),
                           onPressed: disabledRegistrationButton
                               ? null
                               : _registrationPressed),

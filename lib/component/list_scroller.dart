@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:in_expense/component/product_scroller.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/model/lista_spesa.dart';
 import 'package:in_expense/page/aggiungi_lista.dart';
 import 'package:in_expense/page/aggiungi_prodotto.dart';
@@ -153,7 +154,11 @@ class _ListScrollerState extends State<ListScroller> {
                   Padding(
                     padding: EdgeInsets.only(left: 25),
                     child: Text(
-                      closeTopContainer ? "Le tue liste" : "I tuoi prodotti",
+                      closeTopContainer
+                          ? AppLocalizations.of(context)
+                              .translate("lista_scroller")
+                          : AppLocalizations.of(context)
+                              .translate("prodotto_scroller"),
                       style: TextStyle(
                           color: Colors.grey,
                           fontWeight: FontWeight.bold,

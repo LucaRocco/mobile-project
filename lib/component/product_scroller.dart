@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/model/prodotto.dart';
 import 'package:in_expense/page/aggiungi_lista.dart';
 import 'package:in_expense/service/product_service.dart';
@@ -68,7 +69,8 @@ class _ProductsScrollerState extends State<ProductsScroller> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Le tue liste",
+                  AppLocalizations.of(context)
+                      .translate("liste_product_scroller"),
                   style: TextStyle(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,
@@ -138,7 +140,7 @@ class _ProductsScrollerState extends State<ProductsScroller> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Non hai ancora alcun prodotto, aggiungine uno con il tasto",
+                    AppLocalizations.of(context).translate("assente_prodotto"),
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 18),
                     textAlign: TextAlign.center,

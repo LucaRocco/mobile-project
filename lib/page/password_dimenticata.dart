@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 
 class PaaswordDimenticataPage extends StatefulWidget {
   PaaswordDimenticataPage({Key key, this.title}) : super(key: key);
@@ -14,7 +15,9 @@ class _PaaswordDimenticataPageState extends State<PaaswordDimenticataPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text('Cambia Password')),
+        appBar: AppBar(
+            title: Text(AppLocalizations.of(context)
+                .translate("appBar_cambia_password"))),
         body: Container(
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -22,8 +25,8 @@ class _PaaswordDimenticataPageState extends State<PaaswordDimenticataPage> {
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Text(
-                  'Se hai dimenticato la password, ' +
-                      'puoi richiedere una nuova password tramite la tua email',
+                  AppLocalizations.of(context)
+                      .translate("descrizione_password_dimenticata"),
                   style: TextStyle(
                     fontSize: 22.0,
                   ),
@@ -35,7 +38,8 @@ class _PaaswordDimenticataPageState extends State<PaaswordDimenticataPage> {
                     decoration: InputDecoration(
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
-                  labelText: ' Inserisci Email',
+                  labelText:
+                      AppLocalizations.of(context).translate("inserisci_email"),
                 )),
               ),
               Row(
@@ -43,7 +47,8 @@ class _PaaswordDimenticataPageState extends State<PaaswordDimenticataPage> {
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: RaisedButton(
-                      child: Text('invia'),
+                      child:
+                          Text(AppLocalizations.of(context).translate("invia")),
                       onPressed: () => {},
                     ),
                   ),

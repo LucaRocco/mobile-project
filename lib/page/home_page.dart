@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/widget/logo.dart';
 
 import 'login.dart';
@@ -42,7 +44,7 @@ class HomePage extends StatelessWidget {
                           decoration: new BoxDecoration(
                               color: Color(0xFF18D191),
                               borderRadius: new BorderRadius.circular(9.0)),
-                          child: new Text("Entra con la tua email",
+                          child: new Text(AppLocalizations.of(context).translate("login_con_email"),
                               style: new TextStyle(
                                   fontSize: 20.0, color: Colors.white))),
                     ),
@@ -89,5 +91,9 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<String> loadJsonFromAsset(language) async {
+    return await rootBundle.loadString('assets/i18n/' + language + '.json');
   }
 }

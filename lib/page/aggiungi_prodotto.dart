@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/page/liste_attive.dart';
 import 'package:in_expense/service/product_service.dart';
 
@@ -30,9 +31,10 @@ class _ProductAddPageState extends State<ProductAddPage> {
               Padding(
                 padding: EdgeInsets.all(16),
                 child:
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Text(
-                    "Aggiungi un prodotto",
+                    AppLocalizations.of(context)
+                        .translate("testo_nuovo_prodotto"),
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ]),
@@ -49,7 +51,8 @@ class _ProductAddPageState extends State<ProductAddPage> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
-                    labelText: 'Nome',
+                    labelText:
+                        AppLocalizations.of(context).translate("nome_prodotto"),
                   ),
                 ),
               ),
@@ -64,7 +67,9 @@ class _ProductAddPageState extends State<ProductAddPage> {
                           borderRadius: BorderRadius.all(Radius.circular(10))),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10))),
-                      labelText: 'Categoria',)),
+                      labelText: AppLocalizations.of(context)
+                          .translate("categoria_prodotto"),
+                    )),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -86,7 +91,9 @@ class _ProductAddPageState extends State<ProductAddPage> {
                               decoration: new BoxDecoration(
                                   color: Colors.green,
                                   borderRadius: new BorderRadius.circular(9.0)),
-                              child: new Text("Salva",
+                              child: new Text(
+                                  AppLocalizations.of(context)
+                                      .translate("pulsante_salva_prodotto"),
                                   style: new TextStyle(
                                       fontSize: 20.0, color: Colors.white))),
                         )),

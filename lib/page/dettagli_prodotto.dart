@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 
 class ProductDetailsPage extends StatefulWidget {
   ProductDetailsPage({Key key, this.title}) : super(key: key);
@@ -21,12 +22,15 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            'Dettagli prodotto',
+            AppLocalizations.of(context).translate("appBar_dettagli_prodotto"),
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           actions: [
             ButtonBar(
-              children: [Text("Salva")],
+              children: [
+                Text(AppLocalizations.of(context)
+                    .translate("pulsante_salva_dettagli_prodotto"))
+              ],
             )
           ],
         ),
@@ -73,7 +77,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 Padding(
                     padding: EdgeInsets.only(left: 20, top: 30),
                     child: Text(
-                      "Inserisci una descrizione:",
+                      AppLocalizations.of(context)
+                          .translate("inserimento_descrizione_prodotto"),
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     )),
@@ -121,14 +126,16 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 children: <Widget>[
                   new ListTile(
                       leading: new Icon(Icons.photo_library),
-                      title: new Text('Photo Library'),
+                      title: new Text(AppLocalizations.of(context)
+                          .translate("libreria_foto")),
                       onTap: () {
                         _imgFromGallery();
                         Navigator.of(context).pop();
                       }),
                   new ListTile(
                     leading: new Icon(Icons.photo_camera),
-                    title: new Text('Camera'),
+                    title: new Text(
+                        AppLocalizations.of(context).translate("fotocamera")),
                     onTap: () {
                       _imgFromCamera();
                       Navigator.of(context).pop();

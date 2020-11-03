@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:in_expense/page/home_page.dart';
 import 'package:in_expense/page/liste_attive.dart';
@@ -10,6 +11,8 @@ import 'package:in_expense/page/verifica_codice_registrazione.dart';
 import 'package:in_expense/service/lists_service.dart';
 import 'package:in_expense/service/product_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'internationalization/app_localizations.dart';
 
 setUpServices() {
   GetIt.I.registerLazySingleton(() => AccountService());
@@ -50,6 +53,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+        supportedLocales: [
+          const Locale('en', ''),
+          const Locale('it', '')
+        ],
         title: 'inExpense',
         theme: ThemeData(
           appBarTheme: AppBarTheme(

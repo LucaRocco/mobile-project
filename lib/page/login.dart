@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/page/modifica_password.dart';
 import 'package:in_expense/exception/login_exception.dart';
 import 'package:in_expense/page/liste_attive.dart';
@@ -107,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                      child: Text("Password Dimenticata"),
+                      child: Text(AppLocalizations.of(context).translate("recupera_password")),
                       onPressed: () => Get.to(ModificaPasswordPage())),
                   Padding(
                       padding: EdgeInsets.all(16),
@@ -123,13 +124,13 @@ class _LoginPageState extends State<LoginPage> {
                       )),
                 ],
               ),
-              SizedBox(height: MediaQuery.of(context).size.height / 9),
+              SizedBox(height: MediaQuery.of(context).size.height /4),
               Flex(direction: Axis.horizontal, children: [
                 Expanded(
                     child: Align(
                   alignment: FractionalOffset.bottomCenter,
                   child: TextButton(
-                      child: Text("Non hai un account? REGISTRATI"),
+                      child: Text(AppLocalizations.of(context).translate("registrazione")),
                       onPressed: () => Get.to(RegistrationPage())),
                 ))
               ]),

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/page/login.dart';
 import 'package:in_expense/model/user.dart';
 import 'package:in_expense/service/account_service.dart';
@@ -32,7 +33,8 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Conferma Registrazione"),
+        title: Text(AppLocalizations.of(context)
+            .translate("appBar_verifica_registrazione")),
       ),
       body: Container(
         child: ListView(
@@ -45,9 +47,11 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
                   child: Padding(
                     padding: EdgeInsets.all(20),
                     child: Text(
-                      "Grazie " +
+                      AppLocalizations.of(context)
+                              .translate("messaggio_di_verifica1") +
                           user.nome +
-                          ". Abbiamo inviato un codice alla email che hai indicato in fase di registrazione, controlla la tua casella e inserisci il codice di verifica per confermare la registrazione",
+                          AppLocalizations.of(context)
+                              .translate("messaggio_di_verifica2"),
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -61,7 +65,8 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10))),
-                    labelText: 'Codice di verifica',
+                    labelText: AppLocalizations.of(context)
+                        .translate("codice_di_verifica"),
                     icon: Icon(Icons.dialpad)),
                 controller: codeController,
                 onChanged: _onChanged,
@@ -75,7 +80,8 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
                   child: isLoading
                       ? Center(child: CircularProgressIndicator())
                       : RaisedButton(
-                          child: Text('Verifica'),
+                          child: Text(AppLocalizations.of(context)
+                              .translate("pulsante_di_verifica")),
                           onPressed: disabledVerificationButton
                               ? null
                               : _verifyPressed),

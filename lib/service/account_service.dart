@@ -1,13 +1,17 @@
 import 'dart:convert';
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
 import 'package:amazon_cognito_identity_dart/cognito.dart';
 import 'package:in_expense/constant/application_constants.dart';
 import 'package:in_expense/exception/code_verification_exception.dart';
 import 'package:in_expense/exception/login_exception.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountService {
   CognitoUser authenticatedUser;
+
+  BuildContext context;
 
   CognitoUserPool getCognitoUserPool() {
     return new CognitoUserPool(
@@ -40,7 +44,7 @@ class AccountService {
 
     final http.Response response = await http.post(
       ApplicationConstants.serverUrl + "/user/create",
-      headers: (<String, String> {
+      headers: (<String, String>{
         "Content-Type": "application/json",
         "Authorization": "Bearer" + prefs.getString("token")
       }),
@@ -69,8 +73,8 @@ class AccountService {
           await cognitoUser.confirmRegistration(verificationCode);
     } catch (e) {
       throw CodeVerificationException(
-          cause:
-              "Il codice inserito non corrisponde con quello che abbiamo inviato");
+          cause: AppLocalizations.of(context)
+              .translate("errore_inserimento_codice_inviato"));
     }
     setUserStatus(UserStatus.EMPTY);
   }
@@ -85,16 +89,17 @@ class AccountService {
       session = await cognitoUser.authenticateUser(authDetails);
     } on CognitoUserConfirmationNecessaryException catch (e) {
       throw LoginException(
-          cause:
-              "È necessario confermare il proprio account per potere accedere all'applicazione");
+          cause: AppLocalizations.of(context).translate("verifica_account"));
     } on CognitoClientException catch (e) {
       if (e.code == "NotAuthorizedException") {
         throw LoginException(
-            cause: "Username o password errati, si prega di riprovare");
+            cause: AppLocalizations.of(context)
+                .translate("errore_email_or_password"));
       }
     } catch (e) {
       throw LoginException(
-          cause: "Errore durante il login, si prega di riprovare più tardi");
+          cause: AppLocalizations.of(context)
+              .translate("errore_durante_il_login"));
     }
 
     this.authenticatedUser = cognitoUser;
@@ -128,8 +133,9 @@ class AccountService {
       print(e);
     }
 
-    http.Response response = await http.post(ApplicationConstants.serverUrl + "/user/confirm");
-    if(response.statusCode != 200) throw Error();
+    http.Response response =
+        await http.post(ApplicationConstants.serverUrl + "/user/confirm");
+    if (response.statusCode != 200) throw Error();
   }
 
   updateUserAttributes(attributeName, attributeValue) async {

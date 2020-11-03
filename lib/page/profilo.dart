@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 
 class ProfiloPage extends StatefulWidget {
   ProfiloPage({Key key, this.title}) : super(key: key);
@@ -20,9 +21,11 @@ class _ProfiloPageState extends State<ProfiloPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profilo'),
+        title: Text(AppLocalizations.of(context).translate("appBar_profilo")),
         actions: [
-          ButtonBar(children: [Text("Salva")])
+          ButtonBar(children: [
+            Text(AppLocalizations.of(context).translate("salva_profilo"))
+          ])
         ],
       ),
       body: Column(
@@ -68,7 +71,7 @@ class _ProfiloPageState extends State<ProfiloPage> {
               Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                 Padding(padding: EdgeInsets.only(left: 20)),
                 Text(
-                  "NOME",
+                  AppLocalizations.of(context).translate("nome_utente_profilo"),
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                 )
               ]),
@@ -78,7 +81,8 @@ class _ProfiloPageState extends State<ProfiloPage> {
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10))),
-                    labelText: 'inserisci il tuo nome',
+                    labelText: AppLocalizations.of(context)
+                        .translate("inserimento_nome_utente"),
                   ),
                 ),
               ),
@@ -86,7 +90,8 @@ class _ProfiloPageState extends State<ProfiloPage> {
               Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                 Padding(padding: EdgeInsets.only(left: 20)),
                 Text(
-                  "COGNOME",
+                  AppLocalizations.of(context)
+                      .translate("cognome_utente_profilo"),
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                 )
               ]),
@@ -96,7 +101,8 @@ class _ProfiloPageState extends State<ProfiloPage> {
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10))),
-                    labelText: 'inserisci il tuo cognome',
+                    labelText: AppLocalizations.of(context)
+                        .translate("inserimento_cognome_utente"),
                   ),
                 ),
               ),
@@ -104,7 +110,8 @@ class _ProfiloPageState extends State<ProfiloPage> {
               Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                 Padding(padding: EdgeInsets.only(left: 20)),
                 Text(
-                  "E-MAIL",
+                  AppLocalizations.of(context)
+                      .translate("email_utente_profilo"),
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                 )
               ]),
@@ -114,7 +121,8 @@ class _ProfiloPageState extends State<ProfiloPage> {
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10))),
-                    labelText: 'inserisci la tua e-mail',
+                    labelText: AppLocalizations.of(context)
+                        .translate("inserimento_email_utente"),
                   ),
                 ),
               ),
@@ -123,7 +131,9 @@ class _ProfiloPageState extends State<ProfiloPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TextButton(
-                    child: Text("MODIFICA PASSWORD",
+                    child: Text(
+                        AppLocalizations.of(context)
+                            .translate("modifica_password"),
                         style: TextStyle(fontSize: 20)),
                     onPressed: () => {},
                   )
@@ -164,14 +174,16 @@ class _ProfiloPageState extends State<ProfiloPage> {
                 children: <Widget>[
                   new ListTile(
                       leading: new Icon(Icons.photo_library),
-                      title: new Text('Photo Library'),
+                      title: new Text(AppLocalizations.of(context)
+                          .translate("libreria_foto")),
                       onTap: () {
                         _imgFromGallery();
                         Navigator.of(context).pop();
                       }),
                   new ListTile(
                     leading: new Icon(Icons.photo_camera),
-                    title: new Text('Camera'),
+                    title: new Text(
+                        AppLocalizations.of(context).translate("fotocamera")),
                     onTap: () {
                       _imgFromCamera();
                       Navigator.of(context).pop();

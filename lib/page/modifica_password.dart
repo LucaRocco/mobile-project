@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/service/account_service.dart';
 
 class ModificaPasswordPage extends StatefulWidget {
@@ -25,7 +26,8 @@ class _ModificaPasswordPageState extends State<ModificaPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Modifica Password"),
+          title: Text(AppLocalizations.of(context)
+              .translate("appBar_modifica_password")),
         ),
         body: Column(children: [
           Container(
@@ -34,7 +36,8 @@ class _ModificaPasswordPageState extends State<ModificaPasswordPage> {
               decoration: InputDecoration(
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
-                  labelText: 'inserisci vecchia Password',
+                  labelText: AppLocalizations.of(context)
+                      .translate("inserimento_vecchia_password"),
                   icon: Icon(Icons.visibility_off_outlined)),
               controller: oldPasswordController,
               onChanged: _onChanged,
@@ -47,7 +50,8 @@ class _ModificaPasswordPageState extends State<ModificaPasswordPage> {
               decoration: InputDecoration(
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
-                  labelText: 'inserisci nuova password',
+                  labelText: AppLocalizations.of(context)
+                      .translate("inserimento_nuova_password"),
                   icon: Icon(Icons.visibility_off_outlined)),
               controller: passwordController,
               onChanged: _onChanged,
@@ -60,7 +64,8 @@ class _ModificaPasswordPageState extends State<ModificaPasswordPage> {
               decoration: InputDecoration(
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
-                  labelText: 'conferma nuova password',
+                  labelText: AppLocalizations.of(context)
+                      .translate("conferma_nuova_password"),
                   icon: Icon(Icons.visibility_off_outlined)),
               controller: repetePasswordController,
               onChanged: _onChanged,

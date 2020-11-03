@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/page/liste_attive.dart';
 import 'package:in_expense/service/lists_service.dart';
 import 'package:in_expense/service/product_service.dart';
@@ -32,7 +33,7 @@ class _AggiungiListaPageState extends State<AggiungiListaPage> {
               child:
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(
-                  "Aggiungi una lista",
+                  AppLocalizations.of(context).translate("testo_nuova_lista"),
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ]),
@@ -49,22 +50,25 @@ class _AggiungiListaPageState extends State<AggiungiListaPage> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
-                  labelText: 'Nome',
+                  labelText:
+                      AppLocalizations.of(context).translate("nome_lista"),
                 ),
               ),
             ),
             Padding(
               padding: EdgeInsets.only(left: 16, right: 16),
               child: TextField(
-                controller: descrizioneController,
+                  controller: descrizioneController,
                   decoration: InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      labelText: 'Descrizione',)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    labelText: AppLocalizations.of(context)
+                        .translate("descrizione_lista"),
+                  )),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -86,7 +90,9 @@ class _AggiungiListaPageState extends State<AggiungiListaPage> {
                             decoration: new BoxDecoration(
                                 color: Colors.green,
                                 borderRadius: new BorderRadius.circular(9.0)),
-                            child: new Text("Salva",
+                            child: new Text(
+                                AppLocalizations.of(context)
+                                    .translate("pulsante_salva_lista"),
                                 style: new TextStyle(
                                     fontSize: 20.0, color: Colors.white))),
                       )),

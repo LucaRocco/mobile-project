@@ -3,11 +3,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/model/lista_spesa.dart';
 import 'package:in_expense/service/lists_service.dart';
 
 class ListElement extends StatefulWidget {
-  ListElement({Key key, this.title, this.listaSpesa}): super(key: key);
+  ListElement({Key key, this.title, this.listaSpesa}) : super(key: key);
   final String title;
   final ListaSpesa listaSpesa;
 
@@ -58,7 +59,8 @@ class _ListElementState extends State<ListElement> {
                       child: TextField(
                         controller: nomeController,
                         decoration: InputDecoration(
-                            labelText: "Nome lista",
+                            labelText: AppLocalizations.of(context)
+                                .translate("nomeLista_list_element"),
                             border: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10))),
@@ -76,7 +78,8 @@ class _ListElementState extends State<ListElement> {
                           children: [
                             GestureDetector(
                                 onTap: () {
-                                  print("Annulla inserimento");
+                                  print(AppLocalizations.of(context)
+                                      .translate("annulla_inserimento"));
                                 },
                                 child: Row(
                                     mainAxisAlignment:
@@ -144,7 +147,8 @@ class _ListElementState extends State<ListElement> {
                               ),
                               child: Text(
                                 listaSpesa.numeroProdotti.toString() +
-                                    " prodotti",
+                                    AppLocalizations.of(context)
+                                        .translate("prodotti_list_element"),
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -158,7 +162,8 @@ class _ListElementState extends State<ListElement> {
                               ),
                               child: Text(
                                   listaSpesa.numeroPartecipanti.toString() +
-                                      " partecipanti",
+                                      AppLocalizations.of(context).translate(
+                                          "partecipanti_list_element"),
                                   style:
                                       TextStyle(fontWeight: FontWeight.bold)),
                             )
@@ -180,7 +185,8 @@ class _ListElementState extends State<ListElement> {
   }
 
   _addTapped() async {
-    ListaSpesa listaSpesaFromBE = await listsService.saveList(nomeLista: nomeController.text);
+    ListaSpesa listaSpesaFromBE =
+        await listsService.saveList(nomeLista: nomeController.text);
     listaSpesa.id = listaSpesaFromBE.id;
     listaSpesa.nome = nomeController.text;
     setState(() {});
