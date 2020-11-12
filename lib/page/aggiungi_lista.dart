@@ -82,7 +82,7 @@ class _AggiungiListaPageState extends State<AggiungiListaPage> {
                           await listsService.saveList(
                               nomeLista: nomeController.text,
                               descrizioneLista: descrizioneController.text);
-                          Get.off(ListsPage());
+                          Get.offAll(ListsPage());
                         },
                         child: new Container(
                             alignment: Alignment.center,

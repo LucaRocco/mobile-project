@@ -83,7 +83,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
                             await productService.saveProduct(
                                 nome: nomeController.text,
                                 categoria: categoriaController.text);
-                            Get.off(ListsPage());
+                            Get.offAll(ListsPage());
                           },
                           child: new Container(
                               alignment: Alignment.center,

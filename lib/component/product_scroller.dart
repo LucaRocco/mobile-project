@@ -7,6 +7,7 @@ import 'package:get_it/get_it.dart';
 import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/model/prodotto.dart';
 import 'package:in_expense/page/aggiungi_lista.dart';
+import 'package:in_expense/page/dettagli_prodotto.dart';
 import 'package:in_expense/service/product_service.dart';
 
 class ProductsScroller extends StatefulWidget {
@@ -35,7 +36,6 @@ class _ProductsScrollerState extends State<ProductsScroller> {
 
   @override
   Widget build(BuildContext context) {
-    getSummaryProductCards(context);
     return ListView(
       children: [
         SingleChildScrollView(
@@ -47,38 +47,51 @@ class _ProductsScrollerState extends State<ProductsScroller> {
               fit: BoxFit.fill,
               alignment: Alignment.topCenter,
               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FutureBuilder(
-                        future: getSummaryProductCards(context),
-                        builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData) {
-                            return snapshot.data;
-                          } else {
-                            return Center(child: CircularProgressIndicator());
-                          }
-                        }),
-                  ]),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  FutureBuilder(
+                    future: getSummaryProductCards(context),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        return snapshot.data;
+                      } else {
+                        return Container(
+                          height:
+                              MediaQuery.of(context).size.height * 0.27 - 70,
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.width / 2 -
+                                      40),
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),
         Padding(
-            padding: EdgeInsets.only(left: 25),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  AppLocalizations.of(context)
-                      .translate("liste_product_scroller"),
-                  style: TextStyle(
-                      color: Colors.grey,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20),
-                ),
-                IconButton(icon: Icon(Icons.add), onPressed: _addList)
-              ],
-            )),
+          padding: EdgeInsets.only(left: 25),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppLocalizations.of(context)
+                    .translate("liste_product_scroller"),
+                style: TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
+              ),
+              IconButton(icon: Icon(Icons.add), onPressed: _addList)
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -92,45 +105,56 @@ class _ProductsScrollerState extends State<ProductsScroller> {
     List<Prodotto> responseList = await productService.getProdotti();
     List<Widget> listItems = [];
 
-    final double productHeight = MediaQuery.of(context).size.height * 0.27 - 50;
-    responseList.forEach((element) {
-      listItems.add(Container(
-        width: 150,
-        margin: EdgeInsets.only(right: 20),
-        height: productHeight,
-        decoration: BoxDecoration(
-            color: getRandomColor(),
-            borderRadius: BorderRadius.all(Radius.circular(20.0))),
-        child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Flex(
-              direction: Axis.horizontal,
-              children: [
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        element.nome,
-                        style: TextStyle(
-                            fontSize: 25,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
+    final double productHeight = MediaQuery.of(context).size.height * 0.27 - 70;
+    responseList.forEach(
+      (element) {
+        listItems.add(
+          GestureDetector(
+            key: UniqueKey(),
+            onTap: () {
+              Get.to(ProductDetailsPage(prodotto: element));
+            },
+            child: Container(
+              width: 150,
+              margin: EdgeInsets.only(right: 20),
+              height: productHeight,
+              decoration: BoxDecoration(
+                  color: getRandomColor(),
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Flex(
+                  direction: Axis.horizontal,
+                  children: [
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            element.nome,
+                            style: TextStyle(
+                                fontSize: 25,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            element.categoria,
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ],
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        element.categoria,
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            )),
-      ));
-    });
+              ),
+            ),
+          ),
+        );
+      },
+    );
     return listItems.isEmpty
         ? Container(
             width: MediaQuery.of(context).size.width - 40,

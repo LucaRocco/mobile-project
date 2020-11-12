@@ -1,9 +1,12 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:in_expense/internationalization/app_localizations.dart';
+import 'package:in_expense/model/user.dart';
+import 'package:in_expense/service/account_service.dart';
+import 'package:in_expense/service/cloudinary_service.dart';
 
 class ProfiloPage extends StatefulWidget {
   ProfiloPage({Key key, this.title}) : super(key: key);
@@ -16,140 +19,206 @@ class ProfiloPage extends StatefulWidget {
 
 class _ProfiloPageState extends State<ProfiloPage> {
   File _image;
+  TextEditingController nomeController = TextEditingController();
+  TextEditingController cognomeController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  AccountService accountService = GetIt.I<AccountService>();
+  CloudinaryService cloudinaryService = GetIt.I<CloudinaryService>();
+  User user;
+  bool updated = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context).translate("appBar_profilo")),
         actions: [
-          ButtonBar(children: [
-            Text(AppLocalizations.of(context).translate("salva_profilo"))
-          ])
-        ],
-      ),
-      body: Column(
-        children: <Widget>[
-          SizedBox(
-            height: 32,
-          ),
-          Center(
-            child: GestureDetector(
-              onTap: () {
-                _showPicker(context);
-              },
-              child: CircleAvatar(
-                radius: 55,
-                backgroundColor: Color(0xffFDCF09),
-                child: _image != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(50),
-                        child: Image.file(
-                          _image,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.fitHeight,
-                        ),
-                      )
-                    : Container(
-                        decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(50)),
-                        width: 100,
-                        height: 100,
-                        child: Icon(
-                          Icons.camera_alt,
-                          color: Colors.grey[800],
-                        ),
-                      ),
-              ),
-            ),
-          ),
-          Column(
+          ButtonBar(
             children: [
-              Padding(padding: EdgeInsets.only(top: 20)),
-              Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                Padding(padding: EdgeInsets.only(left: 20)),
-                Text(
-                  AppLocalizations.of(context).translate("nome_utente_profilo"),
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                )
-              ]),
-              Container(
-                padding: EdgeInsets.only(left: 16, right: 16),
-                child: TextField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    labelText: AppLocalizations.of(context)
-                        .translate("inserimento_nome_utente"),
-                  ),
-                ),
-              ),
-              Padding(padding: EdgeInsets.only(top: 20)),
-              Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                Padding(padding: EdgeInsets.only(left: 20)),
-                Text(
-                  AppLocalizations.of(context)
-                      .translate("cognome_utente_profilo"),
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                )
-              ]),
-              Container(
-                padding: EdgeInsets.only(left: 16, right: 16),
-                child: TextField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    labelText: AppLocalizations.of(context)
-                        .translate("inserimento_cognome_utente"),
-                  ),
-                ),
-              ),
-              Padding(padding: EdgeInsets.only(top: 20)),
-              Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                Padding(padding: EdgeInsets.only(left: 20)),
-                Text(
-                  AppLocalizations.of(context)
-                      .translate("email_utente_profilo"),
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                )
-              ]),
-              Container(
-                padding: EdgeInsets.only(left: 16, right: 16),
-                child: TextField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    labelText: AppLocalizations.of(context)
-                        .translate("inserimento_email_utente"),
-                  ),
-                ),
-              ),
-              Padding(padding: EdgeInsets.only(top: 30)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    child: Text(
-                        AppLocalizations.of(context)
-                            .translate("modifica_password"),
-                        style: TextStyle(fontSize: 20)),
-                    onPressed: () => {},
-                  )
-                ],
-              ),
+              updated ? TextButton(
+                onPressed: _savePressed,
+                child: Text(
+                AppLocalizations.of(context).translate("salva"),
+                style: TextStyle(color: Colors.green),
+              )) : Text(""),
             ],
           )
         ],
       ),
+      body: FutureBuilder(
+          future: accountService.getUserFromBE(),
+          builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+            if (snapshot.hasData) {
+              if(!updated) {
+                user = snapshot.data;
+                nomeController.text = snapshot.data.nome;
+                cognomeController.text = snapshot.data.cognome;
+                emailController.text = snapshot.data.email;
+              }
+              return ListView(
+                children: <Widget>[
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Center(
+                    child: Text(
+                      AppLocalizations.of(context).translate("il_tuo_profilo"),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 32,
+                  ),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        _showPicker(context);
+                      },
+                      child: CircleAvatar(
+                        radius: 70,
+                        backgroundColor: Colors.black,
+                        child: snapshot.data.image != null
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(70),
+                                child: Image.network(
+                                  snapshot.data.image,
+                                  width: 135,
+                                  height: 135,
+                                  fit: BoxFit.fitHeight,
+                                ),
+                              )
+                            : Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(70)),
+                                width: 100,
+                                height: 100,
+                                child: Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.grey[800],
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 20),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(padding: EdgeInsets.only(left: 20)),
+                        ],
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 16, right: 16),
+                        child: TextField(
+                          controller: nomeController,
+                          onChanged: _onChange,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
+                            labelText: AppLocalizations.of(context)
+                                .translate("nome_utente_profilo"),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 20),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 20),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 16, right: 16),
+                        child: TextField(
+                          controller: cognomeController,
+                          onChanged: _onChange,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
+                            labelText: AppLocalizations.of(context)
+                                .translate("cognome_utente_profilo"),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 20),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 20),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 16, right: 16),
+                        child: TextField(
+                          controller: emailController,
+                          onChanged: _onChange,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
+                            labelText: AppLocalizations.of(context)
+                                .translate("email_utente_profilo"),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 30),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16.0, right: 16.0),
+                              child: new Container(
+                                  alignment: Alignment.center,
+                                  height: 60.0,
+                                  decoration: new BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius:
+                                          new BorderRadius.circular(9.0)),
+                                  child: new Text(
+                                      AppLocalizations.of(context)
+                                          .translate("modifica_password"),
+                                      style: new TextStyle(
+                                          fontSize: 20.0,
+                                          color: Colors.white))),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  )
+                ],
+              );
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          }),
     );
   }
 
   _imgFromCamera() async {
     File image = await ImagePicker.pickImage(
         source: ImageSource.camera, imageQuality: 50);
-
     setState(() {
       _image = image;
     });
@@ -158,9 +227,12 @@ class _ProfiloPageState extends State<ProfiloPage> {
   _imgFromGallery() async {
     File image = await ImagePicker.pickImage(
         source: ImageSource.gallery, imageQuality: 50);
-
-    setState(() {
+    user.image = await cloudinaryService.uploadImage(image);
+    User updatedUser = await accountService.updateProfile(user);
+    print("User Image: " + user.image);
+    this.setState(() {
       _image = image;
+      this.user = updatedUser;
     });
   }
 
@@ -194,5 +266,26 @@ class _ProfiloPageState extends State<ProfiloPage> {
             ),
           );
         });
+  }
+
+  void _onChange(String value) {
+    if(nomeController.text != user.nome ||
+        cognomeController.text != user.cognome ||
+        emailController.text != user.email) {
+      this.setState(() {
+        user.nome = nomeController.text;
+        user.cognome = cognomeController.text;
+        user.email = emailController.text;
+        updated = true;
+      });
+    }
+  }
+
+  void _savePressed() async {
+    User updatedUser = await accountService.updateProfile(user);
+    this.setState(() {
+      updated = false;
+      user = updatedUser;
+    });
   }
 }

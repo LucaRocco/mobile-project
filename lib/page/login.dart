@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
-import 'package:in_expense/internationalization/app_localizations.dart';
-import 'package:in_expense/page/modifica_password.dart';
 import 'package:in_expense/exception/login_exception.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/page/liste_attive.dart';
 import 'package:in_expense/page/registrazione.dart';
 import 'package:in_expense/service/account_service.dart';
 import 'package:in_expense/widget/logo.dart';
+
+import 'modifica_password.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key, this.title, this.email}) : super(key: key);
@@ -31,6 +32,7 @@ class _LoginPageState extends State<LoginPage> {
   bool disabledLogin = true;
   bool isLoading = false;
   bool loginFailed = false;
+  bool visiblePassword = false;
 
   @override
   void initState() {
@@ -69,71 +71,102 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
               Padding(
-                padding: EdgeInsets.all(16),
+                padding:
+                    EdgeInsets.only(top: 16, bottom: 16, left: 30, right: 30),
                 child: TextFormField(
                   decoration: InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                      labelText: 'Email',
-                      icon: Icon(Icons.alternate_email)),
+                    prefixIcon: Icon(Icons.alternate_email),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                    labelText: 'Email',
+                  ),
                   controller: emailController,
                   onChanged: _onChanged,
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 16, right: 16),
+                padding: EdgeInsets.only(left: 30, right: 30),
                 child: TextField(
                   decoration: InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      labelText: 'Password',
-                      icon: Icon(
-                        Icons.visibility_off_outlined,
-                      )),
+                    prefixIcon: IconButton(
+                      icon: visiblePassword
+                          ? Icon(Icons.visibility)
+                          : Icon(Icons.visibility_off),
+                      onPressed: () {
+                        setState(() {
+                          visiblePassword = !visiblePassword;
+                        });
+                      },
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    labelText: 'Password',
+                  ),
                   controller: passwordController,
                   onChanged: _onChanged,
-                  obscureText: true,
+                  obscureText: !visiblePassword,
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              Padding(
+                padding: EdgeInsets.only(top: 30, left: 30, right: 30),
+                child: Builder(
+                  builder: (buildContext) => isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : Flex(
+                          direction: Axis.horizontal,
+                          children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  _login();
+                                },
+                                child: new Container(
+                                    alignment: Alignment.center,
+                                    height: 60.0,
+                                    decoration: new BoxDecoration(
+                                        color: Colors.green,
+                                        borderRadius:
+                                            new BorderRadius.circular(9.0)),
+                                    child: new Text("Login",
+                                        style: new TextStyle(
+                                            fontSize: 20.0,
+                                            color: Colors.white))),
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
+              ),
+              TextButton(
+                  child: Text(AppLocalizations.of(context)
+                      .translate("recupera_password")),
+                  onPressed: () => Get.to(ModificaPasswordPage())),
+              SizedBox(height: MediaQuery.of(context).size.height / 5),
+              Flex(
+                direction: Axis.horizontal,
                 children: [
-                  TextButton(
-                      child: Text(AppLocalizations.of(context).translate("recupera_password")),
-                      onPressed: () => Get.to(ModificaPasswordPage())),
-                  Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Builder(
-                        builder: (buildContext) => isLoading
-                            ? Center(
-                                child: CircularProgressIndicator(),
-                              )
-                            : RaisedButton(
-                                child: Text('Login'),
-                                onPressed: disabledLogin ? null : _login,
-                                color: Colors.blue),
-                      )),
+                  Expanded(
+                    child: Align(
+                      alignment: FractionalOffset.bottomCenter,
+                      child: TextButton(
+                          child: Text(AppLocalizations.of(context)
+                              .translate("registrazione")),
+                          onPressed: () => Get.to(RegistrationPage())),
+                    ),
+                  )
                 ],
               ),
-              SizedBox(height: MediaQuery.of(context).size.height /4),
-              Flex(direction: Axis.horizontal, children: [
-                Expanded(
-                    child: Align(
-                  alignment: FractionalOffset.bottomCenter,
-                  child: TextButton(
-                      child: Text(AppLocalizations.of(context).translate("registrazione")),
-                      onPressed: () => Get.to(RegistrationPage())),
-                ))
-              ]),
             ],
           ),
         ));

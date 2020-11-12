@@ -6,6 +6,7 @@ import 'package:in_expense/constant/application_constants.dart';
 import 'package:in_expense/exception/code_verification_exception.dart';
 import 'package:in_expense/exception/login_exception.dart';
 import 'package:in_expense/internationalization/app_localizations.dart';
+import 'package:in_expense/model/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountService {
@@ -214,6 +215,38 @@ class AccountService {
     if (!prefs.containsKey("UserStatus")) return UserStatus.EMPTY;
     return UserStatus.values.firstWhere(
         (element) => element.toString() == prefs.getString("UserStatus"));
+  }
+
+  Future<User> getUserFromBE() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey("token")) return User();
+    http.Response response = await http.get(
+      ApplicationConstants.serverUrl + "/user",
+      headers: (<String, String>{
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + prefs.getString("token")
+      }),
+    );
+    if (response.statusCode != 200) throw Error();
+    return User.fromJson(jsonDecode(response.body));
+  }
+
+  Future<User> updateProfile(User user) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    http.Response response =
+        await http.put(ApplicationConstants.serverUrl + "/user",
+            headers: (<String, String>{
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + prefs.getString("token")
+            }),
+            body: jsonEncode({
+              "nome": user.nome,
+              "cognome": user.cognome,
+              "email": user.email,
+              "foto": user.image
+            }));
+    if(response.statusCode != 200) throw Error();
+    return User.fromJson(jsonDecode(response.body));
   }
 }
 

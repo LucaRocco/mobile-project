@@ -32,4 +32,9 @@ class ListaSpesa {
             ? 0
             : json['numeroPartecipanti']);
   }
+
+  @override
+  String toString() {
+    return 'ListaSpesa{id: $id, nome: $nome, descrizione: $descrizione, numeroPartecipanti: $numeroPartecipanti, numeroProdotti: $numeroProdotti, partecipanti: $partecipanti, prodotti: $prodotti, coloreChiaro: $coloreChiaro, coloreScuro: $coloreScuro}';
+  }
 }

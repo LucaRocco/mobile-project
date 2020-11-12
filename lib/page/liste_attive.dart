@@ -14,7 +14,6 @@ class ListsPage extends StatefulWidget {
 
 class _ListsPageState extends State<ListsPage> {
   final listsService = GetIt.I<ListsService>();
-  int _selectedIndex;
   List<ListaSpesa> liste = [];
 
   @override

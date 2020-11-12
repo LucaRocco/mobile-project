@@ -7,6 +7,7 @@ import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/model/lista_spesa.dart';
 import 'package:in_expense/page/aggiungi_lista.dart';
 import 'package:in_expense/page/aggiungi_prodotto.dart';
+import 'package:in_expense/page/profilo.dart';
 import 'package:in_expense/service/lists_service.dart';
 
 class ListScroller extends StatefulWidget {
@@ -20,11 +21,12 @@ class _ListScrollerState extends State<ListScroller> {
   ScrollController controller = ScrollController();
   bool closeTopContainer = false;
   double topContainer = 0;
+  List<ListaSpesa> responseList;
 
   Future<Widget> getPostsData() async {
-    List<ListaSpesa> responseList = await listsService.getLists();
+    responseList = await listsService.getLists();
     List<Widget> listItems = [];
-    responseList.forEach((post) {
+    responseList.forEach((list) {
       listItems.add(Container(
           height: 150,
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -44,13 +46,13 @@ class _ListScrollerState extends State<ListScroller> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        post.nome,
+                        list.nome,
                         style: const TextStyle(
                             fontSize: 28, fontWeight: FontWeight.bold),
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        post.descrizione,
+                        list.descrizione,
                         style:
                             const TextStyle(fontSize: 17, color: Colors.grey),
                         overflow: TextOverflow.ellipsis,
@@ -61,14 +63,14 @@ class _ListScrollerState extends State<ListScroller> {
                       Row(
                         children: [
                           Text(
-                            "${post.numeroProdotti} prodotti",
+                            "${list.numeroProdotti} prodotti",
                             style: const TextStyle(
                                 fontSize: 17, color: Colors.grey),
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 20),
                             child: Text(
-                              "${post.numeroPartecipanti} partecipanti",
+                              "${list.numeroPartecipanti} partecipanti",
                               style: const TextStyle(
                                   fontSize: 17, color: Colors.grey),
                             ),
@@ -96,17 +98,13 @@ class _ListScrollerState extends State<ListScroller> {
               scale = 1;
             }
           }
-          return Opacity(
-            opacity: scale,
-            child: Transform(
-              transform: Matrix4.identity()..scale(scale, scale),
-              alignment: Alignment.bottomCenter,
-              child: Align(
-                  heightFactor: 0.7,
-                  alignment: Alignment.topCenter,
-                  child: listItems[index]),
-            ),
-          );
+          return GestureDetector(
+            onTap: () {print("cliccato su elemento $index: ${responseList[index]}");},
+                child: Align(
+                    heightFactor: 0.7,
+                    alignment: Alignment.topCenter,
+                    child: listItems[index]),
+              );
         },
       ),
     );
@@ -125,7 +123,6 @@ class _ListScrollerState extends State<ListScroller> {
     });
   }
 
-  bool dataAlreadyFetched = false;
   Widget data;
 
   @override
@@ -141,7 +138,7 @@ class _ListScrollerState extends State<ListScroller> {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.person, color: Colors.black),
-              onPressed: () {},
+              onPressed: () {Get.to(ProfiloPage());},
             )
           ],
         ),
@@ -189,9 +186,15 @@ class _ListScrollerState extends State<ListScroller> {
                           data = snapshot.data;
                           return data;
                         } else {
-                          return CircularProgressIndicator();
+                          return Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 50),
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
                         }
-                      })
+                      },
+                    )
                   : data,
             ],
           ),

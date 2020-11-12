@@ -2,100 +2,118 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:in_expense/internationalization/app_localizations.dart';
+import 'package:in_expense/model/prodotto.dart';
 
 class ProductDetailsPage extends StatefulWidget {
-  ProductDetailsPage({Key key, this.title}) : super(key: key);
+  ProductDetailsPage({Key key, this.title, this.prodotto}) : super(key: key);
 
   final String title;
+  final Prodotto prodotto;
 
   @override
-  _ProductDetailsPageState createState() => _ProductDetailsPageState();
+  _ProductDetailsPageState createState() =>
+      _ProductDetailsPageState(prodotto: prodotto);
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
+  _ProductDetailsPageState({this.prodotto});
+
+  final Prodotto prodotto;
+  TextEditingController descrizioneController = TextEditingController();
+  TextEditingController testoController = TextEditingController();
   File _image;
+  bool updated = false;
 
   @override
   Widget build(BuildContext context) {
+    descrizioneController.text = prodotto.nome;
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            AppLocalizations.of(context).translate("appBar_dettagli_prodotto"),
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        actionsIconTheme: IconThemeData(color: Colors.green),
+        actions: [
+          TextButton(
+            onPressed: () {},
+            child: updated
+                ? Text(
+                    AppLocalizations.of(context).translate("salva"),
+                    style: TextStyle(color: Colors.green),
+                  )
+                : Text(""),
           ),
-          actions: [
-            ButtonBar(
-              children: [
-                Text(AppLocalizations.of(context)
-                    .translate("pulsante_salva_dettagli_prodotto"))
-              ],
-            )
-          ],
+        ],
+      ),
+      body: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+
+          if(!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+          child: ListView(children: [
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Center(
+            child: Text(
+              prodotto.nome,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+            ),
+          ),
+        ]),
+        SizedBox(
+          height: 15,
         ),
-        body: Column(
-          children: [
-            Row(children: [
-              Padding(
-                padding: EdgeInsets.only(left: 30, top: 30),
-                child: GestureDetector(
-                    onTap: () {
+        Container(
+          child: Stack(children: [
+            Container(
+              height: MediaQuery.of(context).size.height / 3,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: Image.network(prodotto.image).image,
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  IconButton(
+                    color: Colors.grey,
+                    icon: Icon(Icons.add_a_photo),
+                    onPressed: () {
                       _showPicker(context);
                     },
-                    child: CircleAvatar(
-                      radius: 75,
-                      backgroundColor: Colors.grey[200],
-                      child: _image != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(50),
-                              child: Image.file(
-                                _image,
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.fitHeight,
-                              ),
-                            )
-                          : Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(50)),
-                              width: 100,
-                              height: 100,
-                              child: Icon(
-                                Icons.camera_alt,
-                                color: Colors.grey[800],
-                              ),
-                            ),
-                    )),
-                /* Bisogna aggiungere la possibilità del codice a barre*/
-              )
-            ]),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                    padding: EdgeInsets.only(left: 20, top: 30),
-                    child: Text(
-                      AppLocalizations.of(context)
-                          .translate("inserimento_descrizione_prodotto"),
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    )),
-              ],
+                  ),
+                ])
+          ]),
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        Container(
+          padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+          height: 100.0,
+          child: TextField(
+            decoration: InputDecoration(
+              counterText: '',
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
+              labelText: AppLocalizations.of(context)
+                  .translate("inserimento_descrizione_prodotto"),
             ),
-            Container(
-              padding: EdgeInsets.only(left: 16, right: 16),
-              child: TextField(
-                  decoration: InputDecoration(
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-              )),
-            ),
-
-            /* DA AGGIUNGERE L'IMPLEMENTAZIONE DELLA LISTA INFINITA PER IL REZZO */
-          ],
-        ));
+            controller: testoController,
+            onChanged: _onChanged,
+            keyboardType: TextInputType.multiline,
+            maxLines: 3,
+            maxLength: 150,
+          ),
+        ),
+      ])),
+    );
   }
 
   _imgFromCamera() async {
@@ -146,5 +164,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             ),
           );
         });
+  }
+
+  void _onChanged(String value) {
+    this.setState(() {
+      updated = testoController.text != prodotto.descrizione;
+    });
   }
 }

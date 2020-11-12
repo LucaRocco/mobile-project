@@ -8,6 +8,7 @@ import 'package:get_it/get_it.dart';
 import 'package:in_expense/model/user.dart';
 import 'package:in_expense/service/account_service.dart';
 import 'package:in_expense/page/verifica_codice_registrazione.dart';
+import 'package:in_expense/service/cloudinary_service.dart';
 import 'package:in_expense/service/lists_service.dart';
 import 'package:in_expense/service/product_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,6 +19,7 @@ setUpServices() {
   GetIt.I.registerLazySingleton(() => AccountService());
   GetIt.I.registerLazySingleton(() => ListsService());
   GetIt.I.registerLazySingleton(() => ProductService());
+  GetIt.I.registerLazySingleton(() => CloudinaryService());
 }
 
 void main() async {
@@ -52,27 +54,33 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      localizationsDelegates: [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-        supportedLocales: [
-          const Locale('en', ''),
-          const Locale('it', '')
-        ],
-        title: 'inExpense',
-        theme: ThemeData(
-          appBarTheme: AppBarTheme(
-              color: Colors.transparent,
-              elevation: 0,
-              iconTheme: IconThemeData(color: Colors.green)),
-          primarySwatch: Colors.blue,
-          accentColor: Colors.green,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home: homePage);
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+
+        if(!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+        child: GetMaterialApp(
+            debugShowCheckedModeBanner: false,
+            localizationsDelegates: [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: [const Locale('en', ''), const Locale('it', '')],
+            title: 'inExpense',
+            theme: ThemeData(
+              appBarTheme: AppBarTheme(
+                  color: Colors.transparent,
+                  elevation: 0,
+                  iconTheme: IconThemeData(color: Colors.green)),
+              primarySwatch: Colors.blue,
+              accentColor: Colors.green,
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+            ),
+            home: homePage));
   }
 }
