@@ -33,6 +33,7 @@ public class UserController {
         user.setNome(updatedUser.getNome());
         user.setCognome(updatedUser.getCognome());
         user.setEmail(updatedUser.getEmail());
+        user.setFoto(updatedUser.getFoto());
         return ResponseEntity.ok().body(userRepository.save(user));
     }
 
