@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:in_expense/component/expansion_tile.dart';
 import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/model/prodotto.dart';
 
@@ -26,94 +27,86 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   TextEditingController testoController = TextEditingController();
   File _image;
   bool updated = false;
+  int selectedValue = 1;
+  int _value = 1;
+  bool expandFlag = false;
 
   @override
   Widget build(BuildContext context) {
     descrizioneController.text = prodotto.nome;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        actionsIconTheme: IconThemeData(color: Colors.green),
-        actions: [
-          TextButton(
-            onPressed: () {},
-            child: updated
-                ? Text(
-                    AppLocalizations.of(context).translate("salva"),
-                    style: TextStyle(color: Colors.green),
-                  )
-                : Text(""),
-          ),
-        ],
-      ),
-      body: GestureDetector(
-        onTap: () {
-          FocusScopeNode currentFocus = FocusScope.of(context);
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          actionsIconTheme: IconThemeData(color: Colors.green),
+          actions: [
+            TextButton(
+              onPressed: () {},
+              child: updated
+                  ? Text(
+                AppLocalizations.of(context).translate("salva"),
+                style: TextStyle(color: Colors.green),
+              )
+                  : Text(""),
+            ),
+          ],
+        ),
+        body: GestureDetector(
+            onTap: () {
+              FocusScopeNode currentFocus = FocusScope.of(context);
 
-          if(!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-          }
-        },
-          child: ListView(children: [
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Center(
-            child: Text(
-              prodotto.nome,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-            ),
-          ),
-        ]),
-        SizedBox(
-          height: 15,
-        ),
-        Container(
-          child: Stack(children: [
-            Container(
-              height: MediaQuery.of(context).size.height / 3,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: Image.network(prodotto.image).image,
-                  fit: BoxFit.fill,
-                ),
-              ),
-            ),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  IconButton(
-                    color: Colors.grey,
-                    icon: Icon(Icons.add_a_photo),
-                    onPressed: () {
-                      _showPicker(context);
-                    },
+              if (!currentFocus.hasPrimaryFocus) {
+                currentFocus.unfocus();
+              }
+            },
+            child: ListView(children: [
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Center(
+                  child: Text(
+                    prodotto.nome,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                   ),
-                ])
-          ]),
-        ),
-        SizedBox(
-          height: 15,
-        ),
-        Container(
-          padding: EdgeInsets.only(top: 20, left: 20, right: 20),
-          height: 100.0,
-          child: TextField(
-            decoration: InputDecoration(
-              counterText: '',
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10))),
-              labelText: AppLocalizations.of(context)
-                  .translate("inserimento_descrizione_prodotto"),
-            ),
-            controller: testoController,
-            onChanged: _onChanged,
-            keyboardType: TextInputType.multiline,
-            maxLines: 3,
-            maxLength: 150,
-          ),
-        ),
-      ])),
-    );
+                ),
+              ]),
+              SizedBox(
+                height: 15,
+              ),
+              Container(
+                child: Stack(children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height / 3,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: Image.network(prodotto.image).image,
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  ),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          color: Colors.grey,
+                          icon: Icon(Icons.add_a_photo),
+                          onPressed: () {
+                            _showPicker(context);
+                          },
+                        ),
+                      ])
+                ]),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Column(children: [
+                Container(
+                    padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+                    child: SingleChildScrollView(
+                      child: ExpansionTilePage(),
+                    )
+                ),
+              ])
+            ])));
   }
 
   _imgFromCamera() async {
@@ -166,9 +159,15 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         });
   }
 
-  void _onChanged(String value) {
+  void _onChanged(value) {
     this.setState(() {
-      updated = testoController.text != prodotto.descrizione;
+      _value = value;
+    });
+  }
+
+  void _dropdownonChanged(value) {
+    this.setState(() {
+      selectedValue = value;
     });
   }
 }
