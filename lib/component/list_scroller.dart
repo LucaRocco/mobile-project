@@ -7,6 +7,7 @@ import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/model/lista_spesa.dart';
 import 'package:in_expense/page/aggiungi_lista.dart';
 import 'package:in_expense/page/aggiungi_prodotto.dart';
+import 'package:in_expense/page/dettagli_lista.dart';
 import 'package:in_expense/page/profilo.dart';
 import 'package:in_expense/service/lists_service.dart';
 
@@ -99,7 +100,9 @@ class _ListScrollerState extends State<ListScroller> {
             }
           }
           return GestureDetector(
-            onTap: () {print("cliccato su elemento $index: ${responseList[index]}");},
+            onTap: () {
+              Get.to(ListDetailPage(listaSpesa: responseList[index]));
+            },
                 child: Align(
                     heightFactor: 0.7,
                     alignment: Alignment.topCenter,

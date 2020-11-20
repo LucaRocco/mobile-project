@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
 import 'package:amazon_cognito_identity_dart/cognito.dart';
@@ -11,8 +12,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountService {
   CognitoUser authenticatedUser;
-
-  BuildContext context;
 
   CognitoUserPool getCognitoUserPool() {
     return new CognitoUserPool(
@@ -47,7 +46,6 @@ class AccountService {
       ApplicationConstants.serverUrl + "/user/create",
       headers: (<String, String>{
         "Content-Type": "application/json",
-        "Authorization": "Bearer" + prefs.getString("token")
       }),
       body: jsonEncode(<String, String>{
         'nome': firstName,
@@ -73,9 +71,7 @@ class AccountService {
       registrationConfirmed =
           await cognitoUser.confirmRegistration(verificationCode);
     } catch (e) {
-      throw CodeVerificationException(
-          cause: AppLocalizations.of(context)
-              .translate("errore_inserimento_codice_inviato"));
+      throw CodeVerificationException(cause: "Error during code verify");
     }
     setUserStatus(UserStatus.EMPTY);
   }
@@ -90,17 +86,15 @@ class AccountService {
       session = await cognitoUser.authenticateUser(authDetails);
     } on CognitoUserConfirmationNecessaryException catch (e) {
       throw LoginException(
-          cause: AppLocalizations.of(context).translate("verifica_account"));
+          cause: "Error during login");
     } on CognitoClientException catch (e) {
       if (e.code == "NotAuthorizedException") {
         throw LoginException(
-            cause: AppLocalizations.of(context)
-                .translate("errore_email_or_password"));
+            cause: "Error during login");
       }
     } catch (e) {
       throw LoginException(
-          cause: AppLocalizations.of(context)
-              .translate("errore_durante_il_login"));
+          cause: "Error during login");
     }
 
     this.authenticatedUser = cognitoUser;

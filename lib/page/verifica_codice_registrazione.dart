@@ -48,10 +48,10 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
                     padding: EdgeInsets.all(20),
                     child: Text(
                       AppLocalizations.of(context)
-                              .translate("messaggio_di_verifica1") +
+                              .translate("messaggio_di_conferma1") +
                           user.nome +
                           AppLocalizations.of(context)
-                              .translate("messaggio_di_verifica2"),
+                              .translate("messaggio_di_conferma2"),
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),

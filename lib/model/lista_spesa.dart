@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:in_expense/model/prodotto.dart';
 import 'package:in_expense/model/user.dart';
 
@@ -26,6 +28,7 @@ class ListaSpesa {
         id: json['id'],
         nome: json['nome'],
         descrizione: json['descrizione'],
+        partecipanti: (json['users'] as List).map((user) => User.fromJson(user)).toList(),
         numeroProdotti:
             json['numeroProdotti'] == null ? 0 : json['numeroProdotti'] == null,
         numeroPartecipanti: json['numeroPartecipanti'] == null
