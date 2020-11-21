@@ -1,6 +1,8 @@
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
+import 'package:in_expense/component/list_scroller.dart';
 import 'package:in_expense/page/home_page.dart';
 import 'package:in_expense/page/liste_attive.dart';
 import 'package:in_expense/page/login.dart';
@@ -54,33 +56,40 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScopeNode currentFocus = FocusScope.of(context);
-
-        if(!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
-        }
-      },
-        child: GetMaterialApp(
-            debugShowCheckedModeBanner: false,
-            localizationsDelegates: [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: [const Locale('en', ''), const Locale('it', '')],
-            title: 'inExpense',
-            theme: ThemeData(
-              appBarTheme: AppBarTheme(
-                  color: Colors.transparent,
-                  elevation: 0,
-                  iconTheme: IconThemeData(color: Colors.green)),
-              primarySwatch: Colors.blue,
-              accentColor: Colors.green,
-              visualDensity: VisualDensity.adaptivePlatformDensity,
+    return DynamicTheme(
+        defaultBrightness: Brightness.light,
+        data: (brightness) => ThemeData(
+              brightness: brightness,
             ),
-            home: homePage));
+        themedWidgetBuilder: (context, theme) {
+          return GetMaterialApp(
+              debugShowCheckedModeBanner: false,
+              localizationsDelegates: [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: [
+                const Locale('en', ''),
+                const Locale('it', '')
+              ],
+              title: 'inExpense',
+              theme: ThemeData(
+                appBarTheme: AppBarTheme(
+                    color: Colors.transparent,
+                    elevation: 0,
+                    iconTheme: IconThemeData(color: Colors.green)),
+                primarySwatch: Colors.blue,
+                accentColor: Colors.green,
+                visualDensity: VisualDensity.adaptivePlatformDensity,
+              ),
+              home: homePage);
+        });
   }
 }
+
+//rest of the themeData
+//you can also use conditioning here based on the current
+//brightness mode (dark or light). For ex:
+// primarySwatch: brightness == Brighness.dark ? Colors.white : Colors.black

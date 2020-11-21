@@ -1,3 +1,4 @@
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,6 +24,7 @@ class _ListScrollerState extends State<ListScroller> {
   bool closeTopContainer = false;
   double topContainer = 0;
   List<ListaSpesa> responseList;
+  bool isSwitched = false;
 
   Future<Widget> getPostsData() async {
     responseList = await listsService.getLists();
@@ -103,11 +105,11 @@ class _ListScrollerState extends State<ListScroller> {
             onTap: () {
               Get.to(ListDetailPage(listaSpesa: responseList[index]));
             },
-                child: Align(
-                    heightFactor: 0.7,
-                    alignment: Alignment.topCenter,
-                    child: listItems[index]),
-              );
+            child: Align(
+                heightFactor: 0.7,
+                alignment: Alignment.topCenter,
+                child: listItems[index]),
+          );
         },
       ),
     );
@@ -133,77 +135,148 @@ class _ListScrollerState extends State<ListScroller> {
     final Size size = MediaQuery.of(context).size;
     final double categoryHeight = size.height * 0.30;
     return SafeArea(
-      child: Scaffold(
+        child: Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0,
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.person, color: Colors.black),
-              onPressed: () {Get.to(ProfiloPage());},
-            )
+      ),
+      body: Container(
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(left: 25),
+                  child: Text(
+                    closeTopContainer
+                        ? AppLocalizations.of(context)
+                            .translate("lista_scroller")
+                        : AppLocalizations.of(context)
+                            .translate("prodotto_scroller"),
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: closeTopContainer ? _addList : _addProduct,
+                )
+              ],
+            ),
+            AnimatedOpacity(
+              duration: const Duration(milliseconds: 300),
+              opacity: closeTopContainer ? 0 : 1,
+              child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  width: size.width,
+                  alignment: Alignment.topCenter,
+                  height: closeTopContainer ? 0 : categoryHeight,
+                  child: productScroller),
+            ),
+            data == null
+                ? FutureBuilder(
+                    future: getPostsData(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        data = snapshot.data;
+                        return data;
+                      } else {
+                        return Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 50),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+                    },
+                  )
+                : data,
           ],
         ),
-        body: Container(
-          child: Column(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(left: 25),
-                    child: Text(
-                      closeTopContainer
-                          ? AppLocalizations.of(context)
-                              .translate("lista_scroller")
-                          : AppLocalizations.of(context)
-                              .translate("prodotto_scroller"),
-                      style: TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20),
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: closeTopContainer ? _addList : _addProduct,
-                  )
-                ],
-              ),
-              AnimatedOpacity(
-                duration: const Duration(milliseconds: 300),
-                opacity: closeTopContainer ? 0 : 1,
-                child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    width: size.width,
-                    alignment: Alignment.topCenter,
-                    height: closeTopContainer ? 0 : categoryHeight,
-                    child: productScroller),
-              ),
-              data == null
-                  ? FutureBuilder(
-                      future: getPostsData(),
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.hasData) {
-                          data = snapshot.data;
-                          return data;
-                        } else {
-                          return Center(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 50),
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                        }
-                      },
-                    )
-                  : data,
-            ],
-          ),
-        ),
       ),
-    );
+      drawer: Drawer(
+        child: ListView(children: [
+          Container(
+            height: 1000,
+            color: Colors.grey[300],
+            child: Column(
+              children: [
+                Padding(padding: EdgeInsets.only(top: 16)),
+                Text('Menù',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    )),
+                Padding(padding: EdgeInsets.only(top: 16)),
+                TextButton.icon(
+                    onPressed: () {
+                      Get.to(ProfiloPage());
+                    },
+                    icon: Icon(
+                      Icons.person,
+                      color: Colors.black,
+                    ),
+                    label: Text("Profilo",
+                        style: TextStyle(
+                            color: Colors.amber,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold))),
+                Padding(padding: EdgeInsets.all(5)),
+                TextButton.icon(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.person_add,
+                      color: Colors.black,
+                    ),
+                    label: Text("Amici",
+                        style: TextStyle(
+                            color: Colors.amber,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold))),
+                Padding(padding: EdgeInsets.all(5)),
+                TextButton.icon(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.logout,
+                      color: Colors.black,
+                    ),
+                    label: Text("Logout",
+                        style: TextStyle(
+                            color: Colors.amber,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold))),
+                Padding(padding: EdgeInsets.all(5)),
+                FlatButton(
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                            child: Text("Dark Theme",
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.amber))),
+                        Switch(
+                          value: isSwitched,
+                          onChanged: _onChanged,
+                          activeTrackColor: Colors.amber,
+                          activeColor: Colors.amber,
+                        )
+                      ]),
+                  onPressed: () {
+                    themeSwitch(context);
+                  },
+                )
+              ],
+            ),
+          ),
+        ]),
+      ),
+    ));
   }
 
   _addProduct() {
@@ -212,5 +285,18 @@ class _ListScrollerState extends State<ListScroller> {
 
   _addList() {
     Get.to(AggiungiListaPage());
+  }
+
+  void themeSwitch(context) {
+    DynamicTheme.of(context).setBrightness(
+        Theme.of(context).brightness == Brightness.dark
+            ? Brightness.light
+            : Brightness.dark);
+  }
+
+  void _onChanged(value) {
+    setState(() {
+      isSwitched = value;
+    });
   }
 }

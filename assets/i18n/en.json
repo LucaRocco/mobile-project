@@ -15,13 +15,13 @@
   "libreria_foto": "Photo Library",
   "fotocamera": "Camera",
   "appBar_registrazione": "Registration",
-  "descrizione_registrazione": "Record an account to use inExpense",
+  "descrizione_registrazione": "Sign up an account to use inExpense",
   "nome_per_registrazione": "Name",
   "cognome_per_registrazione": "Last name",
   "email_per_registrazione": "Email",
   "password_per_registrazione": "password",
   "ripetizione_password_per_registrazione": "Repete password",
-  "pulsante_per_registrazione": "Record",
+  "pulsante_per_registrazione": "Sign up",
   "appBar_verifica_registrazione": "Confirm Registration",
   "messaggio_di_conferma1": "Thanks",
   "messaggio_di_conferma2": "A code was sent to the email address you have provided at the time of registration, please check your inbox and enter the verification code to confirm the registration",
@@ -54,5 +54,8 @@
   "partecipanti_list_element": "Partecipants",
   "lista_scroller": "Your lists",
   "prodotto_scroller": "Your products",
-  "il_tuo_profilo": "Your profile"
+  "il_tuo_profilo": "Your profile",
+  "caratteristiche_prodotto": "product's features",
+  "marchio": "Brand",
+  "supermercato": "Supermarket"
 }
