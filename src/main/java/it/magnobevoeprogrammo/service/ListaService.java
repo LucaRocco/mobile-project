@@ -2,7 +2,9 @@ package it.magnobevoeprogrammo.service;
 
 import it.magnobevoeprogrammo.exception.NotFoundException;
 import it.magnobevoeprogrammo.model.Lista;
+import it.magnobevoeprogrammo.model.Prodotto;
 import it.magnobevoeprogrammo.model.User;
+import it.magnobevoeprogrammo.model.request.SaveProdottoRequest;
 import it.magnobevoeprogrammo.repository.ListaRepository;
 import it.magnobevoeprogrammo.repository.ProdottoRepository;
 import org.slf4j.Logger;
@@ -11,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -53,5 +57,25 @@ public class ListaService {
         lista.setUsers(Collections.singletonList(user));
         lista.setDataCreazione(new Date());
         return ResponseEntity.ok().body(listaRepository.save(lista));
+    }
+
+    public ResponseEntity<HttpStatus> saveProductToList(SaveProdottoRequest request) {
+        Lista lista = listaRepository.findById((long) request.getIdListaDestinazione()).get();
+        User user = userService.getUser();
+        Optional<Prodotto> prodottoFromDB = prodottoRepository.findById(request.getId());
+        prodottoFromDB.ifPresent(prodotto -> {
+            prodotto.getListe().add(lista);
+            prodotto.setUser(user);
+            prodottoRepository.save(prodotto);
+        });
+        if (!prodottoFromDB.isPresent()) {
+            Prodotto p = new Prodotto();
+            p.setNome(request.getNome());
+            p.setCategoria(request.getCategoria());
+            p.setListe(Collections.singletonList(lista));
+            p.setUser(user);
+            prodottoRepository.save(p);
+        }
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,8 +1,10 @@
 package it.magnobevoeprogrammo.controller;
 
 import it.magnobevoeprogrammo.model.Lista;
+import it.magnobevoeprogrammo.model.request.SaveProdottoRequest;
 import it.magnobevoeprogrammo.service.ListaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,5 +33,10 @@ public class ListaController {
     @PostMapping(path = {"", "/"}, consumes = "application/json; charset=utf-8")
     public ResponseEntity<Lista> addList(@RequestBody Lista lista) {
         return listaService.addList(lista);
+    }
+
+    @PostMapping(path = "/prodotto")
+    public ResponseEntity<HttpStatus> saveProductToList(@RequestBody SaveProdottoRequest request) {
+        return listaService.saveProductToList(request);
     }
 }
