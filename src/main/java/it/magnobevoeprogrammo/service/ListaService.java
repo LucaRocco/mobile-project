@@ -78,4 +78,28 @@ public class ListaService {
         }
         return ResponseEntity.ok().build();
     }
+
+    public ResponseEntity<HttpStatus> saveProductsToList(List<SaveProdottoRequest> request) {
+        Lista lista = listaRepository.findById((long) request.get(0).getIdListaDestinazione()).get();
+        User user = userService.getUser();
+        List<Prodotto> prodotti = new ArrayList<>();
+        request.forEach(req -> {
+            Optional<Prodotto> prodottoFromDB = prodottoRepository.findById(req.getId());
+            prodottoFromDB.ifPresent(prodotto -> {
+                prodotto.getListe().add(lista);
+                prodotto.setUser(user);
+                prodotti.add(prodotto);
+            });
+            if (!prodottoFromDB.isPresent()) {
+                Prodotto p = new Prodotto();
+                p.setNome(req.getNome());
+                p.setCategoria(req.getCategoria());
+                p.setListe(Collections.singletonList(lista));
+                p.setUser(user);
+                prodotti.add(p);
+            }
+        });
+        prodottoRepository.saveAll(prodotti);
+        return ResponseEntity.ok().build();
+    }
 }

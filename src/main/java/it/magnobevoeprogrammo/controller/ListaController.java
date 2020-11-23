@@ -39,4 +39,9 @@ public class ListaController {
     public ResponseEntity<HttpStatus> saveProductToList(@RequestBody SaveProdottoRequest request) {
         return listaService.saveProductToList(request);
     }
+
+    @PostMapping(path = "/prodotti")
+    public ResponseEntity<HttpStatus> saveProductsToList(@RequestBody List<SaveProdottoRequest> request) {
+        return listaService.saveProductsToList(request);
+    }
 }

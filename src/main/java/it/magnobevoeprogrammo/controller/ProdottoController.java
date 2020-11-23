@@ -36,6 +36,11 @@ public class ProdottoController {
         return prodottoService.saveProdotto(prodotto);
     }
 
+    @PostMapping(path = "/multi")
+    public ResponseEntity<HttpStatus> saveProdotti(@RequestBody List<Prodotto> prodotti) {
+        return prodottoService.saveProdotti(prodotti);
+    }
+
     //get all by user
     @GetMapping(path= "/all")
     public ResponseEntity<List<Prodotto>> getAllByUser() {

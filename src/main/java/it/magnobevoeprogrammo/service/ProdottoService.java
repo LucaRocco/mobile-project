@@ -28,6 +28,12 @@ public class ProdottoService {
         prodotto.setUser(userService.getUser());
         return ResponseEntity.ok().body(prodottoRepository.save(prodotto));
     }
+
+    public ResponseEntity<HttpStatus> saveProdotti(List<Prodotto> prodotti) {
+        prodotti.forEach(prodotto -> prodotto.setUser(userService.getUser()));
+        prodottoRepository.saveAll(prodotti);
+        return ResponseEntity.ok().build();
+    }
    
 
   /*  @PostMapping(path={"/", ""})
