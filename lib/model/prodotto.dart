@@ -15,4 +15,11 @@ class Prodotto {
       image: json['foto']
     );
   }
+
+  Map toJson() => {
+    "id": id,
+    "nome": nome,
+    "categoria": categoria,
+    "foto": image
+  };
 }

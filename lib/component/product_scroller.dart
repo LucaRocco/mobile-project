@@ -181,7 +181,7 @@ class _ProductsScrollerState extends State<ProductsScroller> {
                         "+",
                         style: const TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.green,
+                            color: Colors.deepOrange,
                             fontSize: 18),
                         textAlign: TextAlign.center,
                       ),

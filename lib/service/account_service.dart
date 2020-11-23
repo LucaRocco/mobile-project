@@ -1,12 +1,10 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:http/http.dart' as http;
+
 import 'package:amazon_cognito_identity_dart/cognito.dart';
+import 'package:http/http.dart' as http;
 import 'package:in_expense/constant/application_constants.dart';
 import 'package:in_expense/exception/code_verification_exception.dart';
 import 'package:in_expense/exception/login_exception.dart';
-import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/model/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -50,7 +48,8 @@ class AccountService {
       body: jsonEncode(<String, String>{
         'nome': firstName,
         'cognome': lastName,
-        'email': email
+        'email': email,
+        'foto': 'https://robohash.org/$email.png'
       }),
     );
 
@@ -85,16 +84,13 @@ class AccountService {
     try {
       session = await cognitoUser.authenticateUser(authDetails);
     } on CognitoUserConfirmationNecessaryException catch (e) {
-      throw LoginException(
-          cause: "Error during login");
+      throw LoginException(cause: "Error during login");
     } on CognitoClientException catch (e) {
       if (e.code == "NotAuthorizedException") {
-        throw LoginException(
-            cause: "Error during login");
+        throw LoginException(cause: "Error during login");
       }
     } catch (e) {
-      throw LoginException(
-          cause: "Error during login");
+      throw LoginException(cause: "Error during login");
     }
 
     this.authenticatedUser = cognitoUser;
@@ -239,7 +235,7 @@ class AccountService {
               "email": user.email,
               "foto": user.image
             }));
-    if(response.statusCode != 200) throw Error();
+    if (response.statusCode != 200) throw Error();
     return User.fromJson(jsonDecode(response.body));
   }
 }

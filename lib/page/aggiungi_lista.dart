@@ -23,7 +23,7 @@ class _AggiungiListaPageState extends State<AggiungiListaPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        actionsIconTheme: IconThemeData(color: Colors.green),
+        actionsIconTheme: IconThemeData(color: Colors.deepOrange),
       ),
       body: Container(
         child: ListView(
@@ -88,7 +88,7 @@ class _AggiungiListaPageState extends State<AggiungiListaPage> {
                             alignment: Alignment.center,
                             height: 60.0,
                             decoration: new BoxDecoration(
-                                color: Colors.green,
+                                color: Colors.deepOrange,
                                 borderRadius: new BorderRadius.circular(9.0)),
                             child: new Text(
                                 AppLocalizations.of(context)

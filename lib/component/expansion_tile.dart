@@ -62,7 +62,7 @@ class _ExpansionTilePageState extends State<ExpansionTilePage> {
                   children: [
                     RaisedButton(
                       textColor: Colors.white,
-                      color: Colors.green,
+                      color: Colors.deepOrange,
                       onPressed: () {},
                       child:
                           Text(AppLocalizations.of(context).translate("salva")),

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:in_expense/model/prodotto.dart';
 import 'package:in_expense/model/user.dart';
 
@@ -25,15 +23,17 @@ class ListaSpesa {
 
   factory ListaSpesa.fromJson(Map<String, dynamic> json) {
     return ListaSpesa(
-        id: json['id'],
-        nome: json['nome'],
-        descrizione: json['descrizione'],
-        partecipanti: (json['users'] as List).map((user) => User.fromJson(user)).toList(),
-        numeroProdotti:
-            json['numeroProdotti'] == null ? 0 : json['numeroProdotti'] == null,
-        numeroPartecipanti: json['numeroPartecipanti'] == null
-            ? 0
-            : json['numeroPartecipanti']);
+      id: json['id'],
+      nome: json['nome'],
+      descrizione: json['descrizione'],
+      partecipanti:
+          (json['users'] as List).map((user) => User.fromJson(user)).toList(),
+      prodotti: (json['prodotti'] as List)
+          .map((prodotto) => Prodotto.fromJson(prodotto))
+          .toList(),
+      numeroProdotti: (json['prodotti'] as List).length,
+      numeroPartecipanti: (json['users'] as List).length,
+    );
   }
 
   @override

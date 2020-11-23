@@ -135,7 +135,7 @@ class _LoginPageState extends State<LoginPage> {
                                     alignment: Alignment.center,
                                     height: 60.0,
                                     decoration: new BoxDecoration(
-                                        color: Colors.green,
+                                        color: Colors.deepOrange,
                                         borderRadius:
                                             new BorderRadius.circular(9.0)),
                                     child: new Text("Login",

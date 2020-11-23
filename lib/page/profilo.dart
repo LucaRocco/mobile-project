@@ -38,7 +38,7 @@ class _ProfiloPageState extends State<ProfiloPage> {
                 onPressed: _savePressed,
                 child: Text(
                 AppLocalizations.of(context).translate("salva"),
-                style: TextStyle(color: Colors.green),
+                style: TextStyle(color: Colors.deepOrange),
               )) : Text(""),
             ],
           )
@@ -192,7 +192,7 @@ class _ProfiloPageState extends State<ProfiloPage> {
                                   alignment: Alignment.center,
                                   height: 60.0,
                                   decoration: new BoxDecoration(
-                                      color: Colors.green,
+                                      color: Colors.deepOrange,
                                       borderRadius:
                                           new BorderRadius.circular(9.0)),
                                   child: new Text(

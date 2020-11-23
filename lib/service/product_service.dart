@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:in_expense/constant/application_constants.dart';
 import 'package:in_expense/model/prodotto.dart';
+import 'package:in_expense/model/request/prodotto_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductService {
@@ -18,7 +19,8 @@ class ProductService {
     return jsonDecoded.map((json) => Prodotto.fromJson(json)).toList();
   }
 
-  Future<Prodotto> saveProduct({String nome, String categoria}) async {
+  Future<Prodotto> saveProduct(
+      {int id, String nome, String categoria, int lista}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     http.Response response = await http.post(
         ApplicationConstants.serverUrl + "/prodotto",
@@ -26,8 +28,12 @@ class ProductService {
           "Authorization": "Bearer " + prefs.getString("token"),
           "Content-Type": "application/json"
         }),
-        body: jsonEncode(
-            {"nome": nome, "categoria": categoria}));
+        body: jsonEncode({
+          "id": id,
+          "nome": nome,
+          "categoria": categoria,
+          "liste": List.filled(1, lista)
+        }));
     if (response.statusCode != 200) throw Error();
     return Prodotto.fromJson(jsonDecode(response.body));
   }

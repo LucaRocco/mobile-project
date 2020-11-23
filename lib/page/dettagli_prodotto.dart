@@ -37,14 +37,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          actionsIconTheme: IconThemeData(color: Colors.green),
+          actionsIconTheme: IconThemeData(color: Colors.deepOrange),
           actions: [
             TextButton(
               onPressed: () {},
               child: updated
                   ? Text(
                 AppLocalizations.of(context).translate("salva"),
-                style: TextStyle(color: Colors.green),
+                style: TextStyle(color: Colors.deepOrange),
               )
                   : Text(""),
             ),

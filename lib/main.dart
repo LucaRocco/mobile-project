@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:in_expense/component/list_scroller.dart';
+import 'package:in_expense/page/dettagli_lista.dart';
 import 'package:in_expense/page/home_page.dart';
 import 'package:in_expense/page/liste_attive.dart';
 import 'package:in_expense/page/login.dart';
@@ -63,6 +64,10 @@ class MyApp extends StatelessWidget {
             ),
         themedWidgetBuilder: (context, theme) {
           return GetMaterialApp(
+            initialRoute: '/',
+              getPages: [
+                GetPage(name: '/listDetail', page: () => ListDetailPage())
+              ],
               debugShowCheckedModeBanner: false,
               localizationsDelegates: [
                 AppLocalizations.delegate,
@@ -79,9 +84,9 @@ class MyApp extends StatelessWidget {
                 appBarTheme: AppBarTheme(
                     color: Colors.transparent,
                     elevation: 0,
-                    iconTheme: IconThemeData(color: Colors.green)),
+                    iconTheme: IconThemeData(color: Colors.deepOrange)),
                 primarySwatch: Colors.blue,
-                accentColor: Colors.green,
+                accentColor: Colors.deepOrange,
                 visualDensity: VisualDensity.adaptivePlatformDensity,
               ),
               home: homePage);
