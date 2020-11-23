@@ -4,6 +4,7 @@ import it.magnobevoeprogrammo.exception.NotFoundException;
 import it.magnobevoeprogrammo.model.Lista;
 import it.magnobevoeprogrammo.model.User;
 import it.magnobevoeprogrammo.repository.ListaRepository;
+import it.magnobevoeprogrammo.repository.ProdottoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,13 @@ import java.util.*;
 
 @Service
 public class ListaService {
-    private Logger log = LoggerFactory.getLogger(ListaService.class);
+    private final Logger log = LoggerFactory.getLogger(ListaService.class);
 
     @Autowired
     private ListaRepository listaRepository;
+
+    @Autowired
+    private ProdottoRepository prodottoRepository;
 
     @Autowired
     private UserService userService;
@@ -38,7 +42,9 @@ public class ListaService {
     public ResponseEntity<List<Lista>> getAllLists() {
         log.debug("getAllLists() started");
         User user = userService.getUser();
-        return ResponseEntity.ok().body(listaRepository.getAllByUserInUserList(user.getId()));
+        List<Lista> ll = listaRepository.getAllByUserInUserList(user.getId());
+        ll.forEach(lista -> lista.setProdotti(prodottoRepository.findAllByIdLista(lista.getId())));
+        return ResponseEntity.ok().body(ll);
     }
 
     public ResponseEntity<Lista> addList(Lista lista) {
