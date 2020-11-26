@@ -34,13 +34,10 @@
   "testo_nuova_lista": "Aggiungi una lista",
   "nome_lista": "Nome",
   "descrizione_lista": "Descrizione",
-  "pulsante_salva_lista": "Salva",
   "testo_nuovo_prodotto": "Aggiungi un prodotto",
   "nome_prodotto": "Nome",
   "categoria_prodotto": "Categoria",
-  "pulsante_salva_prodotto": "Salva",
   "appBar_dettagli_prodotto": "Dettagli prodotto",
-  "pulsante_salva_dettagli_prodotto": "Salva",
   "inserimento_descrizione_prodotto": "Inserisci una nota",
   "errore_inserimento_codice_inviato": "Il codice inserito non corrisponde con quello che abbiamo inviato",
   "conferma_account": "È necessario confermare il proprio account per potere accedere all'applicazione",
@@ -57,5 +54,7 @@
   "il_tuo_profilo": "Il tuo profilo",
   "caratteristiche_prodotto": "Caratteristiche prodotto",
   "marchio": "Marchio",
-  "supermercato": "Supermercato"
+  "supermercato": "Supermercato",
+  "prodotti": "prodotti",
+  "partecipanti": "partecipanti"
 }

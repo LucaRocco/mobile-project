@@ -133,7 +133,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
                               borderRadius: new BorderRadius.circular(9.0)),
                           child: new Text(
                               AppLocalizations.of(context)
-                                  .translate("pulsante_salva_prodotto"),
+                                  .translate("salva"),
                               style: new TextStyle(
                                   fontSize: 20.0, color: Colors.white))),
                     ),

@@ -175,26 +175,6 @@ class AccountService {
     print(passwordConfirmed);
   }
 
-  Future<String> getUserEmail() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString("email");
-  }
-
-  Future<String> getUserName() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString("name");
-  }
-
-  Future<String> getUserCompleteName() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString("family_name");
-  }
-
-  Future<bool> isUserLoggedIn() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString("UserStatus") == UserStatus.LOGGED.toString();
-  }
-
   void setUserStatus(UserStatus userStatus) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("UserStatus", userStatus.toString());
@@ -276,4 +256,5 @@ class AccountUtility {
 
     return utf8.decode(base64Url.decode(output));
   }
+
 }

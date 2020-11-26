@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:in_expense/component/drawer.dart';
 import 'package:in_expense/component/product_scroller.dart';
 import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/model/lista_spesa.dart';
@@ -25,6 +28,7 @@ class _ListScrollerState extends State<ListScroller> {
   double topContainer = 0;
   List<ListaSpesa> responseList;
   bool isSwitched = false;
+  Timer timer;
 
   Future<Widget> getPostsData() async {
     responseList = await listsService.getLists();
@@ -67,14 +71,15 @@ class _ListScrollerState extends State<ListScroller> {
                       Row(
                         children: [
                           Text(
-                            "${list.numeroProdotti} prodotti",
+                            "${list.numeroProdotti} ${AppLocalizations.of(context)
+                                .translate("prodotti")}",
                             style: const TextStyle(
                                 fontSize: 17, color: Colors.grey),
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 20),
                             child: Text(
-                              "${list.numeroPartecipanti} partecipanti",
+                              "${list.numeroPartecipanti} ${AppLocalizations.of(context).translate("partecipanti")}",
                               style: const TextStyle(
                                   fontSize: 17, color: Colors.grey),
                             ),
@@ -130,6 +135,8 @@ class _ListScrollerState extends State<ListScroller> {
         closeTopContainer = controller.offset > 5;
       });
     });
+    //timer =
+    //  Timer.periodic(Duration(seconds: 15), (Timer t) => {_refreshData()});
   }
 
   Widget data;
@@ -212,84 +219,7 @@ class _ListScrollerState extends State<ListScroller> {
               ],
             ),
           ),
-          drawer: Drawer(
-            child: ListView(children: [
-              Container(
-                height: 1000,
-                color: Colors.grey[300],
-                child: Column(
-                  children: [
-                    Padding(padding: EdgeInsets.only(top: 16)),
-                    Text('Menù',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        )),
-                    Padding(padding: EdgeInsets.only(top: 16)),
-                    TextButton.icon(
-                        onPressed: () {
-                          Get.to(ProfiloPage());
-                        },
-                        icon: Icon(
-                          Icons.person,
-                          color: Colors.black,
-                        ),
-                        label: Text("Profilo",
-                            style: TextStyle(
-                                color: Colors.amber,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold))),
-                    Padding(padding: EdgeInsets.all(5)),
-                    TextButton.icon(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.person_add,
-                          color: Colors.black,
-                        ),
-                        label: Text("Amici",
-                            style: TextStyle(
-                                color: Colors.amber,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold))),
-                    Padding(padding: EdgeInsets.all(5)),
-                    TextButton.icon(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.logout,
-                          color: Colors.black,
-                        ),
-                        label: Text("Logout",
-                            style: TextStyle(
-                                color: Colors.amber,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold))),
-                    Padding(padding: EdgeInsets.all(5)),
-                    FlatButton(
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                                child: Text("Dark Theme",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.amber))),
-                            Switch(
-                              value: isSwitched,
-                              onChanged: _onChanged,
-                              activeTrackColor: Colors.amber,
-                              activeColor: Colors.amber,
-                            )
-                          ]),
-                      onPressed: () {
-                        themeSwitch(context);
-                      },
-                    )
-                  ],
-                ),
-              ),
-            ]),
-          ),
+          drawer: AppDrawer(),
         ),
       ),
     );
@@ -315,4 +245,12 @@ class _ListScrollerState extends State<ListScroller> {
       isSwitched = value;
     });
   }
+
+/*void _refreshData() async {
+    var newData = await getPostsData();
+    this.setState(() {
+      data = newData;
+    });
+    print("refresh");
+  }*/
 }
