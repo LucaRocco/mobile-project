@@ -8,17 +8,25 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "user")
+@Table(name = "utenti")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //Chiave primaria
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userId;
     @Column(unique = true)
     private String email;
     private String nome;
     private String cognome;
     private String foto;
     @JsonIgnore
-    @OneToMany
+    @OneToMany(mappedBy = "user")
     private List<Prodotto> prodotti;
+    @JsonIgnore
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "utenti_lista",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "lista_id") }
+    )
+    private List<Lista> liste;
 }

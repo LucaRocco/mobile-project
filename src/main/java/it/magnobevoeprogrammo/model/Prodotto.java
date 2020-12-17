@@ -4,25 +4,23 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.sql.Blob;
 import java.util.List;
 
 @Data
 @Entity
-@Table(name = "prodotto")
+@Table(name = "prodotti")
 public class Prodotto {
-    @Id @GeneratedValue(strategy= GenerationType.IDENTITY) //generare la chiave
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
     private String categoria;
     private String foto;
     private String codiceABarre;
-    @OneToMany //Relazione 1:n
+    @OneToMany(mappedBy = "prodotto")
+    List<ProdottoLista> prodottiLista;
+    @OneToMany(mappedBy = "prodotto")
     private List<Prezzo> prezzi;
-    @JsonIgnore
     @ManyToOne
     private User user;
-    @JsonIgnore
-    @ManyToMany
-    private List<Lista> liste;
 }

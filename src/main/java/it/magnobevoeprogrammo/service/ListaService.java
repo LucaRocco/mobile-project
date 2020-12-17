@@ -3,21 +3,25 @@ package it.magnobevoeprogrammo.service;
 import it.magnobevoeprogrammo.exception.NotFoundException;
 import it.magnobevoeprogrammo.model.Lista;
 import it.magnobevoeprogrammo.model.Prodotto;
+import it.magnobevoeprogrammo.model.ProdottoLista;
 import it.magnobevoeprogrammo.model.User;
 import it.magnobevoeprogrammo.model.request.SaveProdottoRequest;
+import it.magnobevoeprogrammo.model.response.ListaResponse;
 import it.magnobevoeprogrammo.repository.ListaRepository;
+import it.magnobevoeprogrammo.repository.ProdottoListaRepository;
 import it.magnobevoeprogrammo.repository.ProdottoRepository;
+import it.magnobevoeprogrammo.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.transaction.Transactional;
 import java.util.*;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class ListaService {
@@ -28,6 +32,12 @@ public class ListaService {
 
     @Autowired
     private ProdottoRepository prodottoRepository;
+
+    @Autowired
+    private ProdottoListaRepository prodottoListaRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private UserService userService;
@@ -43,63 +53,53 @@ public class ListaService {
     }
 
     @Transactional
-    public ResponseEntity<List<Lista>> getAllLists() {
+    public ResponseEntity<List<ListaResponse>> getAllLists() {
         log.debug("getAllLists() started");
         User user = userService.getUser();
-        List<Lista> ll = listaRepository.getAllByUserInUserList(user.getId());
-        ll.forEach(lista -> lista.setProdotti(prodottoRepository.findAllByIdLista(lista.getId())));
+        List<ListaResponse> ll = user.getListe().stream().map(Lista::toResponse).collect(toList());
         return ResponseEntity.ok().body(ll);
     }
 
+    @Transactional
     public ResponseEntity<Lista> addList(Lista lista) {
         log.debug("addList() started");
         User user = userService.getUser();
         lista.setUsers(Collections.singletonList(user));
+        lista.setCreatorId(user.getUserId());
         lista.setDataCreazione(new Date());
-        return ResponseEntity.ok().body(listaRepository.save(lista));
+        user.getListe().add(lista);
+        user = userRepository.save(user);
+        return ResponseEntity.ok().body(user.getListe().get(user.getListe().size()-1));
     }
 
+    @Transactional
     public ResponseEntity<HttpStatus> saveProductToList(SaveProdottoRequest request) {
-        Lista lista = listaRepository.findById((long) request.getIdListaDestinazione()).get();
-        User user = userService.getUser();
-        Optional<Prodotto> prodottoFromDB = prodottoRepository.findById(request.getId());
-        prodottoFromDB.ifPresent(prodotto -> {
-            prodotto.getListe().add(lista);
-            prodotto.setUser(user);
-            prodottoRepository.save(prodotto);
-        });
-        if (!prodottoFromDB.isPresent()) {
-            Prodotto p = new Prodotto();
-            p.setNome(request.getNome());
-            p.setCategoria(request.getCategoria());
-            p.setListe(Collections.singletonList(lista));
-            p.setUser(user);
-            prodottoRepository.save(p);
-        }
+        Lista lista = listaRepository.findListaById((long) request.getIdListaDestinazione());
+        Prodotto prodotto = prodottoRepository.findProdottoById(request.getId());
+        prodottoListaRepository.save(ProdottoLista.fromProdotto(prodotto, lista));
         return ResponseEntity.ok().build();
     }
 
+    @Transactional
     public ResponseEntity<HttpStatus> saveProductsToList(List<SaveProdottoRequest> request) {
-        Lista lista = listaRepository.findById((long) request.get(0).getIdListaDestinazione()).get();
-        User user = userService.getUser();
-        List<Prodotto> prodotti = new ArrayList<>();
+        Lista lista = listaRepository.findListaById(request.get(0).getIdListaDestinazione());
+        List<ProdottoLista> prodotti = new ArrayList<>();
         request.forEach(req -> {
-            Optional<Prodotto> prodottoFromDB = prodottoRepository.findById(req.getId());
-            prodottoFromDB.ifPresent(prodotto -> {
-                prodotto.getListe().add(lista);
-                prodotto.setUser(user);
-                prodotti.add(prodotto);
-            });
-            if (!prodottoFromDB.isPresent()) {
-                Prodotto p = new Prodotto();
-                p.setNome(req.getNome());
-                p.setCategoria(req.getCategoria());
-                p.setListe(Collections.singletonList(lista));
-                p.setUser(user);
-                prodotti.add(p);
-            }
+            Prodotto prodotto = prodottoRepository.findProdottoById(req.getId());
+            prodotti.add(ProdottoLista.fromProdotto(prodotto, lista));
         });
-        prodottoRepository.saveAll(prodotti);
+        prodottoListaRepository.saveAll(prodotti);
         return ResponseEntity.ok().build();
+    }
+
+    @Transactional
+    public ResponseEntity<List<ProdottoLista>> deleteProductFromList(long productId, long listaId) {
+        Optional<Lista> optionalLista = listaRepository.findById(listaId);
+        if (!optionalLista.isPresent()) {
+            throw new NotFoundException(402, "Lista non trovata");
+        }
+        Lista lista = optionalLista.get();
+        lista.getProdotti().removeIf(prodottoLista -> prodottoLista.getProdotto().getId().equals(productId));
+        return ResponseEntity.ok().body(lista.getProdotti());
     }
 }

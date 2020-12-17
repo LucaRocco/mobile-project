@@ -3,13 +3,18 @@ package it.magnobevoeprogrammo.controller;
 import it.magnobevoeprogrammo.model.User;
 import it.magnobevoeprogrammo.repository.UserRepository;
 import it.magnobevoeprogrammo.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    private final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -19,7 +24,8 @@ public class UserController {
 
     @PostMapping(path = {"/create", ""})
     public ResponseEntity<String> addUsers(@RequestBody User user) {
-        return ResponseEntity.ok().body(userRepository.save(user).getEmail());
+        log.debug("addUser() started");
+        return userService.createUser(user);
     }
 
     @GetMapping(path = {"/", ""})
@@ -36,6 +42,5 @@ public class UserController {
         user.setFoto(updatedUser.getFoto());
         return ResponseEntity.ok().body(userRepository.save(user));
     }
-
 }
 

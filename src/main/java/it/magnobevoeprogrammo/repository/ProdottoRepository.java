@@ -9,6 +9,5 @@ import java.util.List;
 
 public interface ProdottoRepository extends JpaRepository<Prodotto, Long> {
     List<Prodotto> findAllByUser(User user);
-    @Query(value = "select * from prodotto p join prodotto_liste pl on p.id = pl.prodotto_id where pl.liste_id =:idLista", nativeQuery = true)
-    List<Prodotto> findAllByIdLista(Long idLista);
+    Prodotto findProdottoById(long id);
 }

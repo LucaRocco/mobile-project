@@ -1,5 +1,6 @@
 package it.magnobevoeprogrammo.controller;
 
+import it.magnobevoeprogrammo.model.response.ProdottoResponse;
 import it.magnobevoeprogrammo.service.ProdottoService;
 import it.magnobevoeprogrammo.model.Prezzo;
 import it.magnobevoeprogrammo.model.Prodotto;
@@ -43,23 +44,8 @@ public class ProdottoController {
 
     //get all by user
     @GetMapping(path= "/all")
-    public ResponseEntity<List<Prodotto>> getAllByUser() {
+    public ResponseEntity<List<ProdottoResponse>> getAllByUser() {
         return prodottoService.getAllByUser();
-    }
-
-    //aggiungi prezzo
-    @PostMapping(path = "/aggiungiPrezzo")
-    public ResponseEntity<HttpStatus> aggiungiPrezzo(
-            @RequestParam("idProdotto") Long idProdotto,
-            @RequestParam("prezzo") Prezzo prezzo){
-        return prodottoService.aggiungiPrezzo(idProdotto, prezzo);
-    }
-
-    //ritorna il prezzo
-    @GetMapping(path = "/prezzi")
-    public ResponseEntity<List<Prezzo>> getPrezzi(
-            @RequestParam("idProdotto") Long idProdotto){
-        return prodottoService.getPrezzi(idProdotto);
     }
 
     //ritorna la foto

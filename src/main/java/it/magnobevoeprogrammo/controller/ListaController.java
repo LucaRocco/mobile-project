@@ -1,7 +1,10 @@
 package it.magnobevoeprogrammo.controller;
 
 import it.magnobevoeprogrammo.model.Lista;
+import it.magnobevoeprogrammo.model.Prodotto;
+import it.magnobevoeprogrammo.model.ProdottoLista;
 import it.magnobevoeprogrammo.model.request.SaveProdottoRequest;
+import it.magnobevoeprogrammo.model.response.ListaResponse;
 import it.magnobevoeprogrammo.service.ListaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +29,7 @@ public class ListaController {
 
     @Transactional
     @GetMapping(path = {"", "/"})
-    public ResponseEntity<List<Lista>> getAllLists() {
+    public ResponseEntity<List<ListaResponse>> getAllLists() {
         return listaService.getAllLists();
     }
 
@@ -43,5 +46,10 @@ public class ListaController {
     @PostMapping(path = "/prodotti")
     public ResponseEntity<HttpStatus> saveProductsToList(@RequestBody List<SaveProdottoRequest> request) {
         return listaService.saveProductsToList(request);
+    }
+
+    @DeleteMapping(path = "{idLista}/prodotto/{idProdotto}")
+    public ResponseEntity<List<ProdottoLista>> deleteProductFromList(@PathVariable("idLista") long idLista, @PathVariable("idProdotto") long idProdotto) {
+        return listaService.deleteProductFromList(idProdotto, idLista);
     }
 }
