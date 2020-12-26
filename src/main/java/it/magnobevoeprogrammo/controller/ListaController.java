@@ -1,18 +1,19 @@
 package it.magnobevoeprogrammo.controller;
 
 import it.magnobevoeprogrammo.model.Lista;
-import it.magnobevoeprogrammo.model.Prodotto;
-import it.magnobevoeprogrammo.model.ProdottoLista;
+import it.magnobevoeprogrammo.model.User;
 import it.magnobevoeprogrammo.model.request.SaveProdottoRequest;
 import it.magnobevoeprogrammo.model.response.ListaResponse;
+import it.magnobevoeprogrammo.model.response.ProdottoListaResponse;
 import it.magnobevoeprogrammo.service.ListaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/lista")
@@ -49,7 +50,12 @@ public class ListaController {
     }
 
     @DeleteMapping(path = "{idLista}/prodotto/{idProdotto}")
-    public ResponseEntity<List<ProdottoLista>> deleteProductFromList(@PathVariable("idLista") long idLista, @PathVariable("idProdotto") long idProdotto) {
+    public ResponseEntity<List<ProdottoListaResponse>> deleteProductFromList(@PathVariable("idLista") long idLista, @PathVariable("idProdotto") long idProdotto) {
         return listaService.deleteProductFromList(idProdotto, idLista);
+    }
+
+    @PostMapping(path = "{idLista}/partecipanti")
+    public ResponseEntity<Set<User>> addParticipants(@PathVariable("idLista") long idLista, @RequestBody List<String> emails) {
+        return listaService.addParticipant(emails, idLista);
     }
 }

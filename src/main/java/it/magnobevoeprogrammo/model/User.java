@@ -29,4 +29,15 @@ public class User {
             inverseJoinColumns = { @JoinColumn(name = "lista_id") }
     )
     private List<Lista> liste;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", email='" + email + '\'' +
+                ", nome='" + nome + '\'' +
+                ", cognome='" + cognome + '\'' +
+                ", foto='" + foto + '\'' +
+                '}';
+    }
 }

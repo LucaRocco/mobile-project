@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,11 +32,15 @@ public class UserService {
 
     public User getUser() {
         log.debug("getUser() started for email: " + MDC.get("email"));
-        Optional<User> userOptional = userRepository.findUserByEmail(this.getUserEmail());
-        if(userOptional.isPresent()) {
-            log.debug("UserID: " + userOptional.get().getUserId());
-            return userOptional.get();
+        User user = userRepository.findUserByEmail(this.getUserEmail());
+        if(user != null) {
+            log.debug("UserID: " + user.getUserId());
+            return user;
         } else
             throw new NotFoundException(402, "User not found");
+    }
+
+    public List<User> getFriends() {
+        return userRepository.getFriends(getUser().getUserId());
     }
 }

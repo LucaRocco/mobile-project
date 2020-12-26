@@ -1,10 +1,8 @@
 package it.magnobevoeprogrammo.model.response;
 
-import it.magnobevoeprogrammo.model.ProdottoLista;
 import it.magnobevoeprogrammo.model.User;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 

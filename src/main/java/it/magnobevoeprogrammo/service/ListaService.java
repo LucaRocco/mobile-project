@@ -7,6 +7,7 @@ import it.magnobevoeprogrammo.model.ProdottoLista;
 import it.magnobevoeprogrammo.model.User;
 import it.magnobevoeprogrammo.model.request.SaveProdottoRequest;
 import it.magnobevoeprogrammo.model.response.ListaResponse;
+import it.magnobevoeprogrammo.model.response.ProdottoListaResponse;
 import it.magnobevoeprogrammo.repository.ListaRepository;
 import it.magnobevoeprogrammo.repository.ProdottoListaRepository;
 import it.magnobevoeprogrammo.repository.ProdottoRepository;
@@ -69,7 +70,7 @@ public class ListaService {
         lista.setDataCreazione(new Date());
         user.getListe().add(lista);
         user = userRepository.save(user);
-        return ResponseEntity.ok().body(user.getListe().get(user.getListe().size()-1));
+        return ResponseEntity.ok().body(user.getListe().get(user.getListe().size() - 1));
     }
 
     @Transactional
@@ -92,14 +93,23 @@ public class ListaService {
         return ResponseEntity.ok().build();
     }
 
-    @Transactional
-    public ResponseEntity<List<ProdottoLista>> deleteProductFromList(long productId, long listaId) {
+    public ResponseEntity<List<ProdottoListaResponse>> deleteProductFromList(long productId, long listaId) {
         Optional<Lista> optionalLista = listaRepository.findById(listaId);
         if (!optionalLista.isPresent()) {
             throw new NotFoundException(402, "Lista non trovata");
         }
         Lista lista = optionalLista.get();
-        lista.getProdotti().removeIf(prodottoLista -> prodottoLista.getProdotto().getId().equals(productId));
-        return ResponseEntity.ok().body(lista.getProdotti());
+        prodottoListaRepository.deleteById(productId);
+        lista.getProdotti().removeIf(prodottoLista -> prodottoLista.getId().equals(productId));
+        return ResponseEntity.ok().body(lista.getProdotti().stream().map(ProdottoLista::toResponse).collect(toList()));
+    }
+
+    public ResponseEntity<Set<User>> addParticipant(List<String> emails, long idLista) {
+        List<User> users = userRepository.findAllByEmailIn(emails);
+        Lista lista = listaRepository.findListaById(idLista);
+        users.forEach(user -> user.getListe().add(lista));
+        userRepository.saveAll(users);
+        lista.getUsers().addAll(users);
+        return ResponseEntity.ok(new HashSet<>(lista.getUsers()));
     }
 }

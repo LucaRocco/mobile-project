@@ -92,7 +92,7 @@ public class ProdottoService {
     }
 
     @Transactional
-    private Prodotto getProdottoById(Long idProdotto) {
+    public Prodotto getProdottoById(Long idProdotto) {
         Optional<Prodotto> prodottoOptional = prodottoRepository.findById(idProdotto);
         if (prodottoOptional.isPresent()) {
             return prodottoOptional.get();

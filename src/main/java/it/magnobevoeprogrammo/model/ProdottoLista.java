@@ -1,5 +1,6 @@
 package it.magnobevoeprogrammo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.magnobevoeprogrammo.model.response.ProdottoListaResponse;
 import lombok.Data;
 
@@ -14,6 +15,7 @@ public class ProdottoLista {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @JsonIgnore
     @ManyToOne
     private Lista lista;
     @ManyToOne

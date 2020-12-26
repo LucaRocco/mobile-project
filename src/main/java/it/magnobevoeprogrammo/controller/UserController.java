@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -41,6 +42,13 @@ public class UserController {
         user.setEmail(updatedUser.getEmail());
         user.setFoto(updatedUser.getFoto());
         return ResponseEntity.ok().body(userRepository.save(user));
+    }
+
+    @GetMapping("/friends")
+    public ResponseEntity<List<User>> getFriends() {
+        List<User> friends = userService.getFriends();
+        log.debug("" + friends);
+        return ResponseEntity.ok().body(friends);
     }
 }
 
