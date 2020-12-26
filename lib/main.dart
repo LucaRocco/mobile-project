@@ -1,8 +1,8 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
-import 'package:in_expense/component/list_scroller.dart';
 import 'package:in_expense/page/dettagli_lista.dart';
 import 'package:in_expense/page/home_page.dart';
 import 'package:in_expense/page/liste_attive.dart';
@@ -57,6 +57,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     return DynamicTheme(
         defaultBrightness: Brightness.light,
         data: (brightness) => ThemeData(
@@ -64,7 +67,7 @@ class MyApp extends StatelessWidget {
             ),
         themedWidgetBuilder: (context, theme) {
           return GetMaterialApp(
-            initialRoute: '/',
+              initialRoute: '/',
               getPages: [
                 GetPage(name: '/listDetail', page: () => ListDetailPage())
               ],

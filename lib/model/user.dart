@@ -18,4 +18,12 @@ class User {
   String toString() {
     return 'User{nome: $nome, cognome: $cognome, email: $email, image: $image}';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is User && runtimeType == other.runtimeType && email == other.email;
+
+  @override
+  int get hashCode => email.hashCode;
 }

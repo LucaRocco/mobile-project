@@ -1,3 +1,3 @@
 class ApplicationConstants {
-  static const String serverUrl = "https://mobile-project-roma3.herokuapp.com";
+  static const String serverUrl = "http://192.168.43.56:8080";
 }

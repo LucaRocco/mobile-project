@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
 import 'package:in_expense/model/lista_spesa.dart';
 import 'package:in_expense/model/prodotto.dart';
 import 'package:in_expense/model/user.dart';
 import 'package:in_expense/page/dettagli_partecipanti.dart';
+import 'package:in_expense/page/scegli_partecipanti.dart';
 import 'package:in_expense/page/scelta_prodotto.dart';
+import 'package:in_expense/service/lists_service.dart';
 import 'package:pie_chart/pie_chart.dart';
 
 /*classe per i "DETTAGLI LISTA" ovvero quando sarà aperta una determinata lista saranno visibili i vari dettagli come:
@@ -30,6 +33,9 @@ class _ListDetailPageState extends State<ListDetailPage> {
   _ListDetailPageState({this.listaSpesa});
 
   final ListaSpesa listaSpesa;
+  ListsService listsService = GetIt.I<ListsService>();
+  bool isRemoveLoading = false;
+  int idToRemove = -1;
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +121,12 @@ class _ListDetailPageState extends State<ListDetailPage> {
                 ),
                 IconButton(
                   icon: Icon(Icons.add),
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.to(AddParticipantPage(
+                      participantsAlreadyPresent: listaSpesa.partecipanti,
+                      lista: listaSpesa,
+                    ));
+                  },
                   color: Colors.grey,
                 )
               ],
@@ -166,6 +177,9 @@ class _ListDetailPageState extends State<ListDetailPage> {
                   onPressed: () {
                     Get.to(ProductChoosePage(
                       listaId: listaSpesa.id,
+                      productsAlreadyPresent: listaSpesa.prodotti == null
+                          ? List<Prodotto>()
+                          : listaSpesa.prodotti,
                     ));
                   },
                   color: Colors.grey,
@@ -185,8 +199,18 @@ class _ListDetailPageState extends State<ListDetailPage> {
                           Container(
                             child: Row(
                               children: [
-                                IconButton(
-                                    icon: Icon(Icons.remove), onPressed: null),
+                                (isRemoveLoading && prodotto.id == idToRemove)
+                                    ? Padding(
+                                        padding: EdgeInsets.only(right: 10),
+                                        child: SizedBox(
+                                            height: 15,
+                                            width: 15,
+                                            child: CircularProgressIndicator()))
+                                    : IconButton(
+                                        icon: Icon(Icons.remove),
+                                        onPressed: () {
+                                          _onRemoveProductPressed(prodotto.id);
+                                        }),
                                 IconButton(
                                     icon: Icon(Icons.check), onPressed: null)
                               ],
@@ -246,5 +270,20 @@ class _ListDetailPageState extends State<ListDetailPage> {
           ),
         )
         .toList();
+  }
+
+  _onRemoveProductPressed(idProdotto) async {
+    this.setState(() {
+      isRemoveLoading = true;
+      idToRemove = idProdotto;
+    });
+    print("ProdottoDaRimuovere: $idProdotto");
+    List<Prodotto> prodotti =
+        await listsService.deleteProductFromList(listaSpesa.id, idProdotto);
+    this.setState(() {
+      isRemoveLoading = false;
+      idToRemove = -1;
+      this.listaSpesa.prodotti = prodotti;
+    });
   }
 }

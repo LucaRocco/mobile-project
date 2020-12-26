@@ -9,26 +9,48 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          _createHeader(),
-          _createDrawerItem(icon: Icons.account_circle_outlined, text: 'Profile', onTap: () {Get.to(ProfiloPage());}),
-          _createDrawerItem(icon: Icons.supervisor_account_outlined, text: 'Friends', onTap: () async {
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            prefs.remove("token");
-            prefs.remove("email");
-            prefs.remove("lastname");
-            prefs.remove("fistname");
-          }),
-          _createDrawerItem(icon: Icons.logout, text: 'Logout',),
-          Divider(),
-        ],
-      ),
-    );
+        child: FutureBuilder(
+            future: _createHeader(),
+            builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+              if (snapshot.hasData) {
+                return ListView(
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    snapshot.data,
+                    _createDrawerItem(
+                        icon: Icons.account_circle_outlined,
+                        text: 'Profile',
+                        onTap: () {
+                          Get.to(ProfiloPage());
+                        }),
+                    _createDrawerItem(
+                      icon: Icons.supervisor_account_outlined,
+                      text: 'Friends',
+                    ),
+                    _createDrawerItem(
+                        icon: Icons.logout,
+                        text: 'Logout',
+                        onTap: () async {
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          prefs.remove("token");
+                          prefs.remove("email");
+                          prefs.remove("lastname");
+                          prefs.remove("fistname");
+                          prefs.setString("UserStatus", UserStatus.EMPTY.toString());
+                        }),
+                    Divider(),
+                  ],
+                );
+              } else {
+                return CircularProgressIndicator();
+              }
+            }));
   }
 
-  Widget _createHeader() {
+  Future<Widget> _createHeader() async {
+    var prefs = await SharedPreferences.getInstance();
+    var user = await GetIt.I<AccountService>().getUserFromBE();
     return DrawerHeader(
         margin: EdgeInsets.zero,
         padding: EdgeInsets.zero,
@@ -40,7 +62,13 @@ class AppDrawer extends StatelessWidget {
           Positioned(
               bottom: 12.0,
               left: 16.0,
-              child: Text("Drawer",
+              child: CircleAvatar(
+                    backgroundImage: NetworkImage(user.image))),
+          Positioned(
+              bottom: 20.0,
+              left: 70.0,
+              child: Text(
+                  "${user.nome} ${user.cognome}",
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 20.0,
@@ -63,5 +91,4 @@ class AppDrawer extends StatelessWidget {
       onTap: onTap,
     );
   }
-
 }

@@ -136,7 +136,7 @@ class _ListScrollerState extends State<ListScroller> {
       });
     });
     //timer =
-    //  Timer.periodic(Duration(seconds: 15), (Timer t) => {_refreshData()});
+      //Timer.periodic(Duration(seconds: 15), (Timer t) => {_refreshData()});
   }
 
   Widget data;
@@ -246,11 +246,11 @@ class _ListScrollerState extends State<ListScroller> {
     });
   }
 
-/*void _refreshData() async {
+void _refreshData() async {
     var newData = await getPostsData();
     this.setState(() {
       data = newData;
     });
     print("refresh");
-  }*/
+  }
 }

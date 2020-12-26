@@ -34,6 +34,7 @@ class ProductService {
           "categoria": categoria,
           "liste": List.filled(1, lista)
         }));
+    print(response.body);
     if (response.statusCode != 200) throw Error();
     return Prodotto.fromJson(jsonDecode(response.body));
   }

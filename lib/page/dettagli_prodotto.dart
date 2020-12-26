@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:in_expense/component/expansion_tile.dart';
 import 'package:in_expense/internationalization/app_localizations.dart';
@@ -43,9 +42,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               onPressed: () {},
               child: updated
                   ? Text(
-                AppLocalizations.of(context).translate("salva"),
-                style: TextStyle(color: Colors.deepOrange),
-              )
+                      AppLocalizations.of(context).translate("salva"),
+                      style: TextStyle(color: Colors.deepOrange),
+                    )
                   : Text(""),
             ),
           ],
@@ -71,17 +70,18 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 height: 15,
               ),
               Container(
-                child: Stack(children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height / 3,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: Image.network(prodotto.image).image,
-                        fit: BoxFit.fill,
+                child: Stack(
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height / 3,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: Image.network(prodotto.image).image,
+                          fit: BoxFit.fill,
+                        ),
                       ),
                     ),
-                  ),
-                  Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -92,8 +92,10 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             _showPicker(context);
                           },
                         ),
-                      ])
-                ]),
+                      ],
+                    )
+                  ],
+                ),
               ),
               SizedBox(
                 height: 15,
@@ -103,8 +105,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     padding: EdgeInsets.only(top: 20, left: 20, right: 20),
                     child: SingleChildScrollView(
                       child: ExpansionTilePage(),
-                    )
-                ),
+                    )),
               ])
             ])));
   }

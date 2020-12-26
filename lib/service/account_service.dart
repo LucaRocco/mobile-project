@@ -218,6 +218,19 @@ class AccountService {
     if (response.statusCode != 200) throw Error();
     return User.fromJson(jsonDecode(response.body));
   }
+
+  Future<List<User>> getFriends() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    http.Response response =
+    await http.get(ApplicationConstants.serverUrl + "/user/friends",
+        headers: (<String, String>{
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + prefs.getString("token")
+        }));
+    print(response.statusCode);
+    if (response.statusCode != 200) throw Error();
+    return (jsonDecode(response.body) as List).map((user) => User.fromJson(user)).toList();
+  }
 }
 
 enum UserStatus { LOGGED, NEED_EMAIL_CONFIRMATION, EMPTY }
