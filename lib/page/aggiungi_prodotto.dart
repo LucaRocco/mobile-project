@@ -18,7 +18,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
   ProductService productService = GetIt.I<ProductService>();
   TextEditingController nomeController = new TextEditingController();
   TextEditingController categoriaController = new TextEditingController();
-  var dropdownValue = "Scegli una categoria";
+  var dropdownValue;
   var isButtonEnabled = false;
   var isLoading = false;
 
@@ -49,7 +49,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
               padding: EdgeInsets.all(16),
               child: TextFormField(
                 controller: nomeController,
-                onChanged: _onNameChanged,
+                onChanged: _onValueChanged,
                 decoration: InputDecoration(
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -75,14 +75,19 @@ class _ProductAddPageState extends State<ProductAddPage> {
                       EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
+                      disabledHint: Text(AppLocalizations.of(context)
+                          .translate("scegli_categoria")),
+                      hint: Text(AppLocalizations.of(context)
+                          .translate("scegli_categoria")),
                       value: dropdownValue,
                       iconSize: 24,
                       elevation: 16,
                       isExpanded: true,
                       onChanged: (String newValue) {
+                        print(newValue);
                         setState(() {
                           dropdownValue = newValue;
-                          if (newValue != 'Scegli una categoria' &&
+                          if (newValue != null &&
                               nomeController.text.isNotEmpty &&
                               !nomeController.text.isBlank)
                             isButtonEnabled = true;
@@ -92,16 +97,16 @@ class _ProductAddPageState extends State<ProductAddPage> {
                       },
                       underline: null,
                       items: <String>[
-                        'Scegli una categoria',
-                        'Alimenti',
-                        'Utilita',
-                        'Bevande',
-                        'Casa',
-                        'Benessere'
+                        'alimenti',
+                        'utilita',
+                        'bevande',
+                        'casa',
+                        'benessere'
                       ].map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
-                          child: Text(value),
+                          child: Text(AppLocalizations.of(context)
+                              .translate(value)),
                         );
                       }).toList(),
                     ),
@@ -156,9 +161,9 @@ class _ProductAddPageState extends State<ProductAddPage> {
     );
   }
 
-  _onNameChanged(String value) {
+  _onValueChanged(String value) {
     setState(() {
-      if (dropdownValue != 'Scegli una categoria' &&
+      if (dropdownValue != null &&
           nomeController.text.isNotEmpty &&
           !nomeController.text.isBlank)
         isButtonEnabled = true;

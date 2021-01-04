@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:in_expense/constant/application_constants.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/model/lista_spesa.dart';
 import 'package:in_expense/model/prodotto.dart';
 import 'package:in_expense/model/user.dart';
@@ -13,15 +14,6 @@ import 'package:in_expense/page/scelta_prodotto.dart';
 import 'package:in_expense/service/lists_service.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-/*classe per i "DETTAGLI LISTA" ovvero quando sarà aperta una determinata lista saranno visibili i vari dettagli come:
- -nome lista
- -supermercati consigliati(a cui affiancheremo la possibilità di accedere alle mappe)
- -partecipanti alla lista
- -prodotti della lista
- -la possibilità di condividere l'indirizzo della schermata
- -un bottone per aggiungere dei prodotti alla lista
- */
 
 class ListDetailPage extends StatefulWidget {
   ListDetailPage({this.listaSpesa});
@@ -41,16 +33,19 @@ class _ListDetailPageState extends State<ListDetailPage> {
   bool isLoading = false;
   int idToRemove = -1;
   Timer timer;
+  bool needRefresh = true;
 
   @override
   void initState() {
-    timer = Timer.periodic(Duration(seconds: 5), (timer) { _updateList(); });
+    timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      _updateList();
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    Map<String, double> dataMap = _generateMapOfCategory();
+    Map<String, double> dataMap = _generateMapOfCategory(context);
     sortProducts();
 
     return Scaffold(
@@ -82,9 +77,8 @@ class _ListDetailPageState extends State<ListDetailPage> {
                 dataMap.isEmpty
                     ? Center(
                         child: Text(
-                          "Sembra non esserci niente in questa lista.\n"
-                          "In questo spazio troverai un grafico che ti aiuterà a tenere sotto controllo i prodotti.\n"
-                          "Prova ad aggiungere qualche prodotto",
+                          AppLocalizations.of(context)
+                              .translate("spazio_bianco_grafico"),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 15),
@@ -127,25 +121,33 @@ class _ListDetailPageState extends State<ListDetailPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Partecipants",
+                  AppLocalizations.of(context)
+                      .translate("partecipanti")
+                      .capitalizeFirst,
                   style: TextStyle(
                       color: Colors.grey, fontWeight: FontWeight.bold),
                 ),
-                IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: () async {
-                    var result = await Get.to(
-                      AddParticipantPage(
-                        lista: listaSpesa,
-                      ),
-                    );
-                    if (result != null)
-                      setState(() {
-                        this.listaSpesa.partecipanti = result;
-                      });
-                  },
-                  color: Colors.grey,
-                )
+                listaSpesa.creatorId == listaSpesa.userId
+                    ? IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: () async {
+                          setState(() {
+                            this.needRefresh = false;
+                          });
+                          var result = await Get.to(
+                            AddParticipantPage(
+                              lista: listaSpesa,
+                            ),
+                          );
+                          if (result != null)
+                            setState(() {
+                              this.listaSpesa.partecipanti = result;
+                              this.needRefresh = true;
+                            });
+                        },
+                        color: Colors.grey,
+                      )
+                    : Text("")
               ],
             ),
           ),
@@ -170,7 +172,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
                         _openParticipantsDetails();
                       },
                       child: Text(
-                        "MORE",
+                        AppLocalizations.of(context).translate("di_piu"),
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.grey),
                       ),
@@ -186,13 +188,18 @@ class _ListDetailPageState extends State<ListDetailPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Products",
+                  AppLocalizations.of(context)
+                      .translate("prodotti")
+                      .capitalizeFirst,
                   style: TextStyle(
                       color: Colors.grey, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
                   icon: Icon(Icons.add),
                   onPressed: () async {
+                    this.setState(() {
+                      this.needRefresh = false;
+                    });
                     List<Prodotto> prodottiAggiornati =
                         await Get.to(ProductChoosePage(
                       listaId: listaSpesa.id,
@@ -202,6 +209,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
                     ));
                     if (prodottiAggiornati != null) {
                       this.setState(() {
+                        this.needRefresh = true;
                         this.listaSpesa.prodotti = prodottiAggiornati;
                         this.listaSpesa.numeroProdotti =
                             prodottiAggiornati.length;
@@ -247,8 +255,9 @@ class _ListDetailPageState extends State<ListDetailPage> {
 
                         subtitle: Row(
                           children: <Widget>[
-                            Text("Quantità: ${prodotto.quantita}",
-                                style: TextStyle(color: Colors.black))
+                            Text(
+                              "${AppLocalizations.of(context).translate("quantita")}: ${prodotto.quantita}",
+                              style: TextStyle(color: Colors.black))
                           ],
                         ),
                         trailing: Container(
@@ -313,14 +322,15 @@ class _ListDetailPageState extends State<ListDetailPage> {
     );
   }
 
-  Map<String, double> _generateMapOfCategory() {
+  Map<String, double> _generateMapOfCategory(context) {
     List<Prodotto> prodotti = listaSpesa.prodotti;
     Map<String, double> result = Map<String, double>();
     for (Prodotto p in prodotti) {
-      if (result.containsKey(p.categoria)) {
-        result.update(p.categoria, (value) => value + 1);
+      String categoria = AppLocalizations.of(context).translate(p.categoria);
+      if (result.containsKey(categoria)) {
+        result.update(categoria, (value) => value + 1);
       } else {
-        result.putIfAbsent(p.categoria, () => 1);
+        result.putIfAbsent(categoria, () => 1);
       }
     }
     return result;
@@ -364,7 +374,6 @@ class _ListDetailPageState extends State<ListDetailPage> {
       isLoading = true;
       idToRemove = idProdotto;
     });
-    print("ProdottoDaRimuovere: $idProdotto");
     List<Prodotto> prodotti =
         await listsService.deleteProductFromList(listaSpesa.id, idProdotto);
     this.setState(() {
@@ -375,21 +384,27 @@ class _ListDetailPageState extends State<ListDetailPage> {
   }
 
   void _openParticipantsDetails() async {
+    this.setState(() {
+      this.needRefresh = false;
+    });
     List<User> participants = await Get.to(ParticipantsDetails(
-      users: listaSpesa.partecipanti,
-      email: (await SharedPreferences.getInstance()).getString("email"),
-      lista: listaSpesa,
-    ));
+        users: listaSpesa.partecipanti,
+        email: (await SharedPreferences.getInstance()).getString("email"),
+        lista: listaSpesa));
     listaSpesa.partecipanti = participants;
-    this.setState(() {});
+    this.setState(() {
+      this.needRefresh = true;
+    });
   }
 
   void _updateList() async {
-    ListaSpesa ls = await listsService.getListById(this.listaSpesa.id);
-    this.setState(() {
-      this.listaSpesa = ls;
-    });
-    print("Refreshed List");
+    if (needRefresh) {
+      ListaSpesa ls = await listsService.getListById(this.listaSpesa.id);
+      this.setState(() {
+        this.listaSpesa = ls;
+      });
+      print("Refreshed List");
+    }
   }
 
   void sortProducts() {

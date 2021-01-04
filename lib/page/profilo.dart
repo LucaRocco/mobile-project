@@ -223,7 +223,6 @@ class _ProfiloPageState extends State<ProfiloPage> {
         source: ImageSource.camera, imageQuality: 50);
     user.image = await cloudinaryService.uploadImage(image);
     User updatedUser = await accountService.updateProfile(user);
-    print("User Image: " + user.image);
     this.setState(() {
       this.user = updatedUser;
     });
@@ -235,7 +234,6 @@ class _ProfiloPageState extends State<ProfiloPage> {
         source: ImageSource.gallery, imageQuality: 50);
     user.image = await cloudinaryService.uploadImage(image);
     User updatedUser = await accountService.updateProfile(user);
-    print("User Image: " + user.image);
     this.setState(() {
       this.user = updatedUser;
     });

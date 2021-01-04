@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/page/collaboratori.dart';
 import 'package:in_expense/page/profilo.dart';
 import 'package:in_expense/service/account_service.dart';
@@ -19,19 +20,22 @@ class AppDrawer extends StatelessWidget {
                     snapshot.data,
                     _createDrawerItem(
                         icon: Icons.account_circle_outlined,
-                        text: 'Profile',
+                        text: AppLocalizations.of(context)
+                            .translate("profilo"),
                         onTap: () {
                           Get.to(ProfiloPage());
                         }),
                     _createDrawerItem(
                         icon: Icons.supervisor_account_outlined,
-                        text: 'Collaborators',
+                        text: AppLocalizations.of(context)
+                            .translate("collaboratori"),
                         onTap: () {
                           Get.to(CollaboratorPage());
                         }),
                     _createDrawerItem(
                         icon: Icons.logout,
-                        text: 'Logout',
+                        text: AppLocalizations.of(context)
+                            .translate("logout"),
                         onTap: () async {
                           SharedPreferences prefs =
                               await SharedPreferences.getInstance();

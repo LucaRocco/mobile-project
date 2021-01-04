@@ -9,7 +9,9 @@ class ListaSpesa {
       this.numeroPartecipanti,
       this.numeroProdotti,
       this.partecipanti,
-      this.prodotti});
+      this.prodotti,
+      this.creatorId,
+      this.userId});
 
   int id;
   String nome;
@@ -20,20 +22,23 @@ class ListaSpesa {
   List<Prodotto> prodotti;
   int coloreChiaro;
   int coloreScuro;
+  int creatorId;
+  int userId;
 
   factory ListaSpesa.fromJson(Map<String, dynamic> json) {
     return ListaSpesa(
-      id: json['id'],
-      nome: json['nome'],
-      descrizione: json['descrizione'],
-      partecipanti:
-          (json['users'] as List).map((user) => User.fromJson(user)).toList(),
-      prodotti: (json['prodotti'] as List)
-          .map((prodotto) => Prodotto.fromJson(prodotto))
-          .toList(),
-      numeroProdotti: (json['prodotti'] as List).length,
-      numeroPartecipanti: (json['users'] as List).length,
-    );
+        id: json['id'],
+        nome: json['nome'],
+        descrizione: json['descrizione'],
+        partecipanti:
+            (json['users'] as List).map((user) => User.fromJson(user)).toList(),
+        prodotti: (json['prodotti'] as List)
+            .map((prodotto) => Prodotto.fromJson(prodotto))
+            .toList(),
+        numeroProdotti: (json['prodotti'] as List).length,
+        numeroPartecipanti: (json['users'] as List).length,
+        creatorId: json['creatorId'],
+        userId: json['userId']);
   }
 
   @override
@@ -53,14 +58,16 @@ class ListaSpesa {
   @override
   int get hashCode => id.hashCode ^ partecipanti.hashCode ^ prodotti.hashCode;
 
-  factory ListaSpesa.clone(ListaSpesa l) {
+  ListaSpesa clone() {
     return ListaSpesa(
-        id: l.id,
-        nome: l.nome,
-        descrizione: l.descrizione,
-        numeroPartecipanti: l.numeroPartecipanti,
-        numeroProdotti: l.numeroProdotti,
-        partecipanti: l.partecipanti.map((u) => u.clone()).toList(),
-        prodotti: l.prodotti.map((p) => p.clone()).toList());
+        id: this.id,
+        nome: this.nome,
+        descrizione: this.descrizione,
+        numeroPartecipanti: this.numeroPartecipanti,
+        numeroProdotti: this.numeroProdotti,
+        partecipanti: this.partecipanti.map((u) => u.clone()).toList(),
+        prodotti: this.prodotti.map((p) => p.clone()).toList(),
+        creatorId: this.creatorId,
+        userId: this.userId);
   }
 }

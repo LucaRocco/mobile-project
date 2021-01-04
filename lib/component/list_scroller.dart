@@ -287,7 +287,7 @@ class _ListScrollerState extends State<ListScroller> {
               needRefresh = false;
               ListaSpesa result = await Get.to(
                 ListDetailPage(
-                  listaSpesa: ListaSpesa.clone(responseList[index]),
+                  listaSpesa: responseList[index].clone(),
                 ),
               );
               if (!responseList.contains(result)) {
@@ -346,7 +346,8 @@ class _ListScrollerState extends State<ListScroller> {
                             height: 10,
                           ),
                           Text(
-                            element.categoria,
+                            AppLocalizations.of(context)
+                                .translate(element.categoria),
                             style: TextStyle(fontSize: 16, color: Colors.white),
                           ),
                           Expanded(

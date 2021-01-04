@@ -120,7 +120,8 @@ class _ProductsScrollerState extends State<ProductsScroller> {
                             height: 10,
                           ),
                           Text(
-                            element.categoria,
+                            AppLocalizations.of(context)
+                                .translate(element.categoria),
                             style: TextStyle(fontSize: 16, color: Colors.white),
                           ),
                           Expanded(

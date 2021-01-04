@@ -56,5 +56,18 @@
   "marchio": "Marchio",
   "supermercato": "Supermercato",
   "prodotti": "prodotti",
-  "partecipanti": "partecipanti"
+  "partecipanti": "partecipanti",
+  "profilo": "Profilo",
+  "collaboratori": "Collaboratori",
+  "logout": "Esci",
+  "tu": "Tu",
+  "scegli_categoria": "Scegli una categoria",
+  "spazio_bianco_grafico": "Sembra non esserci niente in questa lista.\nIn questo spazio vedrai un grafico che ti aiuterà a tenere sotto controllo i prodotti.\nProva ad aggiungere qualche prodotto",
+  "di_piu": "DI PIÙ",
+  "quantita": "Quantità",
+  "alimenti": "Alimenti",
+  "utilita": "Utilita",
+  "bevande": "Bevande",
+  "casa": "Casa",
+  "benessere": "Benessere"
 }

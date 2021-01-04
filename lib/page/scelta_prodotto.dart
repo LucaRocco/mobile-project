@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:in_expense/constant/application_constants.dart';
 import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/model/prodotto.dart';
 import 'package:in_expense/model/request/prodotto_request.dart';
@@ -27,18 +28,7 @@ class _ProductChoosePageState extends State<ProductChoosePage> {
   List<Prodotto> prodottiDaAggiungere = List<Prodotto>();
   ProductService productService = GetIt.I<ProductService>();
   ListsService listsService = GetIt.I<ListsService>();
-
-  Map<String, Widget> category2image = {
-    'Alimenti': Image.asset('assets/images/category_eat.png'),
-    'Utilita': Image.asset('assets/images/category_utility.png'),
-    'Bevande': Image.asset('assets/images/category_drink.png'),
-    'Casa': Icon(
-      Icons.home,
-      color: Colors.black,
-      size: 40,
-    ),
-    'Benessere': Image.asset('assets/images/category_healthy.png')
-  };
+  List<Prodotto> prodotti;
 
   @override
   Widget build(BuildContext context) {
@@ -60,82 +50,102 @@ class _ProductChoosePageState extends State<ProductChoosePage> {
         backgroundColor: Colors.transparent,
         actionsIconTheme: IconThemeData(color: Colors.deepOrange),
       ),
-      body: FutureBuilder(
+      body: prodotti == null ? FutureBuilder(
         future: productService.getProdotti(),
         builder:
             (BuildContext context, AsyncSnapshot<List<Prodotto>> snapshot) {
           if (snapshot.hasData) {
-            List<Prodotto> prodotti = snapshot.data;
+            this.prodotti = snapshot.data;
+            prodotti.forEach((element) => element.quantita = 1);
             prodotti.removeWhere((prodotto) => productsAreadyPresent
                 .any((element) => element.originalId == prodotto.id));
-            return ListView.builder(
-              itemCount: prodotti.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  elevation: 8.0,
-                  margin:
-                      new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        color: Colors.white),
-                    child: ListTile(
-                      contentPadding: EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 10.0),
-                      leading: Container(
-                        height: 40,
-                        width: 70,
-                        padding: EdgeInsets.only(right: 12.0),
-                        decoration: new BoxDecoration(
-                            border: new Border(
-                                right: new BorderSide(
-                                    width: 1.0, color: Colors.black))),
-                        child: category2image[prodotti[index].categoria],
-                      ),
-                      title: Text(
-                        prodotti[index].nome,
-                        style: TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold),
-                      ),
-                      // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-
-                      subtitle: Row(
-                        children: <Widget>[
-                          Text("${prodotti[index].categoria}",
-                              style: TextStyle(color: Colors.black))
-                        ],
-                      ),
-                      trailing: Container(
-                        height: 100,
-                        width: 50,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(
-                                icon: Icon(
-                                  prodottiDaAggiungere.contains(prodotti[index])
-                                      ? Icons.remove_shopping_cart_outlined
-                                      : Icons.add_shopping_cart_outlined,
-                                  color: prodottiDaAggiungere
-                                          .contains(prodotti[index])
-                                      ? Colors.deepOrange
-                                      : Colors.green,
-                                ),
-                                onPressed: () => _onPressed(prodotti[index])),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            );
+            return buildListView();
           } else {
             return Center(child: CircularProgressIndicator());
           }
         },
-      ),
+      ) : buildListView(),
     );
+  }
+
+  ListView buildListView() {
+    return ListView.builder(
+            itemCount: prodotti.length,
+            itemBuilder: (context, index) {
+              return Card(
+                elevation: 8.0,
+                margin:
+                    new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      color: Colors.white),
+                  child: ListTile(
+                    contentPadding: EdgeInsets.symmetric(
+                        horizontal: 20.0, vertical: 10.0),
+                    leading: Container(
+                      height: 40,
+                      width: 70,
+                      padding: EdgeInsets.only(right: 12.0),
+                      decoration: new BoxDecoration(
+                          border: new Border(
+                              right: new BorderSide(
+                                  width: 1.0, color: Colors.black))),
+                      child: ApplicationConstants.category2image[prodotti[index].categoria],
+                    ),
+                    title: Text(
+                      prodotti[index].nome,
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                    // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+
+                    subtitle: Row(
+                      children: <Widget>[
+                        Text(AppLocalizations.of(context)
+                            .translate(prodotti[index].categoria),
+                            style: TextStyle(color: Colors.black))
+                      ],
+                    ),
+                    trailing: Container(
+                      height: 100,
+                      width: 200,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                              icon: Icon(Icons.remove), onPressed: () {
+                                setState(() {
+                                  prodotti[index].quantita--;
+                                });
+                                print(prodotti[index].quantita);
+                          }),
+                          Text("${prodotti[index].quantita}"),
+                          IconButton(icon: Icon(Icons.add), onPressed: () {
+                            setState(() {
+                              prodotti[index].quantita = prodotti[index].quantita + 1;
+                            });
+                            print(prodotti[index].quantita);
+                          }),
+                          IconButton(
+                              icon: Icon(
+                                prodottiDaAggiungere.contains(prodotti[index])
+                                    ? Icons.remove_shopping_cart_outlined
+                                    : Icons.add_shopping_cart_outlined,
+                                color: prodottiDaAggiungere
+                                        .contains(prodotti[index])
+                                    ? Colors.deepOrange
+                                    : Colors.green,
+                              ),
+                              onPressed: () => _onPressed(prodotti[index])),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
   }
 
   _onPressed(Prodotto prodotto) {
@@ -159,9 +169,9 @@ class _ProductChoosePageState extends State<ProductChoosePage> {
                 id: prodotto.id,
                 nome: prodotto.nome,
                 categoria: prodotto.categoria,
-                idListaDestinazione: listaId))
+                idListaDestinazione: listaId,
+                quantita: prodotto.quantita))
             .toList());
-    print("Prodotti Dopo Aggiunta: $prodotti");
     Get.close(1);
     Get.back(result: prodotti);
   }
@@ -208,6 +218,4 @@ class _ProductChoosePageState extends State<ProductChoosePage> {
     }
     return result;
   }
-
-  filterList() {}
 }

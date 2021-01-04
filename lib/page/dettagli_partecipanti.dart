@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/model/lista_spesa.dart';
 import 'package:in_expense/model/user.dart';
 import 'package:in_expense/service/lists_service.dart';
@@ -52,31 +53,36 @@ class _ParticipantsDetailsState extends State<ParticipantsDetails> {
                 ),
                 title: user.email != email
                     ? Text(user.nome + " " + user.cognome)
-                    : Text("Tu"),
+                    : Text(AppLocalizations.of(context)
+                    .translate("tu")),
                 subtitle: Text(user.email),
-                trailing: user.email != email
-                    ? IconButton(
-                        icon: (emailToRemove == user.email && isRemoveLoading)
-                            ? SizedBox(
-                                height: 15,
-                                width: 15,
-                                child: CircularProgressIndicator())
-                            : Icon(Icons.delete),
-                        onPressed: () async {
-                          setState(() {
-                            emailToRemove = user.email;
-                            isRemoveLoading = true;
-                          });
-                          var partecipanti = await listsService
-                              .removeParticipantFromList(user.email, lista.id);
-                          lista.partecipanti = partecipanti;
-                          setState(() {
-                            this.users = partecipanti;
-                            emailToRemove = "";
-                            isRemoveLoading = false;
-                          });
-                        },
-                      )
+                trailing: lista.creatorId == lista.userId
+                    ? user.email != email
+                        ? IconButton(
+                            icon:
+                                (emailToRemove == user.email && isRemoveLoading)
+                                    ? SizedBox(
+                                        height: 15,
+                                        width: 15,
+                                        child: CircularProgressIndicator())
+                                    : Icon(Icons.delete),
+                            onPressed: () async {
+                              setState(() {
+                                emailToRemove = user.email;
+                                isRemoveLoading = true;
+                              });
+                              var partecipanti =
+                                  await listsService.removeParticipantFromList(
+                                      user.email, lista.id);
+                              lista.partecipanti = partecipanti;
+                              setState(() {
+                                this.users = partecipanti;
+                                emailToRemove = "";
+                                isRemoveLoading = false;
+                              });
+                            },
+                          )
+                        : Text("")
                     : Text(""),
                 onTap: () {},
               ),

@@ -56,5 +56,18 @@
   "marchio": "Brand",
   "supermercato": "Supermarket",
   "prodotti": "products",
-  "partecipanti": "participants"
+  "partecipanti": "participants",
+  "profilo": "Profile",
+  "collaboratori": "Collaborators",
+  "logout": "Logout",
+  "tu": "You",
+  "scegli_categoria": "Choose category",
+  "spazio_bianco_grafico": "There seems to be nothing here.\nIn this space you will see a chart that will help you keep track of the products.\nTry adding some products",
+  "di_piu": "MORE",
+  "quantita": "Quantity",
+  "alimenti": "Foods",
+  "utilita": "Utility",
+  "bevande": "Drinks",
+  "casa": "home",
+  "Benessere": "Welfare"
 }

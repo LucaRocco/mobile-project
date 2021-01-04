@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class ApplicationConstants {
-  static const String serverUrl = "https://b2b30b79288b.ngrok.io";
+  static const String serverUrl = "http://192.168.1.129:8080";
 
   static final List<Color> colors = [
     Colors.blue,
@@ -23,14 +23,14 @@ class ApplicationConstants {
   }
 
   static Map<String, Widget> category2image = {
-    'Alimenti': Image.asset('assets/images/category_eat.png'),
-    'Utilita': Image.asset('assets/images/category_utility.png'),
-    'Bevande': Image.asset('assets/images/category_drink.png'),
-    'Casa': Icon(
+    'alimenti': Image.asset('assets/images/category_eat.png'),
+    'utilita': Image.asset('assets/images/category_utility.png'),
+    'bevande': Image.asset('assets/images/category_drink.png'),
+    'casa': Icon(
       Icons.home,
       color: Colors.black,
       size: 40,
     ),
-    'Benessere': Image.asset('assets/images/category_healthy.png')
+    'benessere': Image.asset('assets/images/category_healthy.png')
   };
 }
