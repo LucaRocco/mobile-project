@@ -72,43 +72,12 @@ class _ModificaPasswordPageState extends State<ModificaPasswordPage> {
               obscureText: true,
             ),
           ),
-          /* Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: EdgeInsets.all(16),
-                child: isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : RaisedButton(
-                        child: Text('salva modifiche'),
-                        onPressed: disabledRegistrationButton
-                            ? null
-                            : _registrationPressed),
-              ),
-            ],
-          )*/
         ]));
   }
-/*
-  void _registrationPressed() async {
-    this.setState(() {
-      isLoading = true;
-    });
-    await accountService.performRegistration(
-        passwordController.text);
-    this.setState(() {
-      isLoading = false;
-    });
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => VerificationCodePage(user: this.user)));
-  }
-*/
 
   void _onChanged(String value) {
     this.setState(() {
-      (passwordController.text.length < 8 ||
+      disabledRegistrationButton = (passwordController.text.length < 8 ||
           passwordController.text != repetePasswordController.text);
     });
   }

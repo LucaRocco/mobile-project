@@ -84,7 +84,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
                           dropdownValue = newValue;
                           if (newValue != 'Scegli una categoria' &&
                               nomeController.text.isNotEmpty &&
-                              !nomeController.text.isNullOrBlank)
+                              !nomeController.text.isBlank)
                             isButtonEnabled = true;
                           else
                             isButtonEnabled = false;
@@ -160,7 +160,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
     setState(() {
       if (dropdownValue != 'Scegli una categoria' &&
           nomeController.text.isNotEmpty &&
-          !nomeController.text.isNullOrBlank)
+          !nomeController.text.isBlank)
         isButtonEnabled = true;
       else
         isButtonEnabled = false;

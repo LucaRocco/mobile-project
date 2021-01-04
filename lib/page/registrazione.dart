@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/model/user.dart';
-import 'package:in_expense/service/account_service.dart';
 import 'package:in_expense/page/verifica_codice_registrazione.dart';
+import 'package:in_expense/service/account_service.dart';
 
 class RegistrationPage extends StatefulWidget {
   RegistrationPage({Key key, this.title}) : super(key: key);
@@ -27,6 +27,7 @@ class _RegisterPageState extends State<RegistrationPage> {
   bool disabledRegistrationButton = true;
   bool isLoading = false;
   User user = User();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

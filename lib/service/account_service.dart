@@ -57,7 +57,7 @@ class AccountService {
     return data;
   }
 
-  performEmailConfirmation(email, verificationCode) async {
+  Future<bool> performEmailConfirmation(email, verificationCode) async {
     final CognitoUserPool userPool = getCognitoUserPool();
 
     final cognitoUser = new CognitoUser(email, userPool);
@@ -70,6 +70,7 @@ class AccountService {
       throw CodeVerificationException(cause: "Error during code verify");
     }
     setUserStatus(UserStatus.EMPTY);
+    return registrationConfirmed;
   }
 
   Future<CognitoUserSession> performLogin(email, password) async {
@@ -80,7 +81,7 @@ class AccountService {
     CognitoUserSession session;
     try {
       session = await cognitoUser.authenticateUser(authDetails);
-    } on CognitoUserConfirmationNecessaryException catch (e) {
+    } on CognitoUserConfirmationNecessaryException {
       throw LoginException(cause: "Error during login");
     } on CognitoClientException catch (e) {
       if (e.code == "NotAuthorizedException") {
@@ -98,6 +99,12 @@ class AccountService {
     });
     setUserStatus(UserStatus.LOGGED);
     prefs.setString("token", session.idToken.jwtToken);
+    User user = await this.getUserFromBE();
+    prefs.setString("uname", user.nome);
+    prefs.setString("usname", user.cognome);
+    prefs.setString("uimage", user.image);
+    prefs.setString("uemail", user.email);
+    prefs.setInt("uid", user.userId);
     return session;
   }
 
@@ -158,6 +165,7 @@ class AccountService {
     } catch (e) {
       print(e);
     }
+    print("Forgottend Data: $data");
 
 // INTERROMPERE QUI IL FLUSSO DELL'OPERAZIONE PER POI RIPRENDERLO IN UN'ALTRA FUNZIONE.
 
@@ -218,25 +226,30 @@ class AccountService {
   Future<List<User>> getFriends() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     http.Response response =
-    await http.get(ApplicationConstants.serverUrl + "/user/friends",
-        headers: (<String, String>{
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + prefs.getString("token")
-        }));
+        await http.get(ApplicationConstants.serverUrl + "/user/friends",
+            headers: (<String, String>{
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + prefs.getString("token")
+            }));
     if (response.statusCode != 200) throw Error();
-    return (jsonDecode(response.body) as List).map((user) => User.fromJson(user)).toList();
+    return (jsonDecode(response.body) as List)
+        .map((user) => User.fromJson(user))
+        .toList();
   }
 
   Future<List<User>> searchUserByNameAndEmailLike(String query, idLista) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    http.Response response =
-    await http.get(ApplicationConstants.serverUrl + "/user/search?query=$query&idLista=$idLista",
+    http.Response response = await http.get(
+        ApplicationConstants.serverUrl +
+            "/user/search?query=$query&idLista=$idLista",
         headers: (<String, String>{
           "Content-Type": "application/json",
           "Authorization": "Bearer " + prefs.getString("token")
         }));
     if (response.statusCode != 200) throw Error();
-    return (jsonDecode(response.body) as List).map((user) => User.fromJson(user)).toList();
+    return (jsonDecode(response.body) as List)
+        .map((user) => User.fromJson(user))
+        .toList();
   }
 }
 
@@ -276,5 +289,4 @@ class AccountUtility {
 
     return utf8.decode(base64Url.decode(output));
   }
-
 }

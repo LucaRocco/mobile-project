@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_it/get_it.dart';
 import 'package:in_expense/page/collaboratori.dart';
 import 'package:in_expense/page/profilo.dart';
 import 'package:in_expense/service/account_service.dart';
@@ -25,12 +24,11 @@ class AppDrawer extends StatelessWidget {
                           Get.to(ProfiloPage());
                         }),
                     _createDrawerItem(
-                      icon: Icons.supervisor_account_outlined,
-                      text: 'Collaborators',
-                      onTap: () {
-                        Get.to(CollaboratorPage());
-                      }
-                    ),
+                        icon: Icons.supervisor_account_outlined,
+                        text: 'Collaborators',
+                        onTap: () {
+                          Get.to(CollaboratorPage());
+                        }),
                     _createDrawerItem(
                         icon: Icons.logout,
                         text: 'Logout',
@@ -41,7 +39,8 @@ class AppDrawer extends StatelessWidget {
                           prefs.remove("email");
                           prefs.remove("lastname");
                           prefs.remove("fistname");
-                          prefs.setString("UserStatus", UserStatus.EMPTY.toString());
+                          prefs.setString(
+                              "UserStatus", UserStatus.EMPTY.toString());
                         }),
                     Divider(),
                   ],
@@ -54,7 +53,6 @@ class AppDrawer extends StatelessWidget {
 
   Future<Widget> _createHeader() async {
     var prefs = await SharedPreferences.getInstance();
-    var user = await GetIt.I<AccountService>().getUserFromBE();
     return DrawerHeader(
         margin: EdgeInsets.zero,
         padding: EdgeInsets.zero,
@@ -67,12 +65,12 @@ class AppDrawer extends StatelessWidget {
               bottom: 12.0,
               left: 16.0,
               child: CircleAvatar(
-                    backgroundImage: NetworkImage(user.image))),
+                  backgroundImage: NetworkImage(prefs.getString("uimage")))),
           Positioned(
               bottom: 20.0,
               left: 70.0,
               child: Text(
-                  "${user.nome} ${user.cognome}",
+                  "${prefs.getString("uname")} ${prefs.getString("usname")}",
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 20.0,

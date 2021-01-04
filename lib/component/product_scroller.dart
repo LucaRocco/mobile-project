@@ -1,13 +1,12 @@
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:in_expense/constant/application_constants.dart';
 import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/model/prodotto.dart';
 import 'package:in_expense/page/aggiungi_lista.dart';
-import 'package:in_expense/page/dettagli_prodotto.dart';
 import 'package:in_expense/service/product_service.dart';
 
 class ProductsScroller extends StatefulWidget {
@@ -20,19 +19,6 @@ class ProductsScroller extends StatefulWidget {
 
 class _ProductsScrollerState extends State<ProductsScroller> {
   ProductService productService = GetIt.I<ProductService>();
-  final List<Color> colors = [
-    Colors.blue,
-    Colors.red,
-    Colors.yellow,
-    Colors.orange.shade400,
-    Colors.amber.shade600,
-    Colors.purple,
-    Colors.teal,
-    Colors.lightGreen,
-    Colors.tealAccent,
-    Colors.deepOrangeAccent,
-    Colors.red.shade50
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -96,11 +82,6 @@ class _ProductsScrollerState extends State<ProductsScroller> {
     );
   }
 
-  Color getRandomColor() {
-    Random random = new Random();
-    return colors[random.nextInt(colors.length)];
-  }
-
   Future<Widget> getSummaryProductCards(BuildContext context) async {
     List<Prodotto> responseList = await productService.getProdotti();
     List<Widget> listItems = [];
@@ -111,15 +92,13 @@ class _ProductsScrollerState extends State<ProductsScroller> {
         listItems.add(
           GestureDetector(
             key: UniqueKey(),
-            onTap: () {
-              Get.to(ProductDetailsPage(prodotto: element));
-            },
+            onTap: () {},
             child: Container(
               width: 150,
               margin: EdgeInsets.only(right: 20),
               height: productHeight,
               decoration: BoxDecoration(
-                  color: getRandomColor(),
+                  color: ApplicationConstants.getRandomColor(),
                   borderRadius: BorderRadius.all(Radius.circular(20.0))),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
@@ -143,6 +122,42 @@ class _ProductsScrollerState extends State<ProductsScroller> {
                           Text(
                             element.categoria,
                             style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    SizedBox(
+                                      height: 30,
+                                      width: 40,
+                                      child: IconButton(
+                                        icon: Icon(Icons.mode_edit),
+                                        onPressed: () {
+                                          print("Edit ${element.nome}");
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 30,
+                                      width: 30,
+                                      child: IconButton(
+                                        icon: Icon(Icons.delete),
+                                        onPressed: () async {
+                                          print("Remove: ${element.nome}");
+                                          await productService.removeProduct(
+                                              id: element.id);
+                                          this.setState(() {});
+                                        },
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
                         ],
                       ),

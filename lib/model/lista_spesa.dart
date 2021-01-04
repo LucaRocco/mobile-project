@@ -55,13 +55,12 @@ class ListaSpesa {
 
   factory ListaSpesa.clone(ListaSpesa l) {
     return ListaSpesa(
-      id: l.id,
-      nome: l.nome,
-      descrizione: l.descrizione,
-      numeroPartecipanti: l.numeroPartecipanti,
-      numeroProdotti: l.numeroProdotti,
-      partecipanti: l.partecipanti.map((u) => u.clone()).toList(),
-      prodotti: l.prodotti.map((p) => p.clone()).toList()
-    );
+        id: l.id,
+        nome: l.nome,
+        descrizione: l.descrizione,
+        numeroPartecipanti: l.numeroPartecipanti,
+        numeroProdotti: l.numeroProdotti,
+        partecipanti: l.partecipanti.map((u) => u.clone()).toList(),
+        prodotti: l.prodotti.map((p) => p.clone()).toList());
   }
 }

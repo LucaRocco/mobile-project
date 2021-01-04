@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:in_expense/internationalization/app_localizations.dart';
-import 'package:in_expense/page/login.dart';
 import 'package:in_expense/model/user.dart';
+import 'package:in_expense/page/login.dart';
 import 'package:in_expense/service/account_service.dart';
 
 class VerificationCodePage extends StatefulWidget {

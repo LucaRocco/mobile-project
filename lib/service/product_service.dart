@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:in_expense/constant/application_constants.dart';
 import 'package:in_expense/model/prodotto.dart';
-import 'package:in_expense/model/request/prodotto_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductService {
@@ -37,5 +36,18 @@ class ProductService {
     print(response.body);
     if (response.statusCode != 200) throw Error();
     return Prodotto.fromJson(jsonDecode(response.body));
+  }
+
+  Future<void> removeProduct({int id}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    http.Response response = await http.delete(
+      ApplicationConstants.serverUrl + "/prodotto/$id",
+      headers: (<String, String>{
+        "Authorization": "Bearer " + prefs.getString("token"),
+        "Content-Type": "application/json"
+      }),
+    );
+
+    if(response.statusCode != 200) throw Error();
   }
 }

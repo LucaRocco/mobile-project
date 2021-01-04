@@ -44,7 +44,9 @@ class HomePage extends StatelessWidget {
                           decoration: new BoxDecoration(
                               color: Color(0xFF18D191),
                               borderRadius: new BorderRadius.circular(9.0)),
-                          child: new Text(AppLocalizations.of(context).translate("login_con_email"),
+                          child: new Text(
+                              AppLocalizations.of(context)
+                                  .translate("login_con_email"),
                               style: new TextStyle(
                                   fontSize: 20.0, color: Colors.white))),
                     ),

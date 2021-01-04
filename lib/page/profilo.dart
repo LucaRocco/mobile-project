@@ -18,7 +18,6 @@ class ProfiloPage extends StatefulWidget {
 }
 
 class _ProfiloPageState extends State<ProfiloPage> {
-  File _image;
   TextEditingController nomeController = TextEditingController();
   TextEditingController cognomeController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -34,12 +33,14 @@ class _ProfiloPageState extends State<ProfiloPage> {
         actions: [
           ButtonBar(
             children: [
-              updated ? TextButton(
-                onPressed: _savePressed,
-                child: Text(
-                AppLocalizations.of(context).translate("salva"),
-                style: TextStyle(color: Colors.deepOrange),
-              )) : Text(""),
+              updated
+                  ? TextButton(
+                      onPressed: _savePressed,
+                      child: Text(
+                        AppLocalizations.of(context).translate("salva"),
+                        style: TextStyle(color: Colors.deepOrange),
+                      ))
+                  : Text(""),
             ],
           )
         ],
@@ -48,7 +49,7 @@ class _ProfiloPageState extends State<ProfiloPage> {
           future: accountService.getUserFromBE(),
           builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
             if (snapshot.hasData) {
-              if(!updated) {
+              if (!updated) {
                 user = snapshot.data;
                 nomeController.text = snapshot.data.nome;
                 cognomeController.text = snapshot.data.cognome;
@@ -217,21 +218,25 @@ class _ProfiloPageState extends State<ProfiloPage> {
   }
 
   _imgFromCamera() async {
+    // ignore: deprecated_member_use
     File image = await ImagePicker.pickImage(
         source: ImageSource.camera, imageQuality: 50);
-    setState(() {
-      _image = image;
+    user.image = await cloudinaryService.uploadImage(image);
+    User updatedUser = await accountService.updateProfile(user);
+    print("User Image: " + user.image);
+    this.setState(() {
+      this.user = updatedUser;
     });
   }
 
   _imgFromGallery() async {
+    // ignore: deprecated_member_use
     File image = await ImagePicker.pickImage(
         source: ImageSource.gallery, imageQuality: 50);
     user.image = await cloudinaryService.uploadImage(image);
     User updatedUser = await accountService.updateProfile(user);
     print("User Image: " + user.image);
     this.setState(() {
-      _image = image;
       this.user = updatedUser;
     });
   }
@@ -269,7 +274,7 @@ class _ProfiloPageState extends State<ProfiloPage> {
   }
 
   void _onChange(String value) {
-    if(nomeController.text != user.nome ||
+    if (nomeController.text != user.nome ||
         cognomeController.text != user.cognome ||
         emailController.text != user.email) {
       this.setState(() {

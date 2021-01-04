@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:in_expense/constant/application_constants.dart';
 import 'package:in_expense/model/lista_spesa.dart';
 import 'package:in_expense/model/prodotto.dart';
 import 'package:in_expense/model/user.dart';
@@ -33,36 +36,29 @@ class ListDetailPage extends StatefulWidget {
 class _ListDetailPageState extends State<ListDetailPage> {
   _ListDetailPageState({this.listaSpesa});
 
-  final ListaSpesa listaSpesa;
+  ListaSpesa listaSpesa;
   ListsService listsService = GetIt.I<ListsService>();
   bool isLoading = false;
   int idToRemove = -1;
+  Timer timer;
+
+  @override
+  void initState() {
+    timer = Timer.periodic(Duration(seconds: 5), (timer) { _updateList(); });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     Map<String, double> dataMap = _generateMapOfCategory();
-    List<Color> colors = [
-      Colors.deepOrange,
-      Colors.blue,
-      Colors.yellow,
-      Colors.red,
-      Colors.teal,
-      Colors.grey
-    ];
-
-    Map<String, Widget> category2image = {
-      'Alimenti': Image.asset('assets/images/category_eat.png'),
-      'Utilita': Image.asset('assets/images/category_utility.png'),
-      'Bevande': Image.asset('assets/images/category_drink.png'),
-      'Casa': Icon(Icons.home, color: Colors.black, size: 40,),
-      'Benessere': Image.asset('assets/images/category_healthy.png')
-    };
+    sortProducts();
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
+            timer.cancel();
             Get.back(result: listaSpesa);
           },
         ),
@@ -99,7 +95,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
                         animationDuration: Duration(milliseconds: 1000),
                         chartLegendSpacing: 32,
                         chartRadius: MediaQuery.of(context).size.width / 3.2,
-                        colorList: colors,
+                        colorList: ApplicationConstants.colors,
                         initialAngleInDegree: 0,
                         chartType: ChartType.ring,
                         ringStrokeWidth: 7,
@@ -196,13 +192,21 @@ class _ListDetailPageState extends State<ListDetailPage> {
                 ),
                 IconButton(
                   icon: Icon(Icons.add),
-                  onPressed: () {
-                    Get.to(ProductChoosePage(
+                  onPressed: () async {
+                    List<Prodotto> prodottiAggiornati =
+                        await Get.to(ProductChoosePage(
                       listaId: listaSpesa.id,
                       productsAlreadyPresent: listaSpesa.prodotti == null
                           ? List<Prodotto>()
                           : listaSpesa.prodotti,
                     ));
+                    if (prodottiAggiornati != null) {
+                      this.setState(() {
+                        this.listaSpesa.prodotti = prodottiAggiornati;
+                        this.listaSpesa.numeroProdotti =
+                            prodottiAggiornati.length;
+                      });
+                    }
                   },
                   color: Colors.grey,
                 )
@@ -231,7 +235,8 @@ class _ListDetailPageState extends State<ListDetailPage> {
                               border: new Border(
                                   right: new BorderSide(
                                       width: 1.0, color: Colors.black))),
-                          child: category2image[prodotto.categoria],
+                          child: ApplicationConstants
+                              .category2image[prodotto.categoria],
                         ),
                         title: Text(
                           prodotto.nome,
@@ -250,10 +255,11 @@ class _ListDetailPageState extends State<ListDetailPage> {
                           height: 100,
                           width: 100,
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               (isLoading && prodotto.id == idToRemove)
                                   ? Padding(
-                                      padding: EdgeInsets.only(right: 10),
+                                      padding: EdgeInsets.only(left: 15),
                                       child: SizedBox(
                                           height: 15,
                                           width: 15,
@@ -353,7 +359,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
         .toList();
   }
 
-  _onRemoveProductPressed(idProdotto) async {
+  void _onRemoveProductPressed(idProdotto) async {
     this.setState(() {
       isLoading = true;
       idToRemove = idProdotto;
@@ -368,7 +374,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
     });
   }
 
-  _openParticipantsDetails() async {
+  void _openParticipantsDetails() async {
     List<User> participants = await Get.to(ParticipantsDetails(
       users: listaSpesa.partecipanti,
       email: (await SharedPreferences.getInstance()).getString("email"),
@@ -376,5 +382,37 @@ class _ListDetailPageState extends State<ListDetailPage> {
     ));
     listaSpesa.partecipanti = participants;
     this.setState(() {});
+  }
+
+  void _updateList() async {
+    ListaSpesa ls = await listsService.getListById(this.listaSpesa.id);
+    this.setState(() {
+      this.listaSpesa = ls;
+    });
+    print("Refreshed List");
+  }
+
+  void sortProducts() {
+    List<Prodotto> completedProduct = List<Prodotto>();
+    List<Prodotto> uncompletedProduct = List<Prodotto>();
+
+    List<Prodotto> prodotti = List<Prodotto>();
+    prodotti.addAll(listaSpesa.prodotti);
+    prodotti.removeWhere((element) => element.dataAcquisto != null);
+    completedProduct = prodotti;
+
+    prodotti = List<Prodotto>();
+    prodotti.addAll(listaSpesa.prodotti);
+    prodotti.removeWhere((element) => element.dataAcquisto == null);
+    uncompletedProduct = prodotti;
+
+    completedProduct.sort((a, b) => a.nome.compareTo(b.nome));
+    uncompletedProduct.sort((a, b) => a.nome.compareTo(b.nome));
+
+    prodotti = List<Prodotto>();
+    prodotti.addAll(completedProduct);
+    prodotti.addAll(uncompletedProduct);
+
+    listaSpesa.prodotti = prodotti;
   }
 }

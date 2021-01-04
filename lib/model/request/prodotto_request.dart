@@ -4,12 +4,13 @@ class ProductRequest {
   String categoria;
   int idListaDestinazione;
 
-  ProductRequest({this.id, this.nome, this.categoria, this.idListaDestinazione});
+  ProductRequest(
+      {this.id, this.nome, this.categoria, this.idListaDestinazione});
 
   Map toJson() => {
-    "id": id,
-    "nome": nome,
-    "categoria": categoria,
-    "idListaDestinazione": idListaDestinazione
-  };
+        "id": id,
+        "nome": nome,
+        "categoria": categoria,
+        "idListaDestinazione": idListaDestinazione
+      };
 }

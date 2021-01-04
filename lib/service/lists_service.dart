@@ -18,12 +18,11 @@ class ListsService {
               "Authorization": "Bearer " + prefs.getString("token")
             }));
     if (response.statusCode != 200) throw Error();
-    print(response.body);
     var listeObjJson = jsonDecode(response.body) as List;
     return listeObjJson.map((lista) => ListaSpesa.fromJson(lista)).toList();
   }
 
-  Future<ListaSpesa> saveList(
+  Future<void> saveList(
       {String nomeLista, String descrizioneLista}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     http.Response response = await http.post(
@@ -46,6 +45,9 @@ class ListsService {
             }),
             body: jsonEncode(list));
     if (response.statusCode != 200) throw Error();
+    return (jsonDecode(response.body) as List)
+        .map((prodotto) => Prodotto.fromJson(prodotto))
+        .toList();
   }
 
   deleteProductFromList(idLista, idProdotto) async {
@@ -56,8 +58,6 @@ class ListsService {
           "Authorization": "Bearer " + prefs.getString("token"),
           "Content-Type": "application/json"
         }));
-    print(response.statusCode);
-    print(response.body);
     if (response.statusCode != 200) throw Error();
     return (jsonDecode(response.body) as List)
         .map((prodotto) => Prodotto.fromJson(prodotto))
@@ -80,7 +80,6 @@ class ListsService {
   }
 
   Future<List<User>> removeParticipantFromList(String email, idLista) async {
-    print("Deleting $email");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     http.Response response = await http.delete(
         ApplicationConstants.serverUrl +
@@ -108,5 +107,17 @@ class ListsService {
     return (jsonDecode(response.body) as List)
         .map((prodotto) => Prodotto.fromJson(prodotto))
         .toList();
+  }
+
+  Future<ListaSpesa> getListById(int idLista) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    http.Response response = await http.get(
+      ApplicationConstants.serverUrl + "/lista/$idLista",
+        headers: (<String, String>{
+          "Authorization": "Bearer " + prefs.getString("token"),
+          "Content-Type": "application/json"
+        }));
+    if(response.statusCode != 200) throw Error();
+    return ListaSpesa.fromJson(jsonDecode(response.body));
   }
 }

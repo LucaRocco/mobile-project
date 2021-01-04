@@ -35,9 +35,11 @@ class _AddParticipantPageState extends State<AddParticipantPage> {
           partecipantiDaAggiungere.isNotEmpty
               ? TextButton(
                   onPressed: () async {
+                    buildShowDialog(context);
                     var participants = await listsService.addParticipantsToList(
                         partecipantiDaAggiungere.map((e) => e.email).toList(),
                         lista.id);
+                    Get.close(1);
                     Get.back(result: participants);
                   },
                   child: Text(
@@ -85,8 +87,8 @@ class _AddParticipantPageState extends State<AddParticipantPage> {
                   trailing: IconButton(
                     icon: Icon(
                       partecipantiDaAggiungere.contains(snapshot.data[index])
-                          ? Icons.remove
-                          : Icons.add,
+                          ? Icons.person_remove_alt_1_outlined
+                          : Icons.person_add_alt,
                       color: partecipantiDaAggiungere
                               .contains(snapshot.data[index])
                           ? Colors.deepOrange
@@ -120,6 +122,18 @@ class _AddParticipantPageState extends State<AddParticipantPage> {
           }
         },
       ),
+    );
+  }
+
+  buildShowDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 }
@@ -159,7 +173,7 @@ class DataSearch extends SearchDelegate<List<User>> {
                         ),
                         trailing: IconButton(
                           icon: Icon(
-                            Icons.add,
+                            Icons.group_add_outlined,
                             color: Colors.green,
                           ),
                           onPressed: () async {
@@ -185,16 +199,16 @@ class DataSearch extends SearchDelegate<List<User>> {
   Widget buildSuggestions(BuildContext context) {
     return ListView();
   }
+}
 
-  buildShowDialog(BuildContext context) {
-    return showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
-  }
+buildShowDialog(BuildContext context) {
+  return showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    },
+  );
 }

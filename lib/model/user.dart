@@ -1,6 +1,7 @@
 class User {
-  User({this.nome, this.cognome, this.email, this.image});
+  User({this.userId, this.nome, this.cognome, this.email, this.image});
 
+  int userId;
   String nome;
   String cognome;
   String email;
@@ -8,6 +9,7 @@ class User {
 
   factory User.fromJson(json) {
     return User(
+        userId: json['userId'],
         nome: json['nome'],
         cognome: json['cognome'],
         email: json['email'],
@@ -29,10 +31,10 @@ class User {
 
   User clone() {
     return User(
-      nome: this.nome,
-      cognome: this.cognome,
-      email: this.email,
-      image: this.image
-    );
+        userId: this.userId,
+        nome: this.nome,
+        cognome: this.cognome,
+        email: this.email,
+        image: this.image);
   }
 }

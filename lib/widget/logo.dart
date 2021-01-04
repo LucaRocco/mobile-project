@@ -23,8 +23,7 @@ class Logo extends StatelessWidget {
           height: 60.0,
           width: 60.0,
           decoration: new BoxDecoration(
-              borderRadius: new BorderRadius.circular(50.0),
-              color: Colors.red),
+              borderRadius: new BorderRadius.circular(50.0), color: Colors.red),
           child: new Icon(
             Icons.person,
             color: Colors.white,

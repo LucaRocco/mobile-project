@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:in_expense/model/user.dart';
 
@@ -32,7 +31,9 @@ class Prodotto {
         image: json['foto'],
         dataAcquisto: json['dataAcquisto'],
         quantita: json['quantita'],
-        utenteAcquisto: json['utenteAcquisto'] != null ? User.fromJson(json['utenteAcquisto']) : null,
+        utenteAcquisto: json['utenteAcquisto'] != null
+            ? User.fromJson(json['utenteAcquisto'])
+            : null,
         originalId: json['originalId']);
   }
 

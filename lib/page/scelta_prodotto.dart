@@ -3,11 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:in_expense/internationalization/app_localizations.dart';
-import 'package:in_expense/model/lista_spesa.dart';
 import 'package:in_expense/model/prodotto.dart';
 import 'package:in_expense/model/request/prodotto_request.dart';
-import 'package:in_expense/page/dettagli_lista.dart';
-import 'package:in_expense/page/liste_attive.dart';
 import 'package:in_expense/service/lists_service.dart';
 import 'package:in_expense/service/product_service.dart';
 
@@ -30,6 +27,18 @@ class _ProductChoosePageState extends State<ProductChoosePage> {
   List<Prodotto> prodottiDaAggiungere = List<Prodotto>();
   ProductService productService = GetIt.I<ProductService>();
   ListsService listsService = GetIt.I<ListsService>();
+
+  Map<String, Widget> category2image = {
+    'Alimenti': Image.asset('assets/images/category_eat.png'),
+    'Utilita': Image.asset('assets/images/category_utility.png'),
+    'Bevande': Image.asset('assets/images/category_drink.png'),
+    'Casa': Icon(
+      Icons.home,
+      color: Colors.black,
+      size: 40,
+    ),
+    'Benessere': Image.asset('assets/images/category_healthy.png')
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -57,38 +66,66 @@ class _ProductChoosePageState extends State<ProductChoosePage> {
             (BuildContext context, AsyncSnapshot<List<Prodotto>> snapshot) {
           if (snapshot.hasData) {
             List<Prodotto> prodotti = snapshot.data;
-            print(productsAreadyPresent.map((e) => e.originalId));
-            print(prodotti.map((e) => e.id));
-            prodotti.removeWhere(
-                (prodotto) => productsAreadyPresent.any((element) => element.originalId == prodotto.id));
+            prodotti.removeWhere((prodotto) => productsAreadyPresent
+                .any((element) => element.originalId == prodotto.id));
             return ListView.builder(
               itemCount: prodotti.length,
               itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("${prodotti[index].nome}",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      Container(
+                return Card(
+                  elevation: 8.0,
+                  margin:
+                      new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        color: Colors.white),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 10.0),
+                      leading: Container(
+                        height: 40,
+                        width: 70,
+                        padding: EdgeInsets.only(right: 12.0),
+                        decoration: new BoxDecoration(
+                            border: new Border(
+                                right: new BorderSide(
+                                    width: 1.0, color: Colors.black))),
+                        child: category2image[prodotti[index].categoria],
+                      ),
+                      title: Text(
+                        prodotti[index].nome,
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                      // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+
+                      subtitle: Row(
+                        children: <Widget>[
+                          Text("${prodotti[index].categoria}",
+                              style: TextStyle(color: Colors.black))
+                        ],
+                      ),
+                      trailing: Container(
+                        height: 100,
+                        width: 50,
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             IconButton(
                                 icon: Icon(
                                   prodottiDaAggiungere.contains(prodotti[index])
-                                      ? Icons.remove
-                                      : Icons.add,
+                                      ? Icons.remove_shopping_cart_outlined
+                                      : Icons.add_shopping_cart_outlined,
                                   color: prodottiDaAggiungere
                                           .contains(prodotti[index])
                                       ? Colors.deepOrange
                                       : Colors.green,
                                 ),
-                                onPressed: () => _onPressed(prodotti[index]))
+                                onPressed: () => _onPressed(prodotti[index])),
                           ],
                         ),
-                      )
-                    ],
+                      ),
+                    ),
                   ),
                 );
               },
@@ -116,20 +153,17 @@ class _ProductChoosePageState extends State<ProductChoosePage> {
 
   _onSavePressed(context) async {
     buildShowDialog(context);
-    await listsService.saveProductsInList(prodottiDaAggiungere
-        .map((prodotto) => ProductRequest(
-            id: prodotto.id,
-            nome: prodotto.nome,
-            categoria: prodotto.categoria,
-            idListaDestinazione: listaId))
-        .toList());
-    List<ListaSpesa> lista = await listsService.getLists();
-    print("ListaId: $listaId");
-    print("liste: $lista");
-    lista.removeWhere((lista) => lista.id != listaId);
-    Get.close(4);
-    Get.to(ListsPage());
-    Get.to(ListDetailPage(listaSpesa: lista[0]));
+    List<Prodotto> prodotti = await listsService.saveProductsInList(
+        prodottiDaAggiungere
+            .map((prodotto) => ProductRequest(
+                id: prodotto.id,
+                nome: prodotto.nome,
+                categoria: prodotto.categoria,
+                idListaDestinazione: listaId))
+            .toList());
+    print("Prodotti Dopo Aggiunta: $prodotti");
+    Get.close(1);
+    Get.back(result: prodotti);
   }
 
   buildShowDialog(BuildContext context) {
@@ -144,7 +178,7 @@ class _ProductChoosePageState extends State<ProductChoosePage> {
     );
   }
 
-  List<Widget> getProductsDividedByCategories(List<Prodotto> prodotti) {
+  void getProductsDividedByCategories(List<Prodotto> prodotti) {
     List<Widget> productsAndCategory = List<Widget>();
     Map<String, List<Prodotto>> category2product =
         _generateMapOfCategory(prodotti);
@@ -158,7 +192,6 @@ class _ProductChoosePageState extends State<ProductChoosePage> {
           ),
         ],
       ));
-      for (Prodotto p in category2product[category]) {}
     }
   }
 
@@ -176,7 +209,5 @@ class _ProductChoosePageState extends State<ProductChoosePage> {
     return result;
   }
 
-  filterList() {
-
-  }
+  filterList() {}
 }
