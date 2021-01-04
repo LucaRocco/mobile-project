@@ -86,5 +86,8 @@ public class ProdottoController {
         return prodottoService.aggiungiCodice(idProdotto, codice);
     }
 
-
+    @DeleteMapping(path = "/{idProdotto}")
+    public ResponseEntity<HttpStatus> removeProduct(@PathVariable("idProdotto") long idProdotto) {
+        return prodottoService.removeProduct(idProdotto);
+    }
 }

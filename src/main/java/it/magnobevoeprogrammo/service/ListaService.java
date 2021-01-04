@@ -40,14 +40,10 @@ public class ListaService {
     @Autowired
     private UserService userService;
 
-    public ResponseEntity<Lista> getListaById(Long idLista) {
+    public ResponseEntity<ListaResponse> getListaById(Long idLista) {
         log.debug("getListaById started");
-        Optional<Lista> listaOptional = listaRepository.findById(idLista);
-        if (listaOptional.isPresent()) {
-            return ResponseEntity.ok().body(listaOptional.get());
-        } else {
-            throw new NotFoundException(402, "Lista non trovata");
-        }
+        Lista lista = listaRepository.findListaById(idLista);
+        return ResponseEntity.ok().body(lista.toResponse());
     }
 
     @Transactional
@@ -79,16 +75,19 @@ public class ListaService {
         return ResponseEntity.ok().build();
     }
 
-    @Transactional
-    public ResponseEntity<HttpStatus> saveProductsToList(List<SaveProdottoRequest> request) {
+    public ResponseEntity<List<ProdottoListaResponse>> saveProductsToList(List<SaveProdottoRequest> request) {
         Lista lista = listaRepository.findListaById(request.get(0).getIdListaDestinazione());
         List<ProdottoLista> prodotti = new ArrayList<>();
         request.forEach(req -> {
             Prodotto prodotto = prodottoRepository.findProdottoById(req.getId());
             prodotti.add(ProdottoLista.fromProdotto(prodotto, lista, req.getQuantita()));
         });
-        prodottoListaRepository.saveAll(prodotti);
-        return ResponseEntity.ok().build();
+
+        List<ProdottoLista> prodottiSalvati = prodottoListaRepository.saveAll(prodotti);
+        List<ProdottoListaResponse> response = lista.getProdotti().stream().map(ProdottoLista::toResponse).collect(toList());
+        response.addAll(prodottiSalvati.stream().map(ProdottoLista::toResponse).collect(toList()));
+
+        return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<List<ProdottoListaResponse>> deleteProductFromList(long productId, long listaId) {

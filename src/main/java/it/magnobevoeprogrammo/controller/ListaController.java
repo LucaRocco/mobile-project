@@ -26,7 +26,7 @@ public class ListaController {
 
     @Transactional
     @GetMapping(path = "/{idLista}")
-    public ResponseEntity<Lista> getListaById(@PathVariable("idLista") Long idLista) {
+    public ResponseEntity<ListaResponse> getListaById(@PathVariable("idLista") Long idLista) {
         return listaService.getListaById(idLista);
     }
 
@@ -47,7 +47,7 @@ public class ListaController {
     }
 
     @PostMapping(path = "/prodotti")
-    public ResponseEntity<HttpStatus> saveProductsToList(@RequestBody List<SaveProdottoRequest> request) {
+    public ResponseEntity<List<ProdottoListaResponse>> saveProductsToList(@RequestBody List<SaveProdottoRequest> request) {
         return listaService.saveProductsToList(request);
     }
 

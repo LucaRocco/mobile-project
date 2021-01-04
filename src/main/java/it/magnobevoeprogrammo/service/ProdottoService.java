@@ -101,4 +101,8 @@ public class ProdottoService {
         }
     }
 
+    public ResponseEntity<HttpStatus> removeProduct(long idProdotto) {
+        prodottoRepository.delete(prodottoRepository.findProdottoById(idProdotto));
+        return ResponseEntity.ok().build();
+    }
 }
