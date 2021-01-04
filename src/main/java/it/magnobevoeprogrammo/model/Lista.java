@@ -23,7 +23,7 @@ public class Lista {
     private List<User> users;
     private Long creatorId;
 
-    public ListaResponse toResponse() {
+    public ListaResponse toResponse(Long userId) {
         ListaResponse listaResponse = new ListaResponse();
         listaResponse.setId(this.id);
         listaResponse.setCreatorId(this.creatorId);
@@ -32,6 +32,7 @@ public class Lista {
         listaResponse.setNome(this.nome);
         listaResponse.setProdotti(this.prodotti.stream().map(ProdottoLista::toResponse).collect(Collectors.toList()));
         listaResponse.setUsers(this.users);
+        listaResponse.setUserId(userId);
         return listaResponse;
     }
 }

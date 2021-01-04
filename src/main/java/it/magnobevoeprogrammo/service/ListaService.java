@@ -42,15 +42,16 @@ public class ListaService {
 
     public ResponseEntity<ListaResponse> getListaById(Long idLista) {
         log.debug("getListaById started");
+        User user = userService.getUser();
         Lista lista = listaRepository.findListaById(idLista);
-        return ResponseEntity.ok().body(lista.toResponse());
+        return ResponseEntity.ok().body(lista.toResponse(user.getUserId()));
     }
 
     @Transactional
     public ResponseEntity<List<ListaResponse>> getAllLists() {
         log.debug("getAllLists() started");
         User user = userService.getUser();
-        List<ListaResponse> ll = user.getListe().stream().map(Lista::toResponse).collect(toList());
+        List<ListaResponse> ll = user.getListe().stream().map(l -> l.toResponse(user.getUserId())).collect(toList());
         ll.forEach(l -> l.getProdotti().forEach(p -> System.out.println(p.getDataAcquisto())));
         return ResponseEntity.ok().body(ll);
     }

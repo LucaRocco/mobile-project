@@ -15,4 +15,5 @@ public class ListaResponse {
     private List<ProdottoListaResponse> prodotti;
     private List<User> users;
     private Long creatorId;
+    private Long userId;
 }
