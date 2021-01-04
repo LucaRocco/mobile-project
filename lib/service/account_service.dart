@@ -53,9 +53,6 @@ class AccountService {
       }),
     );
 
-    print(response.body);
-    print(response.statusCode);
-
     if (response.statusCode != 200) throw Error();
     return data;
   }
@@ -101,7 +98,6 @@ class AccountService {
     });
     setUserStatus(UserStatus.LOGGED);
     prefs.setString("token", session.idToken.jwtToken);
-    print(session.idToken.jwtToken);
     return session;
   }
 
@@ -227,7 +223,18 @@ class AccountService {
           "Content-Type": "application/json",
           "Authorization": "Bearer " + prefs.getString("token")
         }));
-    print(response.statusCode);
+    if (response.statusCode != 200) throw Error();
+    return (jsonDecode(response.body) as List).map((user) => User.fromJson(user)).toList();
+  }
+
+  Future<List<User>> searchUserByNameAndEmailLike(String query, idLista) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    http.Response response =
+    await http.get(ApplicationConstants.serverUrl + "/user/search?query=$query&idLista=$idLista",
+        headers: (<String, String>{
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + prefs.getString("token")
+        }));
     if (response.statusCode != 200) throw Error();
     return (jsonDecode(response.body) as List).map((user) => User.fromJson(user)).toList();
   }

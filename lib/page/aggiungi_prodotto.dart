@@ -20,6 +20,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
   TextEditingController categoriaController = new TextEditingController();
   var dropdownValue = "Scegli una categoria";
   var isButtonEnabled = false;
+  var isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +94,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
                       items: <String>[
                         'Scegli una categoria',
                         'Alimenti',
-                        'Tecnologia',
+                        'Utilita',
                         'Bevande',
                         'Casa',
                         'Benessere'
@@ -118,24 +119,32 @@ class _ProductAddPageState extends State<ProductAddPage> {
                     child: GestureDetector(
                       onTap: () async {
                         if (isButtonEnabled) {
+                          setState(() {
+                            this.isLoading = true;
+                          });
                           await productService.saveProduct(
                               nome: nomeController.text,
                               categoria: dropdownValue);
                           Get.offAll(ListsPage());
                         }
                       },
-                      child: new Container(
-                          alignment: Alignment.center,
-                          height: 60.0,
-                          decoration: new BoxDecoration(
-                              color:
-                                  isButtonEnabled ? Colors.deepOrange : Colors.grey,
-                              borderRadius: new BorderRadius.circular(9.0)),
-                          child: new Text(
-                              AppLocalizations.of(context)
-                                  .translate("salva"),
-                              style: new TextStyle(
-                                  fontSize: 20.0, color: Colors.white))),
+                      child: isLoading
+                          ? Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : new Container(
+                              alignment: Alignment.center,
+                              height: 60.0,
+                              decoration: new BoxDecoration(
+                                  color: isButtonEnabled
+                                      ? Colors.deepOrange
+                                      : Colors.grey,
+                                  borderRadius: new BorderRadius.circular(9.0)),
+                              child: new Text(
+                                  AppLocalizations.of(context)
+                                      .translate("salva"),
+                                  style: new TextStyle(
+                                      fontSize: 20.0, color: Colors.white))),
                     ),
                   ),
                 )

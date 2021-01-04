@@ -9,6 +9,7 @@ import 'package:in_expense/page/scegli_partecipanti.dart';
 import 'package:in_expense/page/scelta_prodotto.dart';
 import 'package:in_expense/service/lists_service.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /*classe per i "DETTAGLI LISTA" ovvero quando sarà aperta una determinata lista saranno visibili i vari dettagli come:
  -nome lista
@@ -34,7 +35,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
 
   final ListaSpesa listaSpesa;
   ListsService listsService = GetIt.I<ListsService>();
-  bool isRemoveLoading = false;
+  bool isLoading = false;
   int idToRemove = -1;
 
   @override
@@ -49,8 +50,22 @@ class _ListDetailPageState extends State<ListDetailPage> {
       Colors.grey
     ];
 
+    Map<String, Widget> category2image = {
+      'Alimenti': Image.asset('assets/images/category_eat.png'),
+      'Utilita': Image.asset('assets/images/category_utility.png'),
+      'Bevande': Image.asset('assets/images/category_drink.png'),
+      'Casa': Icon(Icons.home, color: Colors.black, size: 40,),
+      'Benessere': Image.asset('assets/images/category_healthy.png')
+    };
+
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Get.back(result: listaSpesa);
+          },
+        ),
         backgroundColor: Colors.transparent,
         actionsIconTheme: IconThemeData(color: Colors.deepOrange),
         title: Center(
@@ -88,7 +103,8 @@ class _ListDetailPageState extends State<ListDetailPage> {
                         initialAngleInDegree: 0,
                         chartType: ChartType.ring,
                         ringStrokeWidth: 7,
-                        formatChartValues: (value) => "$value €",
+                        formatChartValues: (value) =>
+                            "$value".replaceAll(".0", ""),
                         legendOptions: LegendOptions(
                           showLegendsInRow: false,
                           legendPosition: LegendPosition.right,
@@ -121,11 +137,16 @@ class _ListDetailPageState extends State<ListDetailPage> {
                 ),
                 IconButton(
                   icon: Icon(Icons.add),
-                  onPressed: () {
-                    Get.to(AddParticipantPage(
-                      participantsAlreadyPresent: listaSpesa.partecipanti,
-                      lista: listaSpesa,
-                    ));
+                  onPressed: () async {
+                    var result = await Get.to(
+                      AddParticipantPage(
+                        lista: listaSpesa,
+                      ),
+                    );
+                    if (result != null)
+                      setState(() {
+                        this.listaSpesa.partecipanti = result;
+                      });
                   },
                   color: Colors.grey,
                 )
@@ -134,7 +155,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
           ),
           GestureDetector(
             onTap: () {
-              Get.to(PartecipantsDetails(users: listaSpesa.partecipanti));
+              _openParticipantsDetails();
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -149,8 +170,9 @@ class _ListDetailPageState extends State<ListDetailPage> {
                   padding: EdgeInsets.only(right: 10),
                   child: Center(
                     child: TextButton(
-                      onPressed: () => Get.to(
-                          PartecipantsDetails(users: listaSpesa.partecipanti)),
+                      onPressed: () {
+                        _openParticipantsDetails();
+                      },
                       child: Text(
                         "MORE",
                         style: TextStyle(
@@ -190,39 +212,98 @@ class _ListDetailPageState extends State<ListDetailPage> {
           Column(
             children: listaSpesa.prodotti
                 .map(
-                  (prodotto) => Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(prodotto.nome),
-                          Container(
-                            child: Row(
-                              children: [
-                                (isRemoveLoading && prodotto.id == idToRemove)
-                                    ? Padding(
-                                        padding: EdgeInsets.only(right: 10),
-                                        child: SizedBox(
-                                            height: 15,
-                                            width: 15,
-                                            child: CircularProgressIndicator()))
-                                    : IconButton(
-                                        icon: Icon(Icons.remove),
-                                        onPressed: () {
-                                          _onRemoveProductPressed(prodotto.id);
-                                        }),
-                                IconButton(
-                                    icon: Icon(Icons.check), onPressed: null)
-                              ],
-                            ),
-                          )
-                        ],
-                      )),
+                  (prodotto) => Card(
+                    elevation: 8.0,
+                    margin: new EdgeInsets.symmetric(
+                        horizontal: 10.0, vertical: 6.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          color: Colors.white),
+                      child: ListTile(
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 10.0),
+                        leading: Container(
+                          height: 40,
+                          width: 70,
+                          padding: EdgeInsets.only(right: 12.0),
+                          decoration: new BoxDecoration(
+                              border: new Border(
+                                  right: new BorderSide(
+                                      width: 1.0, color: Colors.black))),
+                          child: category2image[prodotto.categoria],
+                        ),
+                        title: Text(
+                          prodotto.nome,
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                        // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+
+                        subtitle: Row(
+                          children: <Widget>[
+                            Text("Quantità: ${prodotto.quantita}",
+                                style: TextStyle(color: Colors.black))
+                          ],
+                        ),
+                        trailing: Container(
+                          height: 100,
+                          width: 100,
+                          child: Row(
+                            children: [
+                              (isLoading && prodotto.id == idToRemove)
+                                  ? Padding(
+                                      padding: EdgeInsets.only(right: 10),
+                                      child: SizedBox(
+                                          height: 15,
+                                          width: 15,
+                                          child: CircularProgressIndicator()))
+                                  : IconButton(
+                                      icon: Icon(
+                                        Icons.delete,
+                                        color: Colors.black,
+                                      ),
+                                      iconSize: 20,
+                                      onPressed: () {
+                                        _onRemoveProductPressed(prodotto.id);
+                                      }),
+                              IconButton(
+                                  icon: Icon(prodotto.dataAcquisto != null
+                                      ? Icons.check_box
+                                      : Icons.check_box_outline_blank),
+                                  onPressed: () async {
+                                    buildShowDialog(context);
+                                    var prodottiAggiornati =
+                                        await listsService.changeProductStatus(
+                                            prodotto.id, listaSpesa.id);
+                                    this.setState(() {
+                                      listaSpesa.prodotti = prodottiAggiornati;
+                                    });
+                                    Get.close(1);
+                                  })
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 )
                 .toList(),
           )
         ],
       ),
+    );
+  }
+
+  buildShowDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 
@@ -274,16 +355,26 @@ class _ListDetailPageState extends State<ListDetailPage> {
 
   _onRemoveProductPressed(idProdotto) async {
     this.setState(() {
-      isRemoveLoading = true;
+      isLoading = true;
       idToRemove = idProdotto;
     });
     print("ProdottoDaRimuovere: $idProdotto");
     List<Prodotto> prodotti =
         await listsService.deleteProductFromList(listaSpesa.id, idProdotto);
     this.setState(() {
-      isRemoveLoading = false;
+      isLoading = false;
       idToRemove = -1;
       this.listaSpesa.prodotti = prodotti;
     });
+  }
+
+  _openParticipantsDetails() async {
+    List<User> participants = await Get.to(ParticipantsDetails(
+      users: listaSpesa.partecipanti,
+      email: (await SharedPreferences.getInstance()).getString("email"),
+      lista: listaSpesa,
+    ));
+    listaSpesa.partecipanti = participants;
+    this.setState(() {});
   }
 }

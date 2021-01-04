@@ -57,8 +57,10 @@ class _ProductChoosePageState extends State<ProductChoosePage> {
             (BuildContext context, AsyncSnapshot<List<Prodotto>> snapshot) {
           if (snapshot.hasData) {
             List<Prodotto> prodotti = snapshot.data;
+            print(productsAreadyPresent.map((e) => e.originalId));
+            print(prodotti.map((e) => e.id));
             prodotti.removeWhere(
-                (prodotto) => productsAreadyPresent.contains(prodotto));
+                (prodotto) => productsAreadyPresent.any((element) => element.originalId == prodotto.id));
             return ListView.builder(
               itemCount: prodotti.length,
               itemBuilder: (context, index) {
@@ -172,5 +174,9 @@ class _ProductChoosePageState extends State<ProductChoosePage> {
       }
     }
     return result;
+  }
+
+  filterList() {
+
   }
 }

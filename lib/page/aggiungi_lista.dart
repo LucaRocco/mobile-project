@@ -7,7 +7,6 @@ import 'package:get_it/get_it.dart';
 import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/page/liste_attive.dart';
 import 'package:in_expense/service/lists_service.dart';
-import 'package:in_expense/service/product_service.dart';
 
 class AggiungiListaPage extends StatefulWidget {
   @override
@@ -18,6 +17,8 @@ class _AggiungiListaPageState extends State<AggiungiListaPage> {
   ListsService listsService = GetIt.I<ListsService>();
   TextEditingController nomeController = new TextEditingController();
   TextEditingController descrizioneController = new TextEditingController();
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,25 +78,33 @@ class _AggiungiListaPageState extends State<AggiungiListaPage> {
                   child: Padding(
                       padding: const EdgeInsets.only(
                           left: 16.0, right: 16.0, top: 40.0),
-                      child: GestureDetector(
-                        onTap: () async {
-                          await listsService.saveList(
-                              nomeLista: nomeController.text,
-                              descrizioneLista: descrizioneController.text);
-                          Get.offAll(ListsPage());
-                        },
-                        child: new Container(
-                            alignment: Alignment.center,
-                            height: 60.0,
-                            decoration: new BoxDecoration(
-                                color: Colors.deepOrange,
-                                borderRadius: new BorderRadius.circular(9.0)),
-                            child: new Text(
-                                AppLocalizations.of(context)
-                                    .translate("salva"),
-                                style: new TextStyle(
-                                    fontSize: 20.0, color: Colors.white))),
-                      )),
+                      child: isLoading
+                          ? Center(child: CircularProgressIndicator())
+                          : GestureDetector(
+                              onTap: () async {
+                                setState(() {
+                                  this.isLoading = true;
+                                });
+                                await listsService.saveList(
+                                    nomeLista: nomeController.text,
+                                    descrizioneLista:
+                                        descrizioneController.text);
+                                Get.offAll(ListsPage());
+                              },
+                              child: new Container(
+                                  alignment: Alignment.center,
+                                  height: 60.0,
+                                  decoration: new BoxDecoration(
+                                      color: Colors.deepOrange,
+                                      borderRadius:
+                                          new BorderRadius.circular(9.0)),
+                                  child: new Text(
+                                      AppLocalizations.of(context)
+                                          .translate("salva"),
+                                      style: new TextStyle(
+                                          fontSize: 20.0,
+                                          color: Colors.white))),
+                            )),
                 )
               ],
             )

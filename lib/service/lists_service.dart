@@ -12,13 +12,12 @@ class ListsService {
   Future<List<ListaSpesa>> getLists() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     http.Response response =
-    await http.get(ApplicationConstants.serverUrl + "/lista",
-        headers: (<String, String>{
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + prefs.getString("token")
-        }));
+        await http.get(ApplicationConstants.serverUrl + "/lista",
+            headers: (<String, String>{
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + prefs.getString("token")
+            }));
     if (response.statusCode != 200) throw Error();
-    print(response.statusCode);
     print(response.body);
     var listeObjJson = jsonDecode(response.body) as List;
     return listeObjJson.map((lista) => ListaSpesa.fromJson(lista)).toList();
@@ -40,14 +39,12 @@ class ListsService {
   saveProductsInList(List<ProductRequest> list) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     http.Response response =
-    await http.post(ApplicationConstants.serverUrl + "/lista/prodotti",
-        headers: (<String, String>{
-          "Authorization": "Bearer " + prefs.getString("token"),
-          "Content-Type": "application/json"
-        }),
-        body: jsonEncode(list));
-    print(response.statusCode);
-    print(response.body);
+        await http.post(ApplicationConstants.serverUrl + "/lista/prodotti",
+            headers: (<String, String>{
+              "Authorization": "Bearer " + prefs.getString("token"),
+              "Content-Type": "application/json"
+            }),
+            body: jsonEncode(list));
     if (response.statusCode != 200) throw Error();
   }
 
@@ -62,8 +59,9 @@ class ListsService {
     print(response.statusCode);
     print(response.body);
     if (response.statusCode != 200) throw Error();
-    return (jsonDecode(response.body) as List).map((prodotto) =>
-        Prodotto.fromJson(prodotto)).toList();
+    return (jsonDecode(response.body) as List)
+        .map((prodotto) => Prodotto.fromJson(prodotto))
+        .toList();
   }
 
   Future<List<User>> addParticipantsToList(List<String> emails, idLista) async {
@@ -75,9 +73,40 @@ class ListsService {
           "Content-Type": "application/json"
         }),
         body: jsonEncode(emails));
-    print(response.statusCode);
-    print(response.body);
-    if(response.statusCode != 200) throw Error();
-    return (jsonDecode(response.body) as List).map((partecipant) => User.fromJson(partecipant)).toList();
+    if (response.statusCode != 200) throw Error();
+    return (jsonDecode(response.body) as List)
+        .map((partecipant) => User.fromJson(partecipant))
+        .toList();
+  }
+
+  Future<List<User>> removeParticipantFromList(String email, idLista) async {
+    print("Deleting $email");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    http.Response response = await http.delete(
+        ApplicationConstants.serverUrl +
+            "/lista/$idLista/partecipanti?email=$email",
+        headers: (<String, String>{
+          "Authorization": "Bearer " + prefs.getString("token"),
+          "Content-Type": "application/json"
+        }));
+    if (response.statusCode != 200) throw Error();
+    return (jsonDecode(response.body) as List)
+        .map((partecipant) => User.fromJson(partecipant))
+        .toList();
+  }
+
+  Future<List<Prodotto>> changeProductStatus(
+      int idProdotto, int idLista) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    http.Response response = await http.put(
+        ApplicationConstants.serverUrl + "/lista/$idLista/prodotto/$idProdotto",
+        headers: (<String, String>{
+          "Authorization": "Bearer " + prefs.getString("token"),
+          "Content-Type": "application/json"
+        }));
+    if (response.statusCode != 200) throw Error();
+    return (jsonDecode(response.body) as List)
+        .map((prodotto) => Prodotto.fromJson(prodotto))
+        .toList();
   }
 }

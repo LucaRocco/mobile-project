@@ -5,26 +5,22 @@ import 'package:get_it/get_it.dart';
 import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/model/lista_spesa.dart';
 import 'package:in_expense/model/user.dart';
-import 'package:in_expense/page/dettagli_lista.dart';
-import 'package:in_expense/page/liste_attive.dart';
 import 'package:in_expense/service/account_service.dart';
 import 'package:in_expense/service/lists_service.dart';
 
 class AddParticipantPage extends StatefulWidget {
-  AddParticipantPage({this.participantsAlreadyPresent, this.lista});
+  AddParticipantPage({this.lista});
 
-  final List<User> participantsAlreadyPresent;
   final ListaSpesa lista;
 
   @override
-  _AddParticipantPageState createState() => _AddParticipantPageState(
-      participantsAlreadyPresent: participantsAlreadyPresent, lista: lista);
+  _AddParticipantPageState createState() =>
+      _AddParticipantPageState(lista: lista);
 }
 
 class _AddParticipantPageState extends State<AddParticipantPage> {
-  _AddParticipantPageState({this.participantsAlreadyPresent, this.lista});
+  _AddParticipantPageState({this.lista});
 
-  final List<User> participantsAlreadyPresent;
   final ListaSpesa lista;
 
   List<User> partecipantiDaAggiungere = List<User>();
@@ -40,29 +36,45 @@ class _AddParticipantPageState extends State<AddParticipantPage> {
               ? TextButton(
                   onPressed: () async {
                     var participants = await listsService.addParticipantsToList(
-                        partecipantiDaAggiungere.map((e) => e.email).toList(), lista.id);
-                    lista.partecipanti = participants;
-                    print(participants);
-                    Get.close(5);
-                    Get.to(ListsPage());
-                    Get.to(ListDetailPage(listaSpesa: lista,));
+                        partecipantiDaAggiungere.map((e) => e.email).toList(),
+                        lista.id);
+                    Get.back(result: participants);
                   },
                   child: Text(
                     AppLocalizations.of(context).translate("salva"),
                     style: TextStyle(color: Colors.deepOrange),
                   ),
                 )
-              : Text("")
+              : Text(""),
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () async {
+              var partecipanti = await showSearch(
+                  context: context, delegate: DataSearch(idLista: lista.id));
+              if (partecipanti != null) {
+                this.setState(() {
+                  lista.partecipanti = partecipanti;
+                });
+              }
+            },
+          )
         ],
         backgroundColor: Colors.transparent,
         actionsIconTheme: IconThemeData(color: Colors.deepOrange),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Get.back(result: lista.partecipanti);
+          },
+        ),
       ),
       body: FutureBuilder(
         future: accountService.getFriends(),
         builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
           if (snapshot.hasData) {
-            snapshot.data.removeWhere(
-                (element) => participantsAlreadyPresent.contains(element));
+            snapshot.data
+                .removeWhere((element) => lista.partecipanti.contains(element));
+            print(snapshot.data);
             return ListView.builder(
               itemCount: snapshot.data.length,
               itemBuilder: (context, index) {
@@ -108,6 +120,81 @@ class _AddParticipantPageState extends State<AddParticipantPage> {
           }
         },
       ),
+    );
+  }
+}
+
+class DataSearch extends SearchDelegate<List<User>> {
+  DataSearch({this.idLista});
+
+  final int idLista;
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: () {
+          close(context, null);
+        });
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    AccountService accountService = GetIt.I<AccountService>();
+    ListsService listsService = GetIt.I<ListsService>();
+    return FutureBuilder(
+        future: accountService.searchUserByNameAndEmailLike(query, idLista),
+        builder: (context, AsyncSnapshot<List<User>> snapshot) {
+          if (snapshot.hasData) {
+            return ListView(
+              children: snapshot.data
+                  .map((u) => ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(u.image),
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(
+                            Icons.add,
+                            color: Colors.green,
+                          ),
+                          onPressed: () async {
+                            buildShowDialog(context);
+                            var participants =
+                                await listsService.addParticipantsToList(
+                                    List.of([u.email]), idLista);
+                            close(context, participants);
+                          },
+                        ),
+                        title: Text(u.nome + " " + u.cognome),
+                        subtitle: Text(u.email),
+                      ))
+                  .toList(),
+            );
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        });
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return ListView();
+  }
+
+  buildShowDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 }

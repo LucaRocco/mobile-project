@@ -12,7 +12,6 @@ import 'package:in_expense/model/lista_spesa.dart';
 import 'package:in_expense/page/aggiungi_lista.dart';
 import 'package:in_expense/page/aggiungi_prodotto.dart';
 import 'package:in_expense/page/dettagli_lista.dart';
-import 'package:in_expense/page/profilo.dart';
 import 'package:in_expense/service/lists_service.dart';
 
 class ListScroller extends StatefulWidget {
@@ -30,8 +29,13 @@ class _ListScrollerState extends State<ListScroller> {
   bool isSwitched = false;
   Timer timer;
 
-  Future<Widget> getPostsData() async {
-    responseList = await listsService.getLists();
+  Future<Widget> getPostsData({List<ListaSpesa> listeSpesa}) async {
+    if(listeSpesa == null) {
+      responseList = await listsService.getLists();
+    } else {
+      responseList = listeSpesa;
+    }
+    responseList.sort((a, b) => a.id.compareTo(b.id));
     List<Widget> listItems = [];
     responseList.forEach((list) {
       listItems.add(
@@ -71,8 +75,7 @@ class _ListScrollerState extends State<ListScroller> {
                       Row(
                         children: [
                           Text(
-                            "${list.numeroProdotti} ${AppLocalizations.of(context)
-                                .translate("prodotti")}",
+                            "${list.numeroProdotti} ${AppLocalizations.of(context).translate("prodotti")}",
                             style: const TextStyle(
                                 fontSize: 17, color: Colors.grey),
                           ),
@@ -110,10 +113,18 @@ class _ListScrollerState extends State<ListScroller> {
             }
           }
           return GestureDetector(
-            onTap: () {
-              Get.to(ListDetailPage(
-                listaSpesa: responseList[index],
-              ));
+            onTap: () async {
+              ListaSpesa result = await Get.to(
+                ListDetailPage(
+                  listaSpesa: ListaSpesa.clone(responseList[index]),
+                ),
+              );
+              if(!responseList.contains(result)) {
+                responseList.removeWhere((element) => element.id == result.id);
+                responseList.add(result);
+                data = await getPostsData(listeSpesa: responseList);
+                setState(() {});
+              }
             },
             child: Align(
                 heightFactor: 0.7,
@@ -132,11 +143,12 @@ class _ListScrollerState extends State<ListScroller> {
       double value = controller.offset / 119;
       setState(() {
         topContainer = value;
-        closeTopContainer = controller.offset > 5;
+        //closeTopContainer = controller.offset > 200;
+        closeTopContainer = false;
       });
     });
     //timer =
-      //Timer.periodic(Duration(seconds: 15), (Timer t) => {_refreshData()});
+    //Timer.periodic(Duration(seconds: 15), (Timer t) => {_refreshData()});
   }
 
   Widget data;
@@ -246,7 +258,7 @@ class _ListScrollerState extends State<ListScroller> {
     });
   }
 
-void _refreshData() async {
+  void _refreshData() async {
     var newData = await getPostsData();
     this.setState(() {
       data = newData;

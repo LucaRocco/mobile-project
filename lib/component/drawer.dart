@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:in_expense/page/collaboratori.dart';
 import 'package:in_expense/page/profilo.dart';
 import 'package:in_expense/service/account_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,7 +26,10 @@ class AppDrawer extends StatelessWidget {
                         }),
                     _createDrawerItem(
                       icon: Icons.supervisor_account_outlined,
-                      text: 'Friends',
+                      text: 'Collaborators',
+                      onTap: () {
+                        Get.to(CollaboratorPage());
+                      }
                     ),
                     _createDrawerItem(
                         icon: Icons.logout,

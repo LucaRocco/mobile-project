@@ -26,4 +26,13 @@ class User {
 
   @override
   int get hashCode => email.hashCode;
+
+  User clone() {
+    return User(
+      nome: this.nome,
+      cognome: this.cognome,
+      email: this.email,
+      image: this.image
+    );
+  }
 }
