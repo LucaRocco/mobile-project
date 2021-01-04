@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.3.4.RELEASE'
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
     id 'java'
+    id 'war'
 }
 
 group = 'it.magnobevoeprogrammo'
@@ -9,6 +10,7 @@ version = '0.0.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -16,6 +18,7 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
     runtimeOnly('org.postgresql:postgresql')
     runtimeOnly('mysql:mysql-connector-java')
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     compileOnly 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
 
@@ -27,4 +30,9 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+war {
+    baseName = 'in-expense'
+    version = '0.1.0'
 }

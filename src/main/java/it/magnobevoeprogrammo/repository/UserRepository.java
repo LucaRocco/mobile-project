@@ -12,4 +12,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT a.amico_id as user_id, nome, cognome, email, foto FROM amici a JOIN utenti u ON a.amico_id = u.user_id WHERE a.user_id =:userId", nativeQuery = true)
     List<User> getFriends(long userId);
     List<User> findAllByEmailIn(List<String> email);
+    List<User> getUserByNomeContainingIgnoreCaseOrEmailContainingIgnoreCase(String s1, String s2);
 }

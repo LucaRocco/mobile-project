@@ -1,10 +1,7 @@
 package it.magnobevoeprogrammo.service;
 
 import it.magnobevoeprogrammo.exception.NotFoundException;
-import it.magnobevoeprogrammo.model.Lista;
-import it.magnobevoeprogrammo.model.Prodotto;
-import it.magnobevoeprogrammo.model.ProdottoLista;
-import it.magnobevoeprogrammo.model.User;
+import it.magnobevoeprogrammo.model.*;
 import it.magnobevoeprogrammo.model.request.SaveProdottoRequest;
 import it.magnobevoeprogrammo.model.response.ListaResponse;
 import it.magnobevoeprogrammo.model.response.ProdottoListaResponse;
@@ -58,6 +55,7 @@ public class ListaService {
         log.debug("getAllLists() started");
         User user = userService.getUser();
         List<ListaResponse> ll = user.getListe().stream().map(Lista::toResponse).collect(toList());
+        ll.forEach(l -> l.getProdotti().forEach(p -> System.out.println(p.getDataAcquisto())));
         return ResponseEntity.ok().body(ll);
     }
 
@@ -75,9 +73,9 @@ public class ListaService {
 
     @Transactional
     public ResponseEntity<HttpStatus> saveProductToList(SaveProdottoRequest request) {
-        Lista lista = listaRepository.findListaById((long) request.getIdListaDestinazione());
+        Lista lista = listaRepository.findListaById(request.getIdListaDestinazione());
         Prodotto prodotto = prodottoRepository.findProdottoById(request.getId());
-        prodottoListaRepository.save(ProdottoLista.fromProdotto(prodotto, lista));
+        prodottoListaRepository.save(ProdottoLista.fromProdotto(prodotto, lista, request.getQuantita()));
         return ResponseEntity.ok().build();
     }
 
@@ -87,7 +85,7 @@ public class ListaService {
         List<ProdottoLista> prodotti = new ArrayList<>();
         request.forEach(req -> {
             Prodotto prodotto = prodottoRepository.findProdottoById(req.getId());
-            prodotti.add(ProdottoLista.fromProdotto(prodotto, lista));
+            prodotti.add(ProdottoLista.fromProdotto(prodotto, lista, req.getQuantita()));
         });
         prodottoListaRepository.saveAll(prodotti);
         return ResponseEntity.ok().build();
@@ -111,5 +109,32 @@ public class ListaService {
         userRepository.saveAll(users);
         lista.getUsers().addAll(users);
         return ResponseEntity.ok(new HashSet<>(lista.getUsers()));
+    }
+
+    public ResponseEntity<Set<User>> removeParticipant(String email, long idLista) {
+        User user = userRepository.findUserByEmail(email);
+        user.getListe().removeIf(l -> l.getId() == idLista);
+        userRepository.save(user);
+        Lista lista = listaRepository.findListaById(idLista);
+        return ResponseEntity.ok(new HashSet<>(lista.getUsers()));
+    }
+
+    public ResponseEntity<Set<ProdottoListaResponse>> changeProductStatus(long idProdotto, long idLista) {
+        ProdottoLista prodottoLista = prodottoListaRepository.findProdottoListaById(idProdotto);
+        User user = userRepository.findUserByEmail(userService.getUserEmail());
+
+        if (prodottoLista.getStatus() == StatusProdotto.DA_ACQUISTARE) {
+            prodottoLista.setDataAquisto(new Date());
+            prodottoLista.setUtenteAcquisto(user);
+            prodottoLista.setStatus(StatusProdotto.ACQUISTATO);
+        } else if(prodottoLista.getStatus() == StatusProdotto.ACQUISTATO) {
+            prodottoLista.setDataAquisto(null);
+            prodottoLista.setUtenteAcquisto(null);
+            prodottoLista.setStatus(StatusProdotto.DA_ACQUISTARE);
+        }
+
+        prodottoListaRepository.save(prodottoLista);
+        Lista lista = listaRepository.findListaById(idLista);
+        return ResponseEntity.ok(new HashSet<>(lista.getProdotti().stream().map(ProdottoLista::toResponse).collect(toList())));
     }
 }

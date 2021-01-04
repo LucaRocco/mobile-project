@@ -26,14 +26,16 @@ public class ProdottoLista {
     private Date dataAquisto;
     @OneToOne
     private User utenteAcquisto;
+    private int quantita;
 
-    public static ProdottoLista fromProdotto(Prodotto p, Lista lista) {
+    public static ProdottoLista fromProdotto(Prodotto p, Lista lista, int quantita) {
         ProdottoLista prodottoLista = new ProdottoLista();
         prodottoLista.setDataAggiunta(new Date());
         prodottoLista.setLista(lista);
         prodottoLista.setProdotto(p);
         prodottoLista.setUtenteAcquisto(null);
         prodottoLista.setStatus(StatusProdotto.DA_ACQUISTARE);
+        prodottoLista.setQuantita(quantita);
         return prodottoLista;
     }
 
@@ -41,7 +43,7 @@ public class ProdottoLista {
         ProdottoListaResponse response = new ProdottoListaResponse();
         response.setCategoria(this.prodotto.getCategoria());
         response.setCodiceABarre(this.prodotto.getCodiceABarre());
-        response.setDataAquisto(this.dataAquisto);
+        response.setDataAcquisto(this.dataAquisto == null ? null : this.dataAquisto.toString());
         response.setFoto(this.prodotto.getFoto());
         response.setId(this.id);
         response.setNome(this.prodotto.getNome());
@@ -49,6 +51,8 @@ public class ProdottoLista {
         response.setStatus(this.status);
         response.setUtenteAcquisto(this.utenteAcquisto);
         response.setUser(this.prodotto.getUser());
+        response.setQuantita(this.quantita);
+        response.setOriginalId(this.prodotto.getId());
         return response;
     }
 }

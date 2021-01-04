@@ -1,6 +1,7 @@
 package it.magnobevoeprogrammo.controller;
 
 import it.magnobevoeprogrammo.model.Lista;
+import it.magnobevoeprogrammo.model.ProdottoLista;
 import it.magnobevoeprogrammo.model.User;
 import it.magnobevoeprogrammo.model.request.SaveProdottoRequest;
 import it.magnobevoeprogrammo.model.response.ListaResponse;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.Set;
 
@@ -49,13 +51,23 @@ public class ListaController {
         return listaService.saveProductsToList(request);
     }
 
-    @DeleteMapping(path = "{idLista}/prodotto/{idProdotto}")
+    @DeleteMapping(path = "/{idLista}/prodotto/{idProdotto}")
     public ResponseEntity<List<ProdottoListaResponse>> deleteProductFromList(@PathVariable("idLista") long idLista, @PathVariable("idProdotto") long idProdotto) {
         return listaService.deleteProductFromList(idProdotto, idLista);
     }
 
-    @PostMapping(path = "{idLista}/partecipanti")
+    @PostMapping(path = "/{idLista}/partecipanti")
     public ResponseEntity<Set<User>> addParticipants(@PathVariable("idLista") long idLista, @RequestBody List<String> emails) {
         return listaService.addParticipant(emails, idLista);
+    }
+
+    @DeleteMapping(path = "/{idLista}/partecipanti")
+    public ResponseEntity<Set<User>> removeParticipant(@PathVariable("idLista") long idLista, @RequestParam("email") String email) {
+        return listaService.removeParticipant(email, idLista);
+    }
+
+    @PutMapping(path = "/{idLista}/prodotto/{idProdotto}")
+    public ResponseEntity<Set<ProdottoListaResponse>> changeProductStatus(@PathVariable("idLista") long idLista, @PathVariable("idProdotto") long idProdotto) {
+        return listaService.changeProductStatus(idProdotto, idLista);
     }
 }

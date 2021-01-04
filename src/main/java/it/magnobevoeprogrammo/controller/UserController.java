@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/user")
@@ -49,6 +50,11 @@ public class UserController {
         List<User> friends = userService.getFriends();
         log.debug("" + friends);
         return ResponseEntity.ok().body(friends);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Set<User>> userSearchByNameAndEmail(@RequestParam("query") String query, @RequestParam("idLista") long idLista) {
+        return userService.userSearchByName(query, idLista);
     }
 }
 

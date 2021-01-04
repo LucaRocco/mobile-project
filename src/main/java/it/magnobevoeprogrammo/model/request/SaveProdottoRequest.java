@@ -12,4 +12,5 @@ public class SaveProdottoRequest {
     private String nome;
     private String categoria;
     private int idListaDestinazione;
+    private int quantita;
 }
