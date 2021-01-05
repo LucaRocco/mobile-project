@@ -67,7 +67,7 @@ public class ListaController {
     }
 
     @PutMapping(path = "/{idLista}/prodotto/{idProdotto}")
-    public ResponseEntity<Set<ProdottoListaResponse>> changeProductStatus(@PathVariable("idLista") long idLista, @PathVariable("idProdotto") long idProdotto) {
-        return listaService.changeProductStatus(idProdotto, idLista);
+    public ResponseEntity<Set<ProdottoListaResponse>> changeProductStatus(@PathVariable("idLista") long idLista, @PathVariable("idProdotto") long idProdotto, @RequestParam("prezzo") float prezzo) {
+        return listaService.changeProductStatus(idProdotto, idLista, prezzo);
     }
 }

@@ -72,7 +72,7 @@ public class ListaService {
     public ResponseEntity<HttpStatus> saveProductToList(SaveProdottoRequest request) {
         Lista lista = listaRepository.findListaById(request.getIdListaDestinazione());
         Prodotto prodotto = prodottoRepository.findProdottoById(request.getId());
-        prodottoListaRepository.save(ProdottoLista.fromProdotto(prodotto, lista, request.getQuantita()));
+        prodottoListaRepository.save(ProdottoLista.fromProdotto(prodotto, lista, request.getQuantita(), request.getPrezzo()));
         return ResponseEntity.ok().build();
     }
 
@@ -81,7 +81,7 @@ public class ListaService {
         List<ProdottoLista> prodotti = new ArrayList<>();
         request.forEach(req -> {
             Prodotto prodotto = prodottoRepository.findProdottoById(req.getId());
-            prodotti.add(ProdottoLista.fromProdotto(prodotto, lista, req.getQuantita()));
+            prodotti.add(ProdottoLista.fromProdotto(prodotto, lista, req.getQuantita(), req.getPrezzo()));
         });
 
         List<ProdottoLista> prodottiSalvati = prodottoListaRepository.saveAll(prodotti);
@@ -119,7 +119,8 @@ public class ListaService {
         return ResponseEntity.ok(new HashSet<>(lista.getUsers()));
     }
 
-    public ResponseEntity<Set<ProdottoListaResponse>> changeProductStatus(long idProdotto, long idLista) {
+    public ResponseEntity<Set<ProdottoListaResponse>> changeProductStatus(long idProdotto, long idLista, float prezzo) {
+        log.debug("prezzo: " + prezzo);
         ProdottoLista prodottoLista = prodottoListaRepository.findProdottoListaById(idProdotto);
         User user = userRepository.findUserByEmail(userService.getUserEmail());
 
@@ -127,9 +128,11 @@ public class ListaService {
             prodottoLista.setDataAquisto(new Date());
             prodottoLista.setUtenteAcquisto(user);
             prodottoLista.setStatus(StatusProdotto.ACQUISTATO);
+            prodottoLista.setPrezzo(prezzo);
         } else if(prodottoLista.getStatus() == StatusProdotto.ACQUISTATO) {
             prodottoLista.setDataAquisto(null);
             prodottoLista.setUtenteAcquisto(null);
+            prodottoLista.setPrezzo(0f);
             prodottoLista.setStatus(StatusProdotto.DA_ACQUISTARE);
         }
 

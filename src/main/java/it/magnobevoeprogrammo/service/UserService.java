@@ -1,14 +1,18 @@
 package it.magnobevoeprogrammo.service;
 
 import it.magnobevoeprogrammo.exception.NotFoundException;
+import it.magnobevoeprogrammo.model.Amici;
 import it.magnobevoeprogrammo.model.Lista;
+import it.magnobevoeprogrammo.model.PK;
 import it.magnobevoeprogrammo.model.User;
+import it.magnobevoeprogrammo.repository.AmiciRepository;
 import it.magnobevoeprogrammo.repository.ListaRepository;
 import it.magnobevoeprogrammo.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +31,9 @@ public class UserService {
 
     @Autowired
     private ListaRepository listaRepository;
+
+    @Autowired
+    private AmiciRepository amiciRepository;
 
     @Transactional
     public ResponseEntity<String> createUser(User user) {
@@ -51,7 +58,7 @@ public class UserService {
         return userRepository.getFriends(getUser().getUserId());
     }
 
-    public ResponseEntity<Set<User>> userSearchByName(String query, long idLista) {
+    public ResponseEntity<Set<User>> userSearchByNameAndFilterByListParticipants(String query, long idLista) {
         Lista lista = listaRepository.findListaById(idLista);
         User user = getUser();
         List<User> users = userRepository.getUserByNomeContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query);
@@ -60,5 +67,21 @@ public class UserService {
             users = users.stream().filter(u -> !lista.getUsers().contains(u)).collect(Collectors.toList());
         }
         return ResponseEntity.ok(new HashSet<>(users));
+    }
+
+    public ResponseEntity<Set<User>> userSearchByNameAndFilterByUserFriends(String query) {
+        User user = getUser();
+        List<User> friends = getFriends();
+        List<User> users = userRepository.getUserByNomeContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query);
+        users = users.stream().filter(u -> !u.getEmail().equals(user.getEmail())).collect(Collectors.toList());
+        if(!friends.isEmpty()) {
+            users = users.stream().filter(u -> !friends.contains(u)).collect(Collectors.toList());
+        }
+        return ResponseEntity.ok(new HashSet<>(users));
+    }
+
+    public ResponseEntity<HttpStatus> addFriend(long friendId) {
+        amiciRepository.save(new Amici(getUser().getUserId(), friendId));
+        return ResponseEntity.ok().build();
     }
 }

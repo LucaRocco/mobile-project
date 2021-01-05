@@ -6,10 +6,10 @@ import it.magnobevoeprogrammo.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 
@@ -52,9 +52,19 @@ public class UserController {
         return ResponseEntity.ok().body(friends);
     }
 
+    @PostMapping("/friends/{friendId}")
+    public ResponseEntity<HttpStatus> addFrieds(@PathVariable("friendId") long friendId) {
+        return userService.addFriend(friendId);
+    }
+
     @GetMapping("/search")
     public ResponseEntity<Set<User>> userSearchByNameAndEmail(@RequestParam("query") String query, @RequestParam("idLista") long idLista) {
-        return userService.userSearchByName(query, idLista);
+        return userService.userSearchByNameAndFilterByListParticipants(query, idLista);
+    }
+
+    @GetMapping("/search/collaborators")
+    public ResponseEntity<Set<User>> userSearchByNameAndFilterByUserFriends(@RequestParam("query") String query) {
+        return userService.userSearchByNameAndFilterByUserFriends(query);
     }
 }
 

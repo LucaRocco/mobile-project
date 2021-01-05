@@ -27,8 +27,9 @@ public class ProdottoLista {
     @OneToOne
     private User utenteAcquisto;
     private int quantita;
+    private Float prezzo;
 
-    public static ProdottoLista fromProdotto(Prodotto p, Lista lista, int quantita) {
+    public static ProdottoLista fromProdotto(Prodotto p, Lista lista, int quantita, float prezzo) {
         ProdottoLista prodottoLista = new ProdottoLista();
         prodottoLista.setDataAggiunta(new Date());
         prodottoLista.setLista(lista);
@@ -36,6 +37,7 @@ public class ProdottoLista {
         prodottoLista.setUtenteAcquisto(null);
         prodottoLista.setStatus(StatusProdotto.DA_ACQUISTARE);
         prodottoLista.setQuantita(quantita);
+        prodottoLista.setPrezzo(prezzo);
         return prodottoLista;
     }
 
@@ -53,6 +55,7 @@ public class ProdottoLista {
         response.setUser(this.prodotto.getUser());
         response.setQuantita(this.quantita);
         response.setOriginalId(this.prodotto.getId());
+        response.setPrezzo(this.prezzo);
         return response;
     }
 }

@@ -13,4 +13,5 @@ public class SaveProdottoRequest {
     private String categoria;
     private int idListaDestinazione;
     private int quantita;
+    private float prezzo;
 }

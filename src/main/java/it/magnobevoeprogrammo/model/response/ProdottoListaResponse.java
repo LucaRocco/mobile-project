@@ -21,4 +21,5 @@ public class ProdottoListaResponse {
     private String dataAcquisto;
     private User utenteAcquisto;
     private int quantita;
+    private float prezzo;
 }
