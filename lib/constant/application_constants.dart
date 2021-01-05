@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class ApplicationConstants {
-  static const String serverUrl = "http://192.168.1.129:8080";
+  static const String serverUrl = "https://14a60eb0e069.ngrok.io";
 
   static final List<Color> colors = [
     Colors.blue,
@@ -32,5 +32,13 @@ class ApplicationConstants {
       size: 40,
     ),
     'benessere': Image.asset('assets/images/category_healthy.png')
+  };
+
+  static Map<String, Color> category2color = {
+    'alimenti': Colors.red,
+    'utilita': Colors.blue,
+    'bevande': Colors.yellow,
+    'casa': Colors.tealAccent,
+    'benessere': Colors.purple
   };
 }

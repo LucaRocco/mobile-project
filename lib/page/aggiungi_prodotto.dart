@@ -2,19 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:in_expense/internationalization/app_localizations.dart';
-import 'package:in_expense/page/liste_attive.dart';
+import 'package:in_expense/model/prodotto.dart';
 import 'package:in_expense/service/product_service.dart';
 
 class ProductAddPage extends StatefulWidget {
-  ProductAddPage({Key key, this.title}) : super(key: key);
+  ProductAddPage({Key key, this.title, this.prodotto}) : super(key: key);
 
   final String title;
+  final Prodotto prodotto;
 
   @override
-  _ProductAddPageState createState() => _ProductAddPageState();
+  _ProductAddPageState createState() =>
+      _ProductAddPageState(prodotto: prodotto);
 }
 
 class _ProductAddPageState extends State<ProductAddPage> {
+  _ProductAddPageState({this.prodotto});
+
+  final Prodotto prodotto;
   ProductService productService = GetIt.I<ProductService>();
   TextEditingController nomeController = new TextEditingController();
   TextEditingController categoriaController = new TextEditingController();
@@ -22,6 +27,13 @@ class _ProductAddPageState extends State<ProductAddPage> {
   var isButtonEnabled = false;
   var isLoading = false;
 
+  @override
+  void initState() {
+    if (this.prodotto != null) {
+      nomeController.text = prodotto.nome;
+    }
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,8 +117,8 @@ class _ProductAddPageState extends State<ProductAddPage> {
                       ].map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
-                          child: Text(AppLocalizations.of(context)
-                              .translate(value)),
+                          child: Text(
+                              AppLocalizations.of(context).translate(value)),
                         );
                       }).toList(),
                     ),
@@ -128,9 +140,10 @@ class _ProductAddPageState extends State<ProductAddPage> {
                             this.isLoading = true;
                           });
                           await productService.saveProduct(
+                              id: prodotto != null ? prodotto.id : null,
                               nome: nomeController.text,
                               categoria: dropdownValue);
-                          Get.offAll(ListsPage());
+                          Get.back();
                         }
                       },
                       child: isLoading

@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:in_expense/component/list_scroller.dart';
 import 'package:in_expense/model/lista_spesa.dart';
 import 'package:in_expense/service/lists_service.dart';
+import 'package:showcaseview/showcase_widget.dart';
 
 class ListsPage extends StatefulWidget {
   ListsPage({Key key, this.title}) : super(key: key);
@@ -18,6 +19,9 @@ class _ListsPageState extends State<ListsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListScroller();
+    return ShowCaseWidget(
+        builder: Builder(
+      builder: (context) => ListScroller(),
+    ));
   }
 }

@@ -24,7 +24,11 @@ class _CollaboratorPageState extends State<CollaboratorPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.search),
-            onPressed: () async {},
+            onPressed: () async {
+              await showSearch(
+                  context: context, delegate: DataSearchCollaboratori());
+              this.setState(() {});
+            },
           )
         ],
         backgroundColor: Colors.transparent,
@@ -70,4 +74,74 @@ class _CollaboratorPageState extends State<CollaboratorPage> {
       ),
     );
   }
+}
+
+class DataSearchCollaboratori extends SearchDelegate<List<User>> {
+  DataSearchCollaboratori();
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: () {
+          close(context, null);
+        });
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    AccountService accountService = GetIt.I<AccountService>();
+    return FutureBuilder(
+        future: accountService.searchUserByNameAndFilterByFriends(query),
+        builder: (context, AsyncSnapshot<List<User>> snapshot) {
+          if (snapshot.hasData) {
+            return ListView(
+              children: snapshot.data
+                  .map((u) => ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(u.image),
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(
+                            Icons.group_add_outlined,
+                            color: Colors.green,
+                          ),
+                          onPressed: () async {
+                            buildShowDialog(context);
+                            await accountService.addFriend(u.userId);
+                            close(context, null);
+                          },
+                        ),
+                        title: Text(u.nome + " " + u.cognome),
+                        subtitle: Text(u.email),
+                      ))
+                  .toList(),
+            );
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        });
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return ListView();
+  }
+}
+
+buildShowDialog(BuildContext context) {
+  return showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    },
+  );
 }

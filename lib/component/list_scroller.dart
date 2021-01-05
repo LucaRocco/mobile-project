@@ -16,6 +16,9 @@ import 'package:in_expense/page/aggiungi_prodotto.dart';
 import 'package:in_expense/page/dettagli_lista.dart';
 import 'package:in_expense/service/lists_service.dart';
 import 'package:in_expense/service/product_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:showcaseview/showcase.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class ListScroller extends StatefulWidget {
   @override
@@ -23,6 +26,12 @@ class ListScroller extends StatefulWidget {
 }
 
 class _ListScrollerState extends State<ListScroller> {
+  GlobalKey _one = GlobalKey();
+  GlobalKey _two = GlobalKey();
+  GlobalKey _three = GlobalKey();
+  GlobalKey _four = GlobalKey();
+  GlobalKey _five = GlobalKey();
+
   final ProductsScroller productScroller = ProductsScroller();
   ListsService listsService = GetIt.I<ListsService>();
   ProductService productService = GetIt.I<ProductService>();
@@ -42,6 +51,11 @@ class _ListScrollerState extends State<ListScroller> {
 
   @override
   Widget build(BuildContext context) {
+    if (false) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        ShowCaseWidget.of(context).startShowCase([_one]);
+      });
+    }
     final Size size = MediaQuery.of(context).size;
     final double productHeight = size.height * 0.30;
     return Container(
@@ -68,18 +82,29 @@ class _ListScrollerState extends State<ListScroller> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(left: 25),
-                      child: Text(
-                        AppLocalizations.of(context)
-                            .translate("prodotto_scroller"),
-                        style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20),
+                      child: Showcase(
+                        key: _one,
+                        title: "I tuoi prodotti",
+                        description:
+                            "Qui troverai l'elenco di tutti i tuoi prodotti e cliccando su 'I tuoi prodotti' potrai accedere alla lista completa",
+                        child: Text(
+                          AppLocalizations.of(context)
+                              .translate("prodotto_scroller"),
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20),
+                        ),
                       ),
                     ),
                     IconButton(
                       icon: Icon(Icons.add),
-                      onPressed: _addProduct,
+                      onPressed: () {
+                        Get.to(ProductAddPage());
+                        setState(() {
+                          productWidget = null;
+                        });
+                      },
                     )
                   ],
                 ),
@@ -159,7 +184,13 @@ class _ListScrollerState extends State<ListScroller> {
                                       fontSize: 20),
                                 ),
                                 IconButton(
-                                    icon: Icon(Icons.add), onPressed: _addList)
+                                    icon: Icon(Icons.add),
+                                    onPressed: () {
+                                      Get.to(AggiungiListaPage());
+                                      setState(() {
+                                        this.data = null;
+                                      });
+                                    })
                               ],
                             ),
                           ),
@@ -194,14 +225,6 @@ class _ListScrollerState extends State<ListScroller> {
     );
   }
 
-  _addProduct() {
-    Get.to(ProductAddPage());
-  }
-
-  _addList() {
-    Get.to(AggiungiListaPage());
-  }
-
   void themeSwitch(context) {
     DynamicTheme.of(context).setBrightness(
         Theme.of(context).brightness == Brightness.dark
@@ -210,6 +233,7 @@ class _ListScrollerState extends State<ListScroller> {
   }
 
   Future<Widget> getPostsData({List<ListaSpesa> listeSpesa}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     if (listeSpesa == null) {
       responseList = await listsService.getLists();
     } else {
@@ -255,14 +279,14 @@ class _ListScrollerState extends State<ListScroller> {
                       Row(
                         children: [
                           Text(
-                            "${list.prodotti.length} ${AppLocalizations.of(context).translate("prodotti")}",
+                            "${list.prodotti.length} ${prefs.getString("locale") == "it" ? "prodotti" : "products"}",
                             style: const TextStyle(
                                 fontSize: 17, color: Colors.grey),
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 20),
                             child: Text(
-                              "${list.partecipanti.length} ${AppLocalizations.of(context).translate("partecipanti")}",
+                              "${list.partecipanti.length} ${prefs.getString("locale") == "it" ? "partecipanti" : "participants"}",
                               style: const TextStyle(
                                   fontSize: 17, color: Colors.grey),
                             ),
@@ -312,6 +336,7 @@ class _ListScrollerState extends State<ListScroller> {
     List<Prodotto> responseList = await productService.getProdotti();
     List<Widget> listItems = [];
 
+    responseList.sort((a, b) => a.nome.compareTo(b.nome));
     final double productHeight = MediaQuery.of(context).size.height * 0.27 - 70;
     responseList.forEach(
       (element) {
@@ -324,7 +349,7 @@ class _ListScrollerState extends State<ListScroller> {
               margin: EdgeInsets.only(right: 20),
               height: productHeight,
               decoration: BoxDecoration(
-                  color: ApplicationConstants.getRandomColor(),
+                  color: ApplicationConstants.category2color[element.categoria],
                   borderRadius: BorderRadius.all(Radius.circular(20.0))),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
@@ -363,7 +388,21 @@ class _ListScrollerState extends State<ListScroller> {
                                       width: 40,
                                       child: IconButton(
                                         icon: Icon(Icons.mode_edit),
-                                        onPressed: () {
+                                        onPressed: () async {
+                                          this.setState(() {
+                                            this.needRefresh = false;
+                                          });
+                                          await Get.to(
+                                            ProductAddPage(
+                                              prodotto: element,
+                                            ),
+                                          );
+                                          this.setState(() {
+                                            productWidget = null;
+                                          });
+                                          this.setState(() {
+                                            this.needRefresh = true;
+                                          });
                                         },
                                       ),
                                     ),
@@ -373,11 +412,19 @@ class _ListScrollerState extends State<ListScroller> {
                                       child: IconButton(
                                         icon: Icon(Icons.delete),
                                         onPressed: () async {
+                                          buildShowDialog(context);
                                           await productService.removeProduct(
                                               id: element.id);
+                                          var newData =
+                                              await this.getPostsData();
+                                          var newProductWidget =
+                                              await getSummaryProductCards(
+                                                  context);
+                                          Get.close(1);
                                           this.setState(() {
-                                            this.data = null;
-                                            this.productWidget = null;
+                                            this.data = newData;
+                                            this.productWidget =
+                                                newProductWidget;
                                           });
                                         },
                                       ),
@@ -443,12 +490,24 @@ class _ListScrollerState extends State<ListScroller> {
   }
 
   void _refreshData() async {
-    if(needRefresh) {
+    if (needRefresh) {
       var newData = await getPostsData();
       this.setState(() {
         data = newData;
       });
       print("Refreshed");
     }
+  }
+
+  buildShowDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
   }
 }

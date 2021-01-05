@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:in_expense/internationalization/app_localizations.dart';
-import 'package:in_expense/page/liste_attive.dart';
 import 'package:in_expense/service/lists_service.dart';
 
 class AggiungiListaPage extends StatefulWidget {
@@ -89,7 +88,7 @@ class _AggiungiListaPageState extends State<AggiungiListaPage> {
                                     nomeLista: nomeController.text,
                                     descrizioneLista:
                                         descrizioneController.text);
-                                Get.offAll(ListsPage());
+                                Get.back();
                               },
                               child: new Container(
                                   alignment: Alignment.center,

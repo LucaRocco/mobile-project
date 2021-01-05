@@ -251,6 +251,32 @@ class AccountService {
         .map((user) => User.fromJson(user))
         .toList();
   }
+
+  Future<List<User>> searchUserByNameAndFilterByFriends(String query) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    http.Response response = await http.get(
+        ApplicationConstants.serverUrl +
+            "/user/search/collaborators?query=$query",
+        headers: (<String, String>{
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + prefs.getString("token")
+        }));
+    if (response.statusCode != 200) throw Error();
+    return (jsonDecode(response.body) as List)
+        .map((user) => User.fromJson(user))
+        .toList();
+  }
+
+  Future<void> addFriend(amicoId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    http.Response response = await http.post(
+      ApplicationConstants.serverUrl + "/user/friends/$amicoId",
+        headers: (<String, String>{
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + prefs.getString("token")
+        }));
+    if(response.statusCode != 200) throw Error();
+  }
 }
 
 enum UserStatus { LOGGED, NEED_EMAIL_CONFIRMATION, EMPTY }

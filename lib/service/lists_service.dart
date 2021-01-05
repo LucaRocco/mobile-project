@@ -95,10 +95,10 @@ class ListsService {
   }
 
   Future<List<Prodotto>> changeProductStatus(
-      int idProdotto, int idLista) async {
+      int idProdotto, int idLista, double prezzo) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     http.Response response = await http.put(
-        ApplicationConstants.serverUrl + "/lista/$idLista/prodotto/$idProdotto",
+        ApplicationConstants.serverUrl + "/lista/$idLista/prodotto/$idProdotto?prezzo=$prezzo",
         headers: (<String, String>{
           "Authorization": "Bearer " + prefs.getString("token"),
           "Content-Type": "application/json"

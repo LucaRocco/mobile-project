@@ -1,4 +1,3 @@
-
 import 'package:in_expense/model/user.dart';
 
 class Prodotto {
@@ -11,7 +10,8 @@ class Prodotto {
       this.dataAcquisto,
       this.quantita,
       this.utenteAcquisto,
-      this.originalId});
+      this.originalId,
+      this.prezzo});
 
   int id;
   int originalId;
@@ -22,6 +22,7 @@ class Prodotto {
   String dataAcquisto;
   int quantita = 0;
   User utenteAcquisto;
+  double prezzo;
 
   factory Prodotto.fromJson(json) {
     return Prodotto(
@@ -34,7 +35,8 @@ class Prodotto {
         utenteAcquisto: json['utenteAcquisto'] != null
             ? User.fromJson(json['utenteAcquisto'])
             : null,
-        originalId: json['originalId']);
+        originalId: json['originalId'],
+        prezzo: json['prezzo']);
   }
 
   Map toJson() => {
@@ -67,7 +69,8 @@ class Prodotto {
         dataAcquisto: this.dataAcquisto,
         quantita: this.quantita,
         utenteAcquisto: this.utenteAcquisto,
-        originalId: this.originalId);
+        originalId: this.originalId,
+        prezzo: this.prezzo);
   }
 
   @override

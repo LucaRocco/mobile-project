@@ -43,10 +43,19 @@ class _ListDetailPageState extends State<ListDetailPage> {
     super.initState();
   }
 
+  List<Color> chartColors = [];
+  Map<String, double> dataMap;
+
   @override
   Widget build(BuildContext context) {
-    Map<String, double> dataMap = _generateMapOfCategory(context);
     sortProducts();
+    dataMap = _generateMapOfCategory(context);
+    var color;
+    listaSpesa.prodotti.forEach((element) {
+      color = ApplicationConstants.category2color[element.categoria];
+      if(!chartColors.contains(color))
+        chartColors.add(color);
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -89,7 +98,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
                         animationDuration: Duration(milliseconds: 1000),
                         chartLegendSpacing: 32,
                         chartRadius: MediaQuery.of(context).size.width / 3.2,
-                        colorList: ApplicationConstants.colors,
+                        colorList: chartColors,
                         initialAngleInDegree: 0,
                         chartType: ChartType.ring,
                         ringStrokeWidth: 7,
@@ -213,6 +222,8 @@ class _ListDetailPageState extends State<ListDetailPage> {
                         this.listaSpesa.prodotti = prodottiAggiornati;
                         this.listaSpesa.numeroProdotti =
                             prodottiAggiornati.length;
+                        this.chartColors = [];
+                        this.dataMap = null;
                       });
                     }
                   },
@@ -225,13 +236,17 @@ class _ListDetailPageState extends State<ListDetailPage> {
             children: listaSpesa.prodotti
                 .map(
                   (prodotto) => Card(
+                    color: Colors.transparent,
                     elevation: 8.0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25.0),
+                    ),
                     margin: new EdgeInsets.symmetric(
                         horizontal: 10.0, vertical: 6.0),
                     child: Container(
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          color: Colors.white),
+                          borderRadius: BorderRadius.circular(25),
+                          color: ApplicationConstants.category2color[prodotto.categoria],),
                       child: ListTile(
                         contentPadding: EdgeInsets.symmetric(
                             horizontal: 20.0, vertical: 10.0),
@@ -253,22 +268,40 @@ class _ListDetailPageState extends State<ListDetailPage> {
                         ),
                         // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
 
-                        subtitle: Row(
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              "${AppLocalizations.of(context).translate("quantita")}: ${prodotto.quantita}",
-                              style: TextStyle(color: Colors.black))
+                                "${AppLocalizations.of(context).translate("quantita")}: ${prodotto.quantita}",
+                                style: TextStyle(color: Colors.black)),
+                            prodotto.dataAcquisto != null
+                                ? Row(children: [
+                                    Text("Aquistato da ",
+                                        style: TextStyle(color: Colors.black)),
+                                    Text("${prodotto.utenteAcquisto.nome}",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold)),
+                                    Text(", ${prodotto.prezzo} €",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold)),
+                                  ])
+                                : Container(
+                                    height: 0,
+                                    width: 0,
+                                  )
                           ],
                         ),
                         trailing: Container(
                           height: 100,
-                          width: 100,
+                          width: 97,
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               (isLoading && prodotto.id == idToRemove)
                                   ? Padding(
-                                      padding: EdgeInsets.only(left: 15),
+                                      padding: EdgeInsets.only(left: 0),
                                       child: SizedBox(
                                           height: 15,
                                           width: 15,
@@ -283,19 +316,33 @@ class _ListDetailPageState extends State<ListDetailPage> {
                                         _onRemoveProductPressed(prodotto.id);
                                       }),
                               IconButton(
-                                  icon: Icon(prodotto.dataAcquisto != null
-                                      ? Icons.check_box
-                                      : Icons.check_box_outline_blank),
-                                  onPressed: () async {
-                                    buildShowDialog(context);
-                                    var prodottiAggiornati =
-                                        await listsService.changeProductStatus(
-                                            prodotto.id, listaSpesa.id);
-                                    this.setState(() {
-                                      listaSpesa.prodotti = prodottiAggiornati;
-                                    });
-                                    Get.close(1);
-                                  })
+                                icon: Icon(prodotto.dataAcquisto != null
+                                    ? Icons.check_box
+                                    : Icons.check_box_outline_blank),
+                                onPressed: () async {
+                                  setState(() {
+                                    this.needRefresh = false;
+                                  });
+                                  var prezzo = "0.0";
+                                  if (prodotto.dataAcquisto == null) {
+                                    prezzo = await Get.bottomSheet(
+                                        this.bottomSheet());
+                                  }
+                                  buildShowDialog(context);
+                                  var prodottiAggiornati =
+                                      await listsService.changeProductStatus(
+                                          prodotto.id,
+                                          listaSpesa.id,
+                                          double.parse(prezzo));
+                                  this.setState(() {
+                                    listaSpesa.prodotti = prodottiAggiornati;
+                                  });
+                                  Get.close(1);
+                                  this.setState(() {
+                                    this.needRefresh = true;
+                                  });
+                                },
+                              )
                             ],
                           ),
                         ),
@@ -373,6 +420,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
     this.setState(() {
       isLoading = true;
       idToRemove = idProdotto;
+      this.needRefresh = false;
     });
     List<Prodotto> prodotti =
         await listsService.deleteProductFromList(listaSpesa.id, idProdotto);
@@ -380,6 +428,11 @@ class _ListDetailPageState extends State<ListDetailPage> {
       isLoading = false;
       idToRemove = -1;
       this.listaSpesa.prodotti = prodotti;
+    });
+    this.setState(() {
+      this.needRefresh = true;
+      this.chartColors = [];
+      this.dataMap = null;
     });
   }
 
@@ -429,5 +482,70 @@ class _ListDetailPageState extends State<ListDetailPage> {
     prodotti.addAll(uncompletedProduct);
 
     listaSpesa.prodotti = prodotti;
+  }
+
+  Widget bottomSheet() {
+    TextEditingController prezzoController = TextEditingController();
+    return Container(
+      height: 200,
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 40,
+          ),
+          Text(
+            "Se hai speso denaro per questo prodotto riportalo qui. \n"
+            "Alla fine potrete fare i conti più facilmente",
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(
+            height: 40,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 150,
+                child: TextFormField(
+                  controller: prezzoController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                    labelText: AppLocalizations.of(context).translate("prezzo"),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 20),
+                child: ClipOval(
+                  child: Material(
+                    color: Colors.deepOrange,
+                    child: InkWell(
+                      splashColor: Colors.blue,
+                      child: SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: Icon(Icons.arrow_forward),
+                      ),
+                      onTap: () {
+                        Get.back(result: prezzoController.text);
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
   }
 }
