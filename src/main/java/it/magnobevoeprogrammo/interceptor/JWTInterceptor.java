@@ -1,5 +1,6 @@
 package it.magnobevoeprogrammo.interceptor;
 
+import ch.qos.logback.core.util.TimeUtil;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.magnobevoeprogrammo.exception.TokenValidationException;
@@ -20,6 +21,13 @@ public class JWTInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        if(!(request.getRequestURI().equals("/user/friends") && request.getMethod().toLowerCase().equals("get"))) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                log.error(e.getMessage());
+            }
+        }
         if(!request.getRequestURI().equals("/user/create")) {
             log.debug("Request intercepted");
             if (request.getHeader("Authorization") == null)
