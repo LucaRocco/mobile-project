@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:in_expense/internationalization/app_localizations.dart';
 import 'package:in_expense/model/user.dart';
 import 'package:in_expense/service/account_service.dart';
 import 'package:in_expense/service/cloudinary_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfiloPage extends StatefulWidget {
   ProfiloPage({Key key, this.title}) : super(key: key);
@@ -86,6 +88,23 @@ class _ProfiloPageState extends State<ProfiloPage> {
                                   width: 135,
                                   height: 135,
                                   fit: BoxFit.fitHeight,
+                                  loadingBuilder: (BuildContext context,
+                                      Widget child,
+                                      ImageChunkEvent loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                        value: loadingProgress
+                                                    .expectedTotalBytes !=
+                                                null
+                                            ? loadingProgress
+                                                    .cumulativeBytesLoaded /
+                                                loadingProgress
+                                                    .expectedTotalBytes
+                                            : null,
+                                      ),
+                                    );
+                                  },
                                 ),
                               )
                             : Container(
@@ -217,26 +236,32 @@ class _ProfiloPageState extends State<ProfiloPage> {
     );
   }
 
-  _imgFromCamera() async {
+  _imgFromCamera(context) async {
     // ignore: deprecated_member_use
     File image = await ImagePicker.pickImage(
         source: ImageSource.camera, imageQuality: 50);
+    buildShowDialog(context);
     user.image = await cloudinaryService.uploadImage(image);
     User updatedUser = await accountService.updateProfile(user);
     this.setState(() {
       this.user = updatedUser;
     });
+    (await SharedPreferences.getInstance()).setString("uimage", user.image);
+    Get.back();
   }
 
-  _imgFromGallery() async {
+  _imgFromGallery(context) async {
     // ignore: deprecated_member_use
     File image = await ImagePicker.pickImage(
         source: ImageSource.gallery, imageQuality: 50);
+    buildShowDialog(context);
     user.image = await cloudinaryService.uploadImage(image);
     User updatedUser = await accountService.updateProfile(user);
     this.setState(() {
       this.user = updatedUser;
     });
+    (await SharedPreferences.getInstance()).setString("uimage", user.image);
+    Get.back();
   }
 
   void _showPicker(context) {
@@ -252,7 +277,7 @@ class _ProfiloPageState extends State<ProfiloPage> {
                       title: new Text(AppLocalizations.of(context)
                           .translate("libreria_foto")),
                       onTap: () {
-                        _imgFromGallery();
+                        _imgFromGallery(context);
                         Navigator.of(context).pop();
                       }),
                   new ListTile(
@@ -260,7 +285,7 @@ class _ProfiloPageState extends State<ProfiloPage> {
                     title: new Text(
                         AppLocalizations.of(context).translate("fotocamera")),
                     onTap: () {
-                      _imgFromCamera();
+                      _imgFromCamera(context);
                       Navigator.of(context).pop();
                     },
                   ),
@@ -290,5 +315,17 @@ class _ProfiloPageState extends State<ProfiloPage> {
       updated = false;
       user = updatedUser;
     });
+  }
+
+  buildShowDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
   }
 }

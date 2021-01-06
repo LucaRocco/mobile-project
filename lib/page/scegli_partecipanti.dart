@@ -44,7 +44,9 @@ class _AddParticipantPageState extends State<AddParticipantPage> {
                   },
                   child: Text(
                     AppLocalizations.of(context).translate("salva"),
-                    style: TextStyle(color: Colors.deepOrange),
+                    style: TextStyle(
+                        color: Colors.deepOrange,
+                        fontSize: 12 / MediaQuery.of(context).textScaleFactor),
                   ),
                 )
               : Text(""),
@@ -58,6 +60,7 @@ class _AddParticipantPageState extends State<AddParticipantPage> {
                   lista.partecipanti = partecipanti;
                 });
               }
+              Get.back(result: lista.partecipanti);
             },
           )
         ],
@@ -76,7 +79,58 @@ class _AddParticipantPageState extends State<AddParticipantPage> {
           if (snapshot.hasData) {
             snapshot.data
                 .removeWhere((element) => lista.partecipanti.contains(element));
-            print(snapshot.data);
+            if (snapshot.data.isEmpty) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 50.0),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.sentiment_very_dissatisfied,
+                        size: 100,
+                        color: Colors.grey,
+                      ),
+                      Text(
+                        "Non c'è niente qui",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      Text("Non hai ancora nessun collaboratore",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
+                      SizedBox(
+                        height: 50,
+                      ),
+                      Container(
+                        width: 200,
+                        child: GestureDetector(
+                          onTap: () async {
+                            var partecipanti = await showSearch(
+                                context: context,
+                                delegate: DataSearch(idLista: lista.id));
+                            if (partecipanti != null) {
+                              this.setState(() {
+                                lista.partecipanti = partecipanti;
+                              });
+                            }
+                            Get.back(result: lista.partecipanti);
+                          },
+                          child: new Container(
+                              alignment: Alignment.center,
+                              height: 60.0,
+                              decoration: new BoxDecoration(
+                                  color: Colors.deepOrange,
+                                  borderRadius: new BorderRadius.circular(9.0)),
+                              child: new Text("Aggiungine Uno",
+                                  style: TextStyle(
+                                      fontSize: 20.0, color: Colors.white))),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
             return ListView.builder(
               itemCount: snapshot.data.length,
               itemBuilder: (context, index) {
@@ -108,10 +162,17 @@ class _AddParticipantPageState extends State<AddParticipantPage> {
                       );
                     },
                   ),
-                  title: Text(snapshot.data[index].nome +
-                      " " +
-                      snapshot.data[index].cognome),
-                  subtitle: Text(snapshot.data[index].email),
+                  title: Text(
+                    snapshot.data[index].nome +
+                        " " +
+                        snapshot.data[index].cognome,
+                    style: TextStyle(
+                        fontSize: 14 / MediaQuery.of(context).textScaleFactor),
+                  ),
+                  subtitle: Text(snapshot.data[index].email,
+                      style: TextStyle(
+                          fontSize:
+                              12 / MediaQuery.of(context).textScaleFactor)),
                 );
               },
             );
@@ -184,8 +245,14 @@ class DataSearch extends SearchDelegate<List<User>> {
                             close(context, participants);
                           },
                         ),
-                        title: Text(u.nome + " " + u.cognome),
-                        subtitle: Text(u.email),
+                        title: Text(u.nome + " " + u.cognome,
+                            style: TextStyle(
+                                fontSize: 14 /
+                                    MediaQuery.of(context).textScaleFactor)),
+                        subtitle: Text(u.email,
+                            style: TextStyle(
+                                fontSize: 12 /
+                                    MediaQuery.of(context).textScaleFactor)),
                       ))
                   .toList(),
             );

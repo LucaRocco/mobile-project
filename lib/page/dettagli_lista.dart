@@ -48,13 +48,13 @@ class _ListDetailPageState extends State<ListDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    chartColors = [];
     sortProducts();
     dataMap = _generateMapOfCategory(context);
     var color;
     listaSpesa.prodotti.forEach((element) {
       color = ApplicationConstants.category2color[element.categoria];
-      if(!chartColors.contains(color))
-        chartColors.add(color);
+      if (!chartColors.contains(color)) chartColors.add(color);
     });
 
     return Scaffold(
@@ -66,11 +66,19 @@ class _ListDetailPageState extends State<ListDetailPage> {
             Get.back(result: listaSpesa);
           },
         ),
+        actions: [
+          Padding(
+              padding: EdgeInsets.only(right: 10),
+              child: Icon(
+                Icons.delete,
+                color: Colors.black,
+              ))
+        ],
         backgroundColor: Colors.transparent,
         actionsIconTheme: IconThemeData(color: Colors.deepOrange),
         title: Center(
             child: Padding(
-                padding: EdgeInsets.only(right: 60),
+                padding: EdgeInsets.only(right: 30),
                 child: Text(listaSpesa.nome,
                     style: TextStyle(color: Colors.black)))),
       ),
@@ -81,7 +89,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
             child: ListView(
               children: [
                 SizedBox(
-                  height: 20,
+                  height: 0,
                 ),
                 dataMap.isEmpty
                     ? Center(
@@ -95,15 +103,16 @@ class _ListDetailPageState extends State<ListDetailPage> {
                       )
                     : PieChart(
                         dataMap: dataMap,
+                        centerText:
+                            "TOT:\n ${listaSpesa.prodotti.map((e) => e.prezzo != null ? e.prezzo : 0).fold(0, (p, c) => p + c)} €",
                         animationDuration: Duration(milliseconds: 1000),
-                        chartLegendSpacing: 32,
-                        chartRadius: MediaQuery.of(context).size.width / 3.2,
+                        chartLegendSpacing: 60,
+                        chartRadius: MediaQuery.of(context).size.width / 2.5,
                         colorList: chartColors,
                         initialAngleInDegree: 0,
                         chartType: ChartType.ring,
-                        ringStrokeWidth: 7,
-                        formatChartValues: (value) =>
-                            "$value".replaceAll(".0", ""),
+                        ringStrokeWidth: 10,
+                        formatChartValues: (value) => "$value €",
                         legendOptions: LegendOptions(
                           showLegendsInRow: false,
                           legendPosition: LegendPosition.right,
@@ -134,7 +143,9 @@ class _ListDetailPageState extends State<ListDetailPage> {
                       .translate("partecipanti")
                       .capitalizeFirst,
                   style: TextStyle(
-                      color: Colors.grey, fontWeight: FontWeight.bold),
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16 / MediaQuery.of(context).textScaleFactor),
                 ),
                 listaSpesa.creatorId == listaSpesa.userId
                     ? IconButton(
@@ -183,7 +194,10 @@ class _ListDetailPageState extends State<ListDetailPage> {
                       child: Text(
                         AppLocalizations.of(context).translate("di_piu"),
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.grey),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                            fontSize:
+                                14 / MediaQuery.of(context).textScaleFactor),
                       ),
                     ),
                   ),
@@ -201,7 +215,9 @@ class _ListDetailPageState extends State<ListDetailPage> {
                       .translate("prodotti")
                       .capitalizeFirst,
                   style: TextStyle(
-                      color: Colors.grey, fontWeight: FontWeight.bold),
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16 / MediaQuery.of(context).textScaleFactor),
                 ),
                 IconButton(
                   icon: Icon(Icons.add),
@@ -242,17 +258,21 @@ class _ListDetailPageState extends State<ListDetailPage> {
                       borderRadius: BorderRadius.circular(25.0),
                     ),
                     margin: new EdgeInsets.symmetric(
-                        horizontal: 10.0, vertical: 6.0),
+                        horizontal: 5.0, vertical: 6.0),
                     child: Container(
+                      height: 80,
+                      width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          color: ApplicationConstants.category2color[prodotto.categoria],),
+                        borderRadius: BorderRadius.circular(25),
+                        color: ApplicationConstants
+                            .category2color[prodotto.categoria],
+                      ),
                       child: ListTile(
                         contentPadding: EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 10.0),
+                            horizontal: 20.0, vertical: 5.0),
                         leading: Container(
                           height: 40,
-                          width: 70,
+                          width: 40,
                           padding: EdgeInsets.only(right: 12.0),
                           decoration: new BoxDecoration(
                               border: new Border(
@@ -261,11 +281,33 @@ class _ListDetailPageState extends State<ListDetailPage> {
                           child: ApplicationConstants
                               .category2image[prodotto.categoria],
                         ),
-                        title: Text(
-                          prodotto.nome,
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.bold),
-                        ),
+                        title: prodotto.utenteAcquisto != null
+                            ? Padding(
+                                padding: EdgeInsets.only(
+                                    top:
+                                        MediaQuery.of(context).size.width / 40),
+                                child: Text(
+                                  prodotto.nome,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16 /
+                                          MediaQuery.of(context)
+                                              .textScaleFactor),
+                                ),
+                              )
+                            : Padding(
+                                padding: EdgeInsets.only(top: 10),
+                                child: Text(
+                                  prodotto.nome,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16 /
+                                          MediaQuery.of(context)
+                                              .textScaleFactor),
+                                ),
+                              ),
                         // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
 
                         subtitle: Column(
@@ -273,19 +315,33 @@ class _ListDetailPageState extends State<ListDetailPage> {
                           children: <Widget>[
                             Text(
                                 "${AppLocalizations.of(context).translate("quantita")}: ${prodotto.quantita}",
-                                style: TextStyle(color: Colors.black)),
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14 /
+                                        MediaQuery.of(context)
+                                            .textScaleFactor)),
                             prodotto.dataAcquisto != null
                                 ? Row(children: [
                                     Text("Aquistato da ",
-                                        style: TextStyle(color: Colors.black)),
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 12 /
+                                                MediaQuery.of(context)
+                                                    .textScaleFactor)),
                                     Text("${prodotto.utenteAcquisto.nome}",
                                         style: TextStyle(
                                             color: Colors.black,
-                                            fontWeight: FontWeight.bold)),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12 /
+                                                MediaQuery.of(context)
+                                                    .textScaleFactor)),
                                     Text(", ${prodotto.prezzo} €",
                                         style: TextStyle(
                                             color: Colors.black,
-                                            fontWeight: FontWeight.bold)),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12 /
+                                                MediaQuery.of(context)
+                                                    .textScaleFactor)),
                                   ])
                                 : Container(
                                     height: 0,
@@ -294,55 +350,65 @@ class _ListDetailPageState extends State<ListDetailPage> {
                           ],
                         ),
                         trailing: Container(
-                          height: 100,
-                          width: 97,
+                          color: Colors.transparent,
+                          height: 40,
+                          width: 70,
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               (isLoading && prodotto.id == idToRemove)
                                   ? Padding(
                                       padding: EdgeInsets.only(left: 0),
                                       child: SizedBox(
-                                          height: 15,
-                                          width: 15,
+                                          height: 25,
+                                          width: 25,
                                           child: CircularProgressIndicator()))
-                                  : IconButton(
-                                      icon: Icon(
-                                        Icons.delete,
-                                        color: Colors.black,
+                                  : SizedBox(
+                                      width: 25,
+                                      height: 50,
+                                      child: IconButton(
+                                        icon: Icon(
+                                          Icons.delete,
+                                          color: Colors.black,
+                                        ),
+                                        iconSize: 25,
+                                        onPressed: () {
+                                          _onRemoveProductPressed(prodotto.id);
+                                        },
                                       ),
-                                      iconSize: 20,
-                                      onPressed: () {
-                                        _onRemoveProductPressed(prodotto.id);
-                                      }),
-                              IconButton(
-                                icon: Icon(prodotto.dataAcquisto != null
-                                    ? Icons.check_box
-                                    : Icons.check_box_outline_blank),
-                                onPressed: () async {
-                                  setState(() {
-                                    this.needRefresh = false;
-                                  });
-                                  var prezzo = "0.0";
-                                  if (prodotto.dataAcquisto == null) {
-                                    prezzo = await Get.bottomSheet(
-                                        this.bottomSheet());
-                                  }
-                                  buildShowDialog(context);
-                                  var prodottiAggiornati =
-                                      await listsService.changeProductStatus(
-                                          prodotto.id,
-                                          listaSpesa.id,
-                                          double.parse(prezzo));
-                                  this.setState(() {
-                                    listaSpesa.prodotti = prodottiAggiornati;
-                                  });
-                                  Get.close(1);
-                                  this.setState(() {
-                                    this.needRefresh = true;
-                                  });
-                                },
-                              )
+                                    ),
+                              SizedBox(
+                                width: 25,
+                                height: 50,
+                                child: IconButton(
+                                  icon: Icon(prodotto.dataAcquisto != null
+                                      ? Icons.check_box
+                                      : Icons.check_box_outline_blank),
+                                  onPressed: () async {
+                                    setState(() {
+                                      this.needRefresh = false;
+                                    });
+                                    var prezzo = "0.0";
+                                    if (prodotto.dataAcquisto == null) {
+                                      prezzo = await Get.bottomSheet(
+                                          this.bottomSheet());
+                                    }
+                                    buildShowDialog(context);
+                                    var prodottiAggiornati =
+                                        await listsService.changeProductStatus(
+                                            prodotto.id,
+                                            listaSpesa.id,
+                                            double.parse(prezzo));
+                                    this.setState(() {
+                                      listaSpesa.prodotti = prodottiAggiornati;
+                                    });
+                                    Get.close(1);
+                                    this.setState(() {
+                                      this.needRefresh = true;
+                                    });
+                                  },
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -375,9 +441,10 @@ class _ListDetailPageState extends State<ListDetailPage> {
     for (Prodotto p in prodotti) {
       String categoria = AppLocalizations.of(context).translate(p.categoria);
       if (result.containsKey(categoria)) {
-        result.update(categoria, (value) => value + 1);
+        result.update(
+            categoria, (value) => value + (p.prezzo != null ? p.prezzo : 0));
       } else {
-        result.putIfAbsent(categoria, () => 1);
+        result.putIfAbsent(categoria, () => p.prezzo != null ? p.prezzo : 0);
       }
     }
     return result;
@@ -466,20 +533,20 @@ class _ListDetailPageState extends State<ListDetailPage> {
 
     List<Prodotto> prodotti = List<Prodotto>();
     prodotti.addAll(listaSpesa.prodotti);
-    prodotti.removeWhere((element) => element.dataAcquisto != null);
+    prodotti.removeWhere((element) => element.dataAcquisto == null);
     completedProduct = prodotti;
 
     prodotti = List<Prodotto>();
     prodotti.addAll(listaSpesa.prodotti);
-    prodotti.removeWhere((element) => element.dataAcquisto == null);
+    prodotti.removeWhere((element) => element.dataAcquisto != null);
     uncompletedProduct = prodotti;
 
-    completedProduct.sort((a, b) => a.nome.compareTo(b.nome));
-    uncompletedProduct.sort((a, b) => a.nome.compareTo(b.nome));
+    completedProduct.sort((a, b) => a.categoria.compareTo(b.categoria));
+    uncompletedProduct.sort((a, b) => a.categoria.compareTo(b.categoria));
 
     prodotti = List<Prodotto>();
-    prodotti.addAll(completedProduct);
     prodotti.addAll(uncompletedProduct);
+    prodotti.addAll(completedProduct);
 
     listaSpesa.prodotti = prodotti;
   }
@@ -487,7 +554,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
   Widget bottomSheet() {
     TextEditingController prezzoController = TextEditingController();
     return Container(
-      height: 200,
+      height: 250,
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -499,6 +566,8 @@ class _ListDetailPageState extends State<ListDetailPage> {
             "Se hai speso denaro per questo prodotto riportalo qui. \n"
             "Alla fine potrete fare i conti più facilmente",
             textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 18 / MediaQuery.of(context).textScaleFactor),
           ),
           SizedBox(
             height: 40,

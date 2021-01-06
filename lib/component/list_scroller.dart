@@ -68,158 +68,169 @@ class _ListScrollerState extends State<ListScroller> {
         ),
       ),
       child: SafeArea(
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            elevation: 0,
+        child: SafeArea(
+          child: Scaffold(
             backgroundColor: Colors.transparent,
-          ),
-          body: Container(
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(left: 25),
-                      child: Showcase(
-                        key: _one,
-                        title: "I tuoi prodotti",
-                        description:
-                            "Qui troverai l'elenco di tutti i tuoi prodotti e cliccando su 'I tuoi prodotti' potrai accedere alla lista completa",
-                        child: Text(
-                          AppLocalizations.of(context)
-                              .translate("prodotto_scroller"),
-                          style: TextStyle(
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20),
+            appBar: AppBar(
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+            ),
+            body: Container(
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(left: 25),
+                        child: Showcase(
+                          key: _one,
+                          title: "I tuoi prodotti",
+                          description:
+                              "Qui troverai l'elenco di tutti i tuoi prodotti e cliccando su 'I tuoi prodotti' potrai accedere alla lista completa",
+                          child: Text(
+                            AppLocalizations.of(context)
+                                .translate("prodotto_scroller"),
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20 /
+                                    MediaQuery.of(context).textScaleFactor),
+                          ),
                         ),
                       ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.add),
-                      onPressed: () {
-                        Get.to(ProductAddPage());
-                        setState(() {
-                          productWidget = null;
-                        });
-                      },
-                    )
-                  ],
-                ),
-                AnimatedOpacity(
-                  opacity: 1,
-                  duration: const Duration(milliseconds: 300),
-                  child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      width: size.width,
-                      alignment: Alignment.topCenter,
-                      height: productHeight,
-                      child: ListView(
-                        children: [
-                          SingleChildScrollView(
-                            physics: BouncingScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: 20, horizontal: 20),
-                              child: FittedBox(
-                                fit: BoxFit.fill,
-                                alignment: Alignment.topCenter,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    productWidget == null
-                                        ? FutureBuilder(
-                                            future:
-                                                getSummaryProductCards(context),
-                                            builder: (BuildContext context,
-                                                AsyncSnapshot snapshot) {
-                                              if (snapshot.hasData) {
-                                                this.productWidget =
-                                                    snapshot.data;
-                                                return snapshot.data;
-                                              } else {
-                                                return Container(
-                                                  height: MediaQuery.of(context)
-                                                              .size
-                                                              .height *
-                                                          0.27 -
-                                                      70,
-                                                  child: Center(
-                                                    child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width /
-                                                                  2 -
-                                                              40),
-                                                      child:
-                                                          CircularProgressIndicator(),
-                                                    ),
-                                                  ),
-                                                );
-                                              }
-                                            },
-                                          )
-                                        : productWidget,
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 25),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  AppLocalizations.of(context)
-                                      .translate("liste_product_scroller"),
-                                  style: TextStyle(
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                                IconButton(
-                                    icon: Icon(Icons.add),
-                                    onPressed: () {
-                                      Get.to(AggiungiListaPage());
-                                      setState(() {
-                                        this.data = null;
-                                      });
-                                    })
-                              ],
-                            ),
-                          ),
-                        ],
-                      )),
-                ),
-                data == null
-                    ? FutureBuilder(
-                        future: getPostsData(),
-                        builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData) {
-                            data = snapshot.data;
-                            return data;
-                          } else {
-                            return Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(top: 50),
-                                child: CircularProgressIndicator(),
-                              ),
-                            );
-                          }
+                      IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: () async {
+                          this.needRefresh = false;
+                          await Get.to(ProductAddPage(
+                            title: "testo_nuovo_prodotto",
+                          ));
+                          setState(() {
+                            productWidget = null;
+                          });
+                          this.needRefresh = true;
                         },
                       )
-                    : data,
-              ],
+                    ],
+                  ),
+                  AnimatedOpacity(
+                    opacity: 1,
+                    duration: const Duration(milliseconds: 300),
+                    child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        width: size.width,
+                        alignment: Alignment.topCenter,
+                        height: productHeight,
+                        child: ListView(
+                          children: [
+                            SingleChildScrollView(
+                              physics: BouncingScrollPhysics(),
+                              scrollDirection: Axis.horizontal,
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 20),
+                                child: FittedBox(
+                                  fit: BoxFit.fill,
+                                  alignment: Alignment.topCenter,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      productWidget == null
+                                          ? FutureBuilder(
+                                              future: getSummaryProductCards(
+                                                  context),
+                                              builder: (BuildContext context,
+                                                  AsyncSnapshot snapshot) {
+                                                if (snapshot.hasData) {
+                                                  this.productWidget =
+                                                      snapshot.data;
+                                                  return snapshot.data;
+                                                } else {
+                                                  return Container(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .height *
+                                                                0.27 -
+                                                            50,
+                                                    child: Center(
+                                                      child: Padding(
+                                                        padding: EdgeInsets.only(
+                                                            left: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width /
+                                                                    2 -
+                                                                40),
+                                                        child:
+                                                            CircularProgressIndicator(),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                              },
+                                            )
+                                          : productWidget,
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 25),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    AppLocalizations.of(context)
+                                        .translate("liste_product_scroller"),
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20 /
+                                            MediaQuery.of(context)
+                                                .textScaleFactor),
+                                  ),
+                                  IconButton(
+                                      icon: Icon(Icons.add),
+                                      onPressed: () async {
+                                        await Get.to(AggiungiListaPage());
+                                        this.data = null;
+                                        setState(() {});
+                                      })
+                                ],
+                              ),
+                            ),
+                          ],
+                        )),
+                  ),
+                  data == null
+                      ? FutureBuilder(
+                          future: getPostsData(),
+                          builder:
+                              (BuildContext context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasData) {
+                              data = snapshot.data;
+                              return data;
+                            } else {
+                              return Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 50),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+                          },
+                        )
+                      : data,
+                ],
+              ),
             ),
+            drawer: AppDrawer(),
           ),
-          drawer: AppDrawer(),
         ),
       ),
     );
@@ -233,6 +244,7 @@ class _ListScrollerState extends State<ListScroller> {
   }
 
   Future<Widget> getPostsData({List<ListaSpesa> listeSpesa}) async {
+    var textScale = MediaQuery.of(context).textScaleFactor;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (listeSpesa == null) {
       responseList = await listsService.getLists();
@@ -263,14 +275,15 @@ class _ListScrollerState extends State<ListScroller> {
                     children: <Widget>[
                       Text(
                         list.nome,
-                        style: const TextStyle(
-                            fontSize: 28, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 24 / textScale,
+                            fontWeight: FontWeight.bold),
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
                         list.descrizione,
-                        style:
-                            const TextStyle(fontSize: 17, color: Colors.grey),
+                        style: TextStyle(
+                            fontSize: 16 / textScale, color: Colors.grey),
                         overflow: TextOverflow.ellipsis,
                       ),
                       SizedBox(
@@ -280,15 +293,15 @@ class _ListScrollerState extends State<ListScroller> {
                         children: [
                           Text(
                             "${list.prodotti.length} ${prefs.getString("locale") == "it" ? "prodotti" : "products"}",
-                            style: const TextStyle(
-                                fontSize: 17, color: Colors.grey),
+                            style: TextStyle(
+                                fontSize: 16 / textScale, color: Colors.grey),
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 20),
                             child: Text(
                               "${list.partecipanti.length} ${prefs.getString("locale") == "it" ? "partecipanti" : "participants"}",
-                              style: const TextStyle(
-                                  fontSize: 17, color: Colors.grey),
+                              style: TextStyle(
+                                  fontSize: 14 / textScale, color: Colors.grey),
                             ),
                           ),
                         ],
@@ -333,112 +346,111 @@ class _ListScrollerState extends State<ListScroller> {
   }
 
   Future<Widget> getSummaryProductCards(BuildContext context) async {
+    var textScale = MediaQuery.of(context).textScaleFactor;
     List<Prodotto> responseList = await productService.getProdotti();
     List<Widget> listItems = [];
 
     responseList.sort((a, b) => a.nome.compareTo(b.nome));
-    final double productHeight = MediaQuery.of(context).size.height * 0.27 - 70;
+    final double productHeight = MediaQuery.of(context).size.height * 0.27 - 50;
     responseList.forEach(
       (element) {
         listItems.add(
-          GestureDetector(
-            key: UniqueKey(),
-            onTap: () {},
-            child: Container(
-              width: 150,
-              margin: EdgeInsets.only(right: 20),
-              height: productHeight,
-              decoration: BoxDecoration(
-                  color: ApplicationConstants.category2color[element.categoria],
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Flex(
-                  direction: Axis.horizontal,
-                  children: [
-                    Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
+          Container(
+            width: 150,
+            margin: EdgeInsets.only(right: 10),
+            height: productHeight,
+            decoration: BoxDecoration(
+                color: ApplicationConstants.category2color[element.categoria],
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  top: 6.0, left: 12.0, bottom: 6.0, right: 6.0),
+              child: Flex(
+                direction: Axis.horizontal,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Flexible(
+                          child: Text(
                             element.nome,
                             style: TextStyle(
-                                fontSize: 25,
+                                fontSize: 25 / textScale,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            AppLocalizations.of(context)
-                                .translate(element.categoria),
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    SizedBox(
-                                      height: 30,
-                                      width: 40,
-                                      child: IconButton(
-                                        icon: Icon(Icons.mode_edit),
-                                        onPressed: () async {
-                                          this.setState(() {
-                                            this.needRefresh = false;
-                                          });
-                                          await Get.to(
-                                            ProductAddPage(
-                                              prodotto: element,
-                                            ),
-                                          );
-                                          this.setState(() {
-                                            productWidget = null;
-                                          });
-                                          this.setState(() {
-                                            this.needRefresh = true;
-                                          });
-                                        },
-                                      ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          AppLocalizations.of(context)
+                              .translate(element.categoria),
+                          style: TextStyle(
+                              fontSize: 16 / textScale, color: Colors.white),
+                        ),
+                        Flexible(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  SizedBox(
+                                    height: 20,
+                                    width: 40,
+                                    child: IconButton(
+                                      icon: Icon(Icons.mode_edit),
+                                      onPressed: () async {
+                                        this.setState(() {
+                                          this.needRefresh = false;
+                                        });
+                                        await Get.to(
+                                          ProductAddPage(
+                                            title: "testo_modifica_prodotto",
+                                            prodotto: element,
+                                          ),
+                                        );
+                                        this.productWidget = null;
+                                        this.setState(() {
+                                          this.needRefresh = true;
+                                        });
+                                      },
                                     ),
-                                    SizedBox(
-                                      height: 30,
-                                      width: 30,
-                                      child: IconButton(
-                                        icon: Icon(Icons.delete),
-                                        onPressed: () async {
-                                          buildShowDialog(context);
-                                          await productService.removeProduct(
-                                              id: element.id);
-                                          var newData =
-                                              await this.getPostsData();
-                                          var newProductWidget =
-                                              await getSummaryProductCards(
-                                                  context);
-                                          Get.close(1);
-                                          this.setState(() {
-                                            this.data = newData;
-                                            this.productWidget =
-                                                newProductWidget;
-                                          });
-                                        },
-                                      ),
-                                    )
-                                  ],
-                                )
-                              ],
-                            ),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                    width: 30,
+                                    child: IconButton(
+                                      icon: Icon(Icons.delete),
+                                      onPressed: () async {
+                                        buildShowDialog(context);
+                                        await productService.removeProduct(
+                                            id: element.id);
+                                        var newData = await this.getPostsData();
+                                        var newProductWidget =
+                                            await getSummaryProductCards(
+                                                context);
+                                        Get.close(1);
+                                        this.setState(() {
+                                          this.data = newData;
+                                          this.productWidget = newProductWidget;
+                                        });
+                                      },
+                                    ),
+                                  )
+                                ],
+                              )
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -455,8 +467,9 @@ class _ListScrollerState extends State<ListScroller> {
                 children: [
                   Text(
                     AppLocalizations.of(context).translate("assente_prodotto"),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 18),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18 / MediaQuery.of(context).textScaleFactor),
                     textAlign: TextAlign.center,
                   ),
                   Row(
@@ -469,10 +482,11 @@ class _ListScrollerState extends State<ListScroller> {
                       ),
                       Text(
                         "+",
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.deepOrange,
-                            fontSize: 18),
+                            fontSize:
+                                18 / MediaQuery.of(context).textScaleFactor),
                         textAlign: TextAlign.center,
                       ),
                       Text(

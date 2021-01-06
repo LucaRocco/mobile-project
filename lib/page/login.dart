@@ -43,159 +43,156 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Login"),
-        ),
-        body: Container(
-          height: double.maxFinite,
-          child: ListView(
-            children: <Widget>[
-              Padding(padding: EdgeInsets.only(top: 30)),
-              Logo(),
-              new Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: new Text(
-                      "inExpense",
-                      style: new TextStyle(fontSize: 30.0),
-                    ),
-                  )
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(padding: EdgeInsets.all(20)),
-                ],
-              ),
-              Padding(
-                padding:
-                    EdgeInsets.only(top: 16, bottom: 16, left: 30, right: 30),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.alternate_email),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    labelText: 'Email',
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        child: ListView(
+          children: <Widget>[
+            Padding(padding: EdgeInsets.only(top: 30)),
+            Logo(),
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: new Text(
+                    "inExpense",
+                    style: new TextStyle(fontSize: 30.0),
                   ),
-                  controller: emailController,
-                  onChanged: _onChanged,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 30, right: 30),
-                child: TextField(
-                  decoration: InputDecoration(
-                    prefixIcon: IconButton(
-                      icon: visiblePassword
-                          ? Icon(Icons.visibility)
-                          : Icon(Icons.visibility_off),
-                      onPressed: () {
-                        setState(() {
-                          visiblePassword = !visiblePassword;
-                        });
-                      },
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    labelText: 'Password',
+                )
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(padding: EdgeInsets.all(20)),
+              ],
+            ),
+            Padding(
+              padding:
+                  EdgeInsets.only(top: 16, bottom: 16, left: 30, right: 30),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.alternate_email),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
-                  controller: passwordController,
-                  onChanged: _onChanged,
-                  obscureText: !visiblePassword,
+                  labelText: 'Email',
                 ),
+                controller: emailController,
+                onChanged: _onChanged,
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 30, left: 30, right: 30),
-                child: Builder(
-                  builder: (buildContext) => isLoading
-                      ? Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : Flex(
-                          direction: Axis.horizontal,
-                          children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  _login();
-                                },
-                                child: new Container(
-                                    alignment: Alignment.center,
-                                    height: 60.0,
-                                    decoration: new BoxDecoration(
-                                        color: Colors.deepOrange,
-                                        borderRadius:
-                                            new BorderRadius.circular(9.0)),
-                                    child: new Text("Login",
-                                        style: new TextStyle(
-                                            fontSize: 20.0,
-                                            color: Colors.white))),
-                              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 30, right: 30),
+              child: TextField(
+                decoration: InputDecoration(
+                  prefixIcon: IconButton(
+                    icon: visiblePassword
+                        ? Icon(Icons.visibility)
+                        : Icon(Icons.visibility_off),
+                    onPressed: () {
+                      setState(() {
+                        visiblePassword = !visiblePassword;
+                      });
+                    },
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  labelText: 'Password',
+                ),
+                controller: passwordController,
+                onChanged: _onChanged,
+                obscureText: !visiblePassword,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 10, left: 30, right: 30),
+              child: Builder(
+                builder: (buildContext) => isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : Flex(
+                        direction: Axis.horizontal,
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                _login();
+                              },
+                              child: new Container(
+                                  alignment: Alignment.center,
+                                  height: 60.0,
+                                  decoration: new BoxDecoration(
+                                      color: disabledLogin
+                                          ? Colors.grey
+                                          : Colors.deepOrange,
+                                      borderRadius:
+                                          new BorderRadius.circular(9.0)),
+                                  child: new Text("Login",
+                                      style: new TextStyle(
+                                          fontSize: 20.0,
+                                          color: Colors.white))),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
+                      ),
+              ),
+            ),
+            TextButton(
+                child: Text(AppLocalizations.of(context)
+                    .translate("recupera_password")),
+                onPressed: () => Get.to(ModificaPasswordPage())),
+            Padding(
+              padding: EdgeInsets.only(top: 120),
+              child: TextButton(
+                child: Text(
+                    AppLocalizations.of(context).translate("registrazione")),
+                onPressed: () => Get.to(
+                  RegistrationPage(),
                 ),
               ),
-              TextButton(
-                  child: Text(AppLocalizations.of(context)
-                      .translate("recupera_password")),
-                  onPressed: () => Get.to(ModificaPasswordPage())),
-              SizedBox(height: MediaQuery.of(context).size.height / 5),
-              Flex(
-                direction: Axis.horizontal,
-                children: [
-                  Expanded(
-                    child: Align(
-                      alignment: FractionalOffset.bottomCenter,
-                      child: TextButton(
-                          child: Text(AppLocalizations.of(context)
-                              .translate("registrazione")),
-                          onPressed: () => Get.to(RegistrationPage())),
-                    ),
-                  )
-                ],
-              ),
-            ],
-          ),
-        ));
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   void _login() async {
-    this.setState(() {
-      loginFailed = false;
-      isLoading = true;
-    });
-    try {
-      await accountService.performLogin(
-          emailController.text, passwordController.text);
-    } on LoginException catch (e) {
+    if (!disabledLogin) {
       this.setState(() {
-        loginFailed = true;
-        Get.showSnackbar(GetBar(
-          title: "Login Error",
-          message: e.cause,
-          duration: Duration(seconds: 4),
-          animationDuration: Duration(milliseconds: 600),
-        ));
+        loginFailed = false;
+        isLoading = true;
       });
-    }
-    this.setState(() {
-      isLoading = false;
-    });
-    if (!loginFailed) {
-      Get.offAll(ListsPage());
+      try {
+        await accountService.performLogin(
+            emailController.text, passwordController.text);
+      } on LoginException catch (e) {
+        this.setState(() {
+          loginFailed = true;
+          Get.showSnackbar(GetBar(
+            title: "Login Error",
+            message: e.cause,
+            duration: Duration(seconds: 4),
+            animationDuration: Duration(milliseconds: 600),
+          ));
+        });
+      }
+      this.setState(() {
+        isLoading = false;
+      });
+      if (!loginFailed) {
+        Get.offAll(ListsPage());
+      }
     }
   }
 

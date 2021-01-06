@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class ApplicationConstants {
-  static const String serverUrl = "https://14a60eb0e069.ngrok.io";
+  static const String serverUrl = "https://mobile-project-roma3.herokuapp.com";
 
   static final List<Color> colors = [
     Colors.blue,
@@ -29,7 +29,7 @@ class ApplicationConstants {
     'casa': Icon(
       Icons.home,
       color: Colors.black,
-      size: 40,
+      size: 25,
     ),
     'benessere': Image.asset('assets/images/category_healthy.png')
   };

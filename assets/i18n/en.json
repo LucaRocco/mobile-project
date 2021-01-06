@@ -35,6 +35,7 @@
   "nome_lista": "Name",
   "descrizione_lista": "Description",
   "testo_nuovo_prodotto": "Add product",
+  "testo_modifica_prodotto": "Modify product",
   "nome_prodotto": "Name",
   "categoria_prodotto": "Category",
   "appBar_dettagli_prodotto": "Product details",
@@ -69,6 +70,6 @@
   "utilita": "Utility",
   "bevande": "Drinks",
   "casa": "home",
-  "Benessere": "Welfare",
+  "benessere": "Welfare",
   "prezzo": "Price"
 }

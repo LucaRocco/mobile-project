@@ -32,10 +32,6 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)
-            .translate("appBar_verifica_registrazione")),
-      ),
       body: Container(
         child: ListView(
           children: <Widget>[
@@ -47,11 +43,7 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
                   child: Padding(
                     padding: EdgeInsets.all(20),
                     child: Text(
-                      AppLocalizations.of(context)
-                              .translate("messaggio_di_conferma1") +
-                          user.nome +
-                          AppLocalizations.of(context)
-                              .translate("messaggio_di_conferma2"),
+                      "${AppLocalizations.of(context).translate("messaggio_di_conferma1")} ${user.nome}.\n\n${AppLocalizations.of(context).translate("messaggio_di_conferma2")}",
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -60,34 +52,38 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
               ],
             ),
             Container(
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.all(20),
               child: TextField(
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10))),
                     labelText: AppLocalizations.of(context)
                         .translate("codice_di_verifica"),
-                    icon: Icon(Icons.dialpad)),
+                    prefixIcon: Icon(Icons.dialpad)),
                 controller: codeController,
                 onChanged: _onChanged,
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(16),
-                  child: isLoading
-                      ? Center(child: CircularProgressIndicator())
-                      : RaisedButton(
-                          child: Text(AppLocalizations.of(context)
-                              .translate("pulsante_di_verifica")),
-                          onPressed: disabledVerificationButton
-                              ? null
-                              : _verifyPressed),
-                ),
-              ],
-            )
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: GestureDetector(
+                onTap: _verifyPressed,
+                child: new Container(
+                    alignment: Alignment.center,
+                    height: 60.0,
+                    decoration: new BoxDecoration(
+                        color: disabledVerificationButton
+                            ? Colors.grey
+                            : Colors.deepOrange,
+                        borderRadius: new BorderRadius.circular(9.0)),
+                    child: new Text(
+                        AppLocalizations.of(context)
+                            .translate("pulsante_di_verifica"),
+                        style: new TextStyle(
+                            fontSize: 20.0, color: Colors.white))),
+              ),
+            ),
           ],
         ),
       ),
@@ -95,16 +91,18 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
   }
 
   void _verifyPressed() async {
-    this.setState(() {
-      isLoading = true;
-    });
-    await accountService.performEmailConfirmation(
-        user.email, codeController.text);
-    this.setState(() {
-      isLoading = false;
-    });
+    if (!disabledVerificationButton) {
+      this.setState(() {
+        isLoading = true;
+      });
+      await accountService.performEmailConfirmation(
+          user.email, codeController.text);
+      this.setState(() {
+        isLoading = false;
+      });
 
-    Get.off(LoginPage());
+      Get.off(LoginPage());
+    }
   }
 
   void _onChanged(String value) {

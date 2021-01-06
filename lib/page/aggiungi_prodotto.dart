@@ -13,11 +13,12 @@ class ProductAddPage extends StatefulWidget {
 
   @override
   _ProductAddPageState createState() =>
-      _ProductAddPageState(prodotto: prodotto);
+      _ProductAddPageState(prodotto: prodotto, title: title);
 }
 
 class _ProductAddPageState extends State<ProductAddPage> {
-  _ProductAddPageState({this.prodotto});
+  _ProductAddPageState({this.title, this.prodotto});
+  final String title;
 
   final Prodotto prodotto;
   ProductService productService = GetIt.I<ProductService>();
@@ -51,7 +52,7 @@ class _ProductAddPageState extends State<ProductAddPage> {
                 children: [
                   Text(
                     AppLocalizations.of(context)
-                        .translate("testo_nuovo_prodotto"),
+                        .translate(title),
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ],

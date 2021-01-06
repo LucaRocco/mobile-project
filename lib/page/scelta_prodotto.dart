@@ -50,102 +50,116 @@ class _ProductChoosePageState extends State<ProductChoosePage> {
         backgroundColor: Colors.transparent,
         actionsIconTheme: IconThemeData(color: Colors.deepOrange),
       ),
-      body: prodotti == null ? FutureBuilder(
-        future: productService.getProdotti(),
-        builder:
-            (BuildContext context, AsyncSnapshot<List<Prodotto>> snapshot) {
-          if (snapshot.hasData) {
-            this.prodotti = snapshot.data;
-            prodotti.forEach((element) => element.quantita = 1);
-            prodotti.removeWhere((prodotto) => productsAreadyPresent
-                .any((element) => element.originalId == prodotto.id));
-            return buildListView();
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
-      ) : buildListView(),
+      body: prodotti == null
+          ? FutureBuilder(
+              future: productService.getProdotti(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<Prodotto>> snapshot) {
+                if (snapshot.hasData) {
+                  this.prodotti = snapshot.data;
+                  prodotti.forEach((element) => element.quantita = 1);
+                  prodotti.removeWhere((prodotto) => productsAreadyPresent
+                      .any((element) => element.originalId == prodotto.id));
+                  return buildListView();
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              },
+            )
+          : buildListView(),
     );
   }
 
   ListView buildListView() {
     return ListView.builder(
-            itemCount: prodotti.length,
-            itemBuilder: (context, index) {
-              return Card(
-                elevation: 8.0,
-                margin:
-                    new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      color: Colors.white),
-                  child: ListTile(
-                    contentPadding: EdgeInsets.symmetric(
-                        horizontal: 20.0, vertical: 10.0),
-                    leading: Container(
-                      height: 40,
-                      width: 70,
-                      padding: EdgeInsets.only(right: 12.0),
-                      decoration: new BoxDecoration(
-                          border: new Border(
-                              right: new BorderSide(
-                                  width: 1.0, color: Colors.black))),
-                      child: ApplicationConstants.category2image[prodotti[index].categoria],
-                    ),
-                    title: Text(
-                      prodotti[index].nome,
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
-                    ),
-                    // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+      itemCount: prodotti.length,
+      itemBuilder: (context, index) {
+        return Card(
+          elevation: 8.0,
+          margin: new EdgeInsets.symmetric(horizontal: 5.0, vertical: 6.0),
+          child: Container(
+            height: 80,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50), color: Colors.white),
+            child: ListTile(
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+              leading: Container(
+                height: 40,
+                width: 40,
+                padding: EdgeInsets.only(right: 12.0),
+                decoration: new BoxDecoration(
+                    border: new Border(
+                        right:
+                            new BorderSide(width: 1.0, color: Colors.black))),
+                child: ApplicationConstants
+                    .category2image[prodotti[index].categoria],
+              ),
+              title: Text(
+                prodotti[index].nome.replaceAll(" ", "\n"),
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14),
+                overflow: TextOverflow.ellipsis,
+              ),
+              // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
 
-                    subtitle: Row(
-                      children: <Widget>[
-                        Text(AppLocalizations.of(context)
-                            .translate(prodotti[index].categoria),
-                            style: TextStyle(color: Colors.black))
-                      ],
-                    ),
-                    trailing: Container(
-                      height: 100,
-                      width: 200,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                              icon: Icon(Icons.remove), onPressed: () {
-                                setState(() {
-                                  prodotti[index].quantita--;
-                                });
-                                print(prodotti[index].quantita);
-                          }),
-                          Text("${prodotti[index].quantita}"),
-                          IconButton(icon: Icon(Icons.add), onPressed: () {
-                            setState(() {
-                              prodotti[index].quantita = prodotti[index].quantita + 1;
-                            });
-                            print(prodotti[index].quantita);
-                          }),
-                          IconButton(
-                              icon: Icon(
-                                prodottiDaAggiungere.contains(prodotti[index])
-                                    ? Icons.remove_shopping_cart_outlined
-                                    : Icons.add_shopping_cart_outlined,
-                                color: prodottiDaAggiungere
-                                        .contains(prodotti[index])
-                                    ? Colors.deepOrange
-                                    : Colors.green,
-                              ),
-                              onPressed: () => _onPressed(prodotti[index])),
-                        ],
+              subtitle: Row(
+                children: <Widget>[
+                  Text(
+                      AppLocalizations.of(context)
+                          .translate(prodotti[index].categoria),
+                      style: TextStyle(color: Colors.black, fontSize: 12))
+                ],
+              ),
+              trailing: Container(
+                height: 100,
+                width: 160,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                        icon: Icon(Icons.remove),
+                        onPressed: () {
+                          setState(() {
+                            prodotti[index].quantita--;
+                          });
+                          print(prodotti[index].quantita);
+                        }),
+                    Text("${prodotti[index].quantita}"),
+                    IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: () {
+                          setState(() {
+                            prodotti[index].quantita =
+                                prodotti[index].quantita + 1;
+                          });
+                          print(prodotti[index].quantita);
+                        }),
+                    SizedBox(
+                      height: 40,
+                      width: 25,
+                      child: IconButton(
+                        icon: Icon(
+                          prodottiDaAggiungere.contains(prodotti[index])
+                              ? Icons.remove_shopping_cart_outlined
+                              : Icons.add_shopping_cart_outlined,
+                          color: prodottiDaAggiungere.contains(prodotti[index])
+                              ? Colors.deepOrange
+                              : Colors.green,
+                        ),
+                        onPressed: () => _onPressed(prodotti[index]),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              );
-            },
-          );
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   _onPressed(Prodotto prodotto) {
